@@ -1,6 +1,6 @@
 import { Tenant } from "@prisma/client";
 import Link from "next/link";
-import { useDeleteTenant } from "../../utils/hooks";
+import { useDelete } from "../../utils/hooks";
 
 export type CardProps = {
   tenant: Tenant,
@@ -8,7 +8,7 @@ export type CardProps = {
 
 const Card = ({ tenant }: CardProps) => {
 
-  const deleteTenant = useDeleteTenant(tenant.id)
+  const deleteTenant = useDelete(tenant.id, 'tenants')
 
   return (
     <li className="grid bg-tenant border rounded-md shadow-inner text-lg p-4">

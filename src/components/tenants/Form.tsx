@@ -12,7 +12,7 @@ const inputDefaultStyle =
   "mt-1 neighborhood  w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0 focus:outline-link py-2 px-3";
 interface FormProps {
   tenant?: TenantWithPixKeys;
-  action: "auth.tenants.create" | "auth.tenants.edit";
+  action: "create" | "edit";
 }
 
 
@@ -20,8 +20,8 @@ const today = new Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "2-digi
 const lastYear = `${new Date().getFullYear()}-01-01`;
 
 const Form = ({ tenant, action }: FormProps) => {
-  const mutation = trpc.useMutation(action);
-  console.log(tenant);
+  const create = trpc.tenants.create.useMutation();
+  const edit = trpc.tenants.edit.useMutation();
 
   const { register, handleSubmit, formState: { errors }, control } = useForm<CreateTenantSchemaType>({
     resolver: zodResolver(CreateTenantSchema),
@@ -45,7 +45,7 @@ const Form = ({ tenant, action }: FormProps) => {
   });
 
   const { fields, append, remove } = useFieldArray({ name: 'pixKeys', control });
-  const { invalidateQueries } = trpc.useContext();
+  const { tenants } = trpc.useContext();
   const { dirtyFields, isDirty } = useFormState({ control })
   const { push } = useRouter()
 
@@ -53,24 +53,23 @@ const Form = ({ tenant, action }: FormProps) => {
     console.log('errors', errors);
   }
 
-
   const onValid: SubmitHandler<CreateTenantSchema> = (rawData, e) => {
-    if (action === "auth.tenants.edit" && tenant) {
+    if (action === "edit" && tenant) {
       const { pixKeys: pixKeysData, ...tenantData} = getDirtyValues<CreateTenantSchema>(dirtyFields, rawData)
 
-      mutation.mutate({ tenantData, pixKeysData, tenantId: tenant.id }, {
+      edit.mutate({ tenantData, pixKeysData, tenantId: tenant.id }, {
         onSuccess() {
-          invalidateQueries(["auth.tenants.findAll"]);
-          invalidateQueries(["auth.tenants.findOne", {id: tenant.id}]);
+          tenants.findAll.invalidate()
+          tenants.findOne.invalidate({ id: tenant.id })
         }
       })
       return
     }
 
-    mutation.mutate(rawData, {
+    create.mutate(rawData, {
       onSuccess() {
         e?.target.reset();
-        invalidateQueries("auth.tenants.findAll");
+        tenants.findAll.invalidate()
         push('/inquilinos/pesquisar')
       },
     });
@@ -82,15 +81,15 @@ const Form = ({ tenant, action }: FormProps) => {
       <fieldset>
         <legend className="mx-auto">
           <h2 className="text-4xl font-semibold text-center mb-12">
-            {action === "auth.tenants.create" ? "Cadastrar" : "Editar"}{" "}
+            {action === "create" ? "Cadastrar" : "Editar"}{" "}
             Inquilino
           </h2>
         </legend>
 
-        {mutation.isSuccess && (
+        {(edit.isSuccess || create.isSuccess) && (
           <p className="text-3xl font-semibold text-center text-link mb-12">
             Inquilino{" "}
-            {action === "auth.tenants.create" ? "cadastrado" : "editado"} com
+            {action === "create" ? "cadastrado" : "editado"} com
             sucesso!
           </p>
         )}
@@ -177,8 +176,8 @@ const Form = ({ tenant, action }: FormProps) => {
               </InputContainer>
 
               <button className="bg-link disabled:bg-slate-200 rounded-lg text-lg font-semibold text-white mt-auto py-3 px-8"
-                disabled={mutation.isLoading || !isDirty}>
-                {action === "auth.tenants.create" ? "Cadastrar" : "Editar"}
+                disabled={(edit.isLoading || create.isLoading) || !isDirty}>
+                {action === "create" ? "Cadastrar" : "Editar"}
               </button>
             </div>
 

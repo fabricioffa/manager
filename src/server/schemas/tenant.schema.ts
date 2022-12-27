@@ -27,8 +27,10 @@ export const CreateTenantSchema = z.object({
   debit: z.number().nonnegative().nullish(),
   waterId: z.string().trim().nullish().or(z.literal("")),
   electricityId: z.string().trim().nullish().or(z.literal("")),
-  lastPayment: z.preprocess((arg) => (typeof arg === "string" || arg instanceof Date) ? new Date(arg) : arg
-  , z.date().min(last10Years).max(new Date())).optional(),
+  lastPayment: z.preprocess((arg) => {
+    if (arg instanceof Date && arg?.toDateString() === 'Invalid Date') return undefined
+  }
+  , z.date().min(last10Years).max(new Date()).optional()),
   pixKeys: z.array(createPixKeysSchema).nullish(),
   obs: z.string().trim().nullish().or(z.literal("")),
 });

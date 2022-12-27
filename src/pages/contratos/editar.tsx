@@ -7,7 +7,7 @@ const EditContract = () => {
   const { query: { id } } = useRouter();
   const stringId = id as string
 
-  const { data: contract, isLoading, isError } = trpc.useQuery(['auth.contracts.findOne', { id: stringId }])
+  const { data: contract, isLoading, isError } = trpc.contracts.findOne.useQuery({ id: stringId })
 
   if (isError) return <div>Deu BO. Dá refresh... sei lá :/ </div>
 
@@ -18,7 +18,7 @@ const EditContract = () => {
       <div className="container">
         <GoBackBtn />
         <h1 className="text-5xl font-semibold text-center mb-14">Contratos</h1>
-        <Form contract={contract} action={"auth.contracts.edit"} />
+        <Form contract={contract} action={"edit"} />
       </div>
     )
   }

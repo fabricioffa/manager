@@ -1,10 +1,9 @@
-import { createPixKeysSchema } from './../../schemas/pixKeys.schemas';
-import { CreateTenantSchema } from './../../schemas/tenant.schema';
-import { router, protectedProcedure } from './../trpc';
+import { createPixKeysSchema } from "./../../schemas/pixKeys.schemas";
+import { CreateTenantSchema } from "./../../schemas/tenant.schema";
+import { router, protectedProcedure } from "./../trpc";
 import { z } from "zod";
 
-
-export const contractRouter = router({
+export const tenantsRouter = router({
   create: protectedProcedure
     .input(CreateTenantSchema)
     .mutation(async ({ ctx, input }) => {
@@ -24,11 +23,13 @@ export const contractRouter = router({
       }
       await ctx.prisma.tenant.create({ data: tenantData });
     }),
-  
+
   findOne: protectedProcedure
-    .input(z.object({
-      id: z.string(),
-    }))
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
     .query(async ({ ctx, input: { id } }) => {
       return await ctx.prisma.tenant.findUnique({
         where: { id },
@@ -43,28 +44,28 @@ export const contractRouter = router({
         },
       });
     }),
-  
-  findAll: protectedProcedure
-    .query(async ({ ctx }) => {
-      return await ctx.prisma.tenant.findMany();
-    }),
-  
-  selectData: protectedProcedure
-    .query(async ({ ctx }) => {
-      return await ctx.prisma.tenant.findMany({
-        select: {
-          id: true,
-          name: true,
-        }
-      });
-    }),
-  
+
+  findAll: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.tenant.findMany();
+  }),
+
+  selectData: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.tenant.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+  }),
+
   edit: protectedProcedure
-    .input(z.object({
+    .input(
+      z.object({
         tenantData: CreateTenantSchema.omit({ pixKeys: true }).partial(),
         tenantId: z.string().cuid(),
         pixKeysData: z.array(createPixKeysSchema).nullish(),
-    }))
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       try {
         await ctx.prisma.$transaction(async (tx) => {
@@ -94,15 +95,16 @@ export const contractRouter = router({
         return error;
       }
     }),
-  
+
   delete: protectedProcedure
-    .input(z.object({
-      id: z.string(),
-    }))
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
     .mutation(async ({ ctx, input: { id } }) => {
       await ctx.prisma.tenant.delete({
         where: { id },
       });
     }),
-  
-})
+});

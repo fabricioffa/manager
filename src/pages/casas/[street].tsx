@@ -10,11 +10,7 @@ const HouseProfile = () => {
   } = useRouter();
   const stringId = id as string;
 
-  const {
-    data: house,
-    isLoading,
-    isError,
-  } = trpc.useQuery(["auth.houses.findOne", { id: stringId }]);
+  const { data: house, isLoading, isError } = trpc.houses.findOne.useQuery({ id: stringId });
 
     const deleteHouse = useDeleteHouse(stringId)
 

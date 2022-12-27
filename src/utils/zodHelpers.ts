@@ -108,7 +108,7 @@ export class CnpjValidator {
 // }
 
 
-export function getDirtyValues<T extends FieldValues>(dirtyFields: FieldNamesMarkedBoolean<T>, allValues: T) {
+export function getDirtyValues<T extends FieldValues>(dirtyFields: FieldNamesMarkedBoolean<T>, allValues: T): Partial<T> {
   return Object.keys(dirtyFields).reduce((dirtyValues, field) => {
     const dirtyField = dirtyFields[field as keyof FieldNamesMarkedBoolean<T>]
     let fieldValue = allValues[field as keyof T]

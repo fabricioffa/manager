@@ -1,13 +1,13 @@
 import { House } from "@prisma/client";
 import Link from "next/link";
-import { useDeleteHouse } from "../../utils/hooks";
+import { useDelete } from "../../utils/hooks";
 
 export type CardProps = {
   house: House
 }
 
 const Card = ({ house }: CardProps) => {
-  const deleteHouse = useDeleteHouse(house.id)
+  const deleteHouse = useDelete(house.id, 'houses')
 
   return (
     <li className="grid bg-house border rounded-md shadow-inner text-lg p-4">

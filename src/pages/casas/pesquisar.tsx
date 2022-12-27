@@ -13,7 +13,7 @@ const perPage = 10;
 
 
 const HouseSearch = () => {
-  const { data, isSuccess } = trpc.useQuery(['auth.houses.findAll'])
+  const { data, isSuccess } = trpc.houses.findAll.useQuery()
   const [filter, setFilter] = useState({property: 'all', caseSensitive: false, query: ''})
   const [currentPage, setCurrentPage] = useState(0)
 

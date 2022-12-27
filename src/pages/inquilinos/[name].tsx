@@ -9,7 +9,7 @@ const TenantProfile = () => {
   const { query: { id } } = useRouter();
   const stringId = id as string
 
-  const {data: tenant, isLoading, isError} = trpc.useQuery(['auth.tenants.findOne', {id: stringId}])
+  const {data: tenant, isLoading, isError} = trpc.tenants.findOne.useQuery({id: stringId})
 
   const deleteTenant = useDeleteTenant(stringId)
 

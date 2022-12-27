@@ -1,10 +1,11 @@
-import { CreateHouseSchema, createHouseSchema } from "../../server/schemas/house.schema";
+import { createHouseSchema } from "../../server/schemas/house.schema";
+import type { CreateHouseSchema } from "../../server/schemas/house.schema";
 import { trpc } from "../../utils/trpc";
-
-import { useForm, SubmitHandler, SubmitErrorHandler, useFormState } from "react-hook-form";
+import { useForm, useFormState } from "react-hook-form";
+import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputContainer from "../InputContainer";
-import { House } from "@prisma/client";
+import type { House } from "@prisma/client";
 import { getDirtyValues } from "../../utils/zodHelpers";
 import { useRouter } from "next/router";
 
@@ -12,11 +13,13 @@ const inputDefaultStyle =
   "mt-1 neighborhood w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0 focus:outline-link py-2 px-3";
 interface FormProps {
   house?: House ;
-  action: "auth.houses.create" | "auth.houses.edit";
+  action: "create" | "edit";
 }
 
 const Form = ({ house, action }: FormProps) => {
-  const mutation = trpc.useMutation(action);
+  
+  const create = trpc.houses.create.useMutation();
+  const edit = trpc.houses.edit.useMutation();
 
   const { register, handleSubmit, formState: { errors }, control} = useForm<CreateHouseSchema>({
     resolver: zodResolver(createHouseSchema),
@@ -37,7 +40,7 @@ const Form = ({ house, action }: FormProps) => {
       : undefined,
   });
 
-  const { invalidateQueries } = trpc.useContext();
+  const { houses } = trpc.useContext();
 
   const { dirtyFields, isDirty } = useFormState({control})
 
@@ -49,42 +52,42 @@ const Form = ({ house, action }: FormProps) => {
 
 
   const onValid: SubmitHandler<CreateHouseSchema> = (data, e) => {
-    if (action === "auth.houses.edit" && house) {
+    if (action === "edit" && house) {
 
       const houseData = getDirtyValues<CreateHouseSchema>(dirtyFields, data)
 
-      mutation.mutate({ houseData, houseId: house.id }, {
+      edit.mutate({ houseData, houseId: house.id }, {
         onSuccess() {
-          invalidateQueries(["auth.houses.findAll"]);
-          invalidateQueries(["auth.houses.findOne", { id: house.id }]);
+          houses.findAll.invalidate()
+          houses.findOne.invalidate({ id: house.id })
         }
       })
       return
     }
 
-    mutation.mutate(data, {
+    create.mutate(data, {
       onSuccess() {
         e?.target.reset();
-        invalidateQueries("auth.houses.findAll");
+        houses.findAll.invalidate()
         push('/casas/pesquisar')
       },
     });
-  };
+  }; 
 
   return (
     <form onSubmit={handleSubmit(onValid, onInvalid)}>
       <fieldset>
         <legend className="mx-auto">
           <h2 className="text-4xl font-semibold text-center mb-12">
-            {action === "auth.houses.create" ? "Cadastrar" : "Editar"}{" "}
+            {action === "create" ? "Cadastrar" : "Editar"}{" "}
             Casa
           </h2>
         </legend>
 
-        {mutation.isSuccess && (
+        {(edit.isSuccess || create.isSuccess) && (
           <p className="text-3xl font-semibold text-center text-link mb-12">
             Casa{" "}
-            {action === "auth.houses.create" ? "cadastrado" : "editado"} com
+            {action === "create" ? "cadastrado" : "editado"} com
             sucesso!
           </p>
         )}
@@ -143,9 +146,9 @@ const Form = ({ house, action }: FormProps) => {
               spellCheck id="description" cols={30} rows={8} {...register("description")} />
           </InputContainer>
 
-          <button disabled={mutation.isLoading || !isDirty }
+          <button disabled={(create.isLoading || edit.isLoading) || !isDirty }
             className="bg-link disabled:bg-slate-200 rounded-lg text-lg font-semibold text-white md:mt-7 mb-2 py-3 px-8">
-            {action === "auth.houses.create" ? "Cadastrar" : "Editar"}
+            {action === "create" ? "Cadastrar" : "Editar"}
           </button>
         </div>
       </fieldset>

@@ -12,7 +12,7 @@ const defaultFilter = { property: 'all', caseSensitive: false, query: '' };
 export type Filter = typeof defaultFilter;
 
 const SearchContract = () => {
-  const { data: contracts, isSuccess } = trpc.useQuery(['auth.contracts.findAll'])
+  const { data: contracts, isSuccess } = trpc.contracts.findAll.useQuery()
   const [filter, setFilter] = useState(defaultFilter)
   const [currentPage, setCurrentPage] = useState(0)
 

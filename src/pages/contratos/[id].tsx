@@ -10,7 +10,7 @@ const ContractProfile = () => {
   const { query: { id } } = useRouter();
   const stringId = id as string
 
-  const {data: contract, isLoading, isError} = trpc.useQuery(['auth.contracts.findOne', {id: stringId}])
+  const {data: contract, isLoading, isError} = trpc.contracts.findOne.useQuery({id: stringId})
 
   const deleteContract = useDeleteContract(stringId)
 

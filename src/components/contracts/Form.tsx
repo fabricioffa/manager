@@ -1,5 +1,5 @@
 import { trpc } from "../../utils/trpc";
-import { ContractWithAllRelations, contractsSchema, createContractsSchema } from "../../server/schemas/contracts.schemas";
+import { ContractWithAllRelations, contractsSchema } from "../../server/schemas/contracts.schemas";
 import type { ContractsSchema } from "../../server/schemas/contracts.schemas";
 
 import { useForm, SubmitHandler, useFormState, SubmitErrorHandler } from "react-hook-form";
@@ -12,7 +12,7 @@ const inputDefaultStyle =
   "mt-1 neighborhood  w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0 focus:outline-link py-2 px-3";
 interface FormProps {
   contract?: ContractWithAllRelations;
-  action: "auth.contracts.create" | "auth.contracts.edit";
+  action: "create" | "edit";
 }
 
 const fiveYearsBack = `${new Date().getFullYear() - 5}-01-01`;
@@ -20,9 +20,11 @@ const fiveYearsAfter = `${new Date().getFullYear() + 5}-01-01`;
 const today = new Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "2-digit", day: "2-digit" }).format(Date.now())
 
 const Form = ({ contract, action }: FormProps) => {
-  const mutation = trpc.useMutation(action);
-  const {data: tenants, isSuccess: loadedTenants} = trpc.useQuery(['auth.tenants.selectData'])
-  const {data: houses, isSuccess: loadedHouses} = trpc.useQuery(['auth.houses.selectData'])
+  const create = trpc.contracts.create.useMutation();
+  const edit = trpc.contracts.edit.useMutation();
+
+  const {data: tenants, isSuccess: loadedTenants} = trpc.tenants.selectData.useQuery()
+  const {data: houses, isSuccess: loadedHouses} = trpc.houses.selectData.useQuery()
 
   const { register, handleSubmit, formState: { errors }, control,  } = useForm<ContractsSchema>({
     resolver: zodResolver(contractsSchema),
@@ -40,7 +42,7 @@ const Form = ({ contract, action }: FormProps) => {
     }
 });
 
-  const { invalidateQueries } = trpc.useContext();
+  const { contracts } = trpc.useContext();
   const { dirtyFields, isDirty } = useFormState({ control })
   const { push } = useRouter()
 
@@ -49,22 +51,22 @@ const Form = ({ contract, action }: FormProps) => {
   }
 
   const onValid: SubmitHandler<ContractsSchema> = (rawData, e) => {
-    if (action === "auth.contracts.edit" && contract) {
+    if (action === "edit" && contract) {
       const { witnesses: witnessesData, ...contractData} = getDirtyValues<ContractsSchema>(dirtyFields, rawData)
 
-      mutation.mutate({ contractData, witnessesData, contractId: contract.id }, {
+      edit.mutate({ contractData, witnessesData, contractId: contract.id }, {
         onSuccess() {
-          invalidateQueries(["auth.contracts.findAll"]);
-          invalidateQueries(["auth.contracts.findOne", {id: contract.id}]);
+          contracts.findAll.invalidate()
+          contracts.findOne.invalidate({id: contract.id})
         }
       })
       return
     }
-
-    mutation.mutate(rawData, {
+    
+    create.mutate(rawData, {
       onSuccess() {
         e?.target.reset();
-        invalidateQueries("auth.contracts.findAll");
+        contracts.findAll.invalidate()
         push('/contratos/pesquisar')
       },
     });
@@ -75,15 +77,15 @@ const Form = ({ contract, action }: FormProps) => {
       <fieldset className="mb-4">
         <legend className="mx-auto">
           <h2 className="text-4xl font-semibold text-center mb-12">
-            {action === "auth.contracts.create" ? "Cadastrar" : "Editar"}{" "}
+            {action === "create" ? "Cadastrar" : "Editar"}{" "}
             Contrato
           </h2>
         </legend>
 
-        {mutation.isSuccess && (
+        {(edit.isSuccess || create.isSuccess) && (
           <p className="text-3xl font-semibold text-center text-link mb-12">
             Contrato{" "}
-            {action === "auth.contracts.create" ? "cadastrado" : "editado"} com
+            {action === "create" ? "cadastrado" : "editado"} com
             sucesso!
           </p>
         )}
@@ -201,8 +203,8 @@ const Form = ({ contract, action }: FormProps) => {
 
       </div>
       <button className="block w-1/4 min-w-min bg-link disabled:bg-slate-200 rounded-lg text-lg font-semibold text-white mt-8 mx-auto py-3 px-8"
-        disabled={mutation.isLoading || !isDirty}>
-        {action === "auth.contracts.create" ? "Cadastrar" : "Editar"}
+        disabled={(edit.isLoading || create.isLoading) || !isDirty}>
+        {action === "create" ? "Cadastrar" : "Editar"}
       </button>
     </form>
   );

@@ -2,7 +2,7 @@ import { protectedProcedure, router } from './../trpc';
 import { createHouseSchema } from './../../schemas/house.schema';
 import { z } from "zod";
 
-export const contractRouter = router({
+export const housesRouter = router({
   create: protectedProcedure
     .input(createHouseSchema)
     .mutation(async ({ ctx, input: data }) => {
@@ -17,11 +17,6 @@ export const contractRouter = router({
       });
     }),
   
-  findAll: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx }) => {
-      return await ctx.prisma.house.findMany();
-    }),
   
   findAll: protectedProcedure
     .query(async ({ ctx }) => {

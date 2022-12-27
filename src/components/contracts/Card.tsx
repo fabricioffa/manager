@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { useDeleteTenant } from "../../utils/hooks";
 import { ContractWithRelations } from "../../server/schemas/contracts.schemas";
+import { useDelete } from "../../utils/hooks";
 
 const dateToString = (date: Date) => new Intl.DateTimeFormat('pt-BR').format(date)
 
@@ -10,7 +10,7 @@ export type CardProps = {
 
 const Card = ({ contract }: CardProps) => {
 
-  const deleteTenant = useDeleteTenant(contract.id)
+  const deleteContract = useDelete(contract.id, 'contracts')
 
   return (
     <li className="grid bg-tenant border rounded-md shadow-inner text-lg p-4">
@@ -33,7 +33,7 @@ const Card = ({ contract }: CardProps) => {
         border border-blue-700 text-white text-center font-semibold">
           Editar
         </Link>
-        <button onClick={() => deleteTenant()}
+        <button onClick={() => deleteContract()}
           className="grow bg-red-400 rounded-lg border border-red-700 text-white font-semibold">
           Excluir
         </button>

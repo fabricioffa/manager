@@ -7,7 +7,7 @@ const Create = () => {
   const { query: { id } } = useRouter();
   const stringId = id as string
 
-  const { data: tenant, isLoading, isError } = trpc.useQuery(['auth.tenants.findOne', { id: stringId }])
+  const { data: tenant, isLoading, isError } = trpc.tenants.findOne.useQuery({ id: stringId })
 
   if (isError) return <div>Deu BO. Dá refresh... sei lá :/ </div>
 
@@ -18,7 +18,7 @@ const Create = () => {
       <div className="container">
         <GoBackBtn />
         <h1 className="text-5xl font-semibold text-center mb-14">Inquilinos</h1>
-        <Form tenant={tenant} action={"auth.tenants.edit"} />
+        <Form tenant={tenant} action={"edit"} />
       </div>
     )
   }
