@@ -49,7 +49,10 @@ export const tenantsRouter = router({
   findAll: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.tenant.findMany({
       include: {
-        contract: {
+        contracts: {
+          where: {
+            endingDate: null
+          },
           select: {
             id: true,
             dueDay: true,

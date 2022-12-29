@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import GoBackBtn from "../../components/goBackBtn";
 import { trpc } from "../../utils/trpc";
-import { useDeleteHouse } from "../../utils/hooks";
+import { useDelete } from "../../utils/hooks";
 
 const HouseProfile = () => {
   const {
@@ -12,7 +12,7 @@ const HouseProfile = () => {
 
   const { data: house, isLoading, isError } = trpc.houses.findOne.useQuery({ id: stringId });
 
-    const deleteHouse = useDeleteHouse(stringId)
+    const deleteHouse = useDelete(stringId, 'houses')
 
     if (isError) return <div>Deu BO. Dá refresh... sei lá :/ </div>;
 

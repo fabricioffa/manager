@@ -3,26 +3,23 @@ import Card from "../../components/houses/Card";
 import SearchForm from "../../components/houses/SearchForm";
 import { ItemsList } from "../../components/ItemsList";
 import Paginator from "../../components/Paginator";
-import { filterHouses } from "../../utils/functions";
+import { filterHouses, dataFilter } from "../../utils/functions";
 import { trpc } from "../../utils/trpc";
+import { HousesSearchOptions } from "../../server/schemas/house.schema";
 
-export type Filter = {
-  property: string, caseSensitive: boolean, query: string
-}
 const perPage = 10;
-
 
 const HouseSearch = () => {
   const { data, isSuccess } = trpc.houses.findAll.useQuery()
-  const [filter, setFilter] = useState({property: 'all', caseSensitive: false, query: ''})
+  const [filter, setFilter] = useState<HousesSearchOptions>({property: 'all', caseSensitive: false, query: ''})
   const [currentPage, setCurrentPage] = useState(0)
 
-  const onFilterChange = (newFilter: Partial<typeof filter>) => {
+  const onFilterChange = (newFilter: Partial<HousesSearchOptions>) => {
     setFilter({...filter, ...newFilter})
   }
 
   if (isSuccess) {
-    const houses = filterHouses(filter, data)
+    const houses = dataFilter<NonNullable<typeof data>[number], HousesSearchOptions>(data, filter)
 
     const paginatedHouses = houses.slice(currentPage, currentPage + perPage)
 

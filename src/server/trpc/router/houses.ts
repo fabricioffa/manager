@@ -20,7 +20,18 @@ export const housesRouter = router({
   
   findAll: protectedProcedure
     .query(async ({ ctx }) => {
-      return await ctx.prisma.house.findMany();
+      return await ctx.prisma.house.findMany({
+        include: {
+          contracts: {
+            where: {
+              endingDate: null
+            },
+            select: {
+              id: true,
+            }
+          }
+        }
+      });
     }),
   
   selectData: protectedProcedure

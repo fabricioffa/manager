@@ -3,10 +3,10 @@ import { ItemsList } from "../../components/ItemsList";
 import Paginator from "../../components/Paginator";
 import Card from "../../components/tenants/Card"
 import SearchForm from "../../components/tenants/SearchForm";
-// import { dataFilter } from "../../utils/functions";
-import { filterTenants } from "../../utils/functions";
+import { dataFilter } from "../../utils/functions";
 import { trpc } from "../../utils/trpc";
 import { TenantsSearchOptions } from "../../server/schemas/tenant.schema";
+import GoBackBtn from "../../components/goBackBtn";
 
 const perPage = 10;
 
@@ -22,7 +22,7 @@ const Search = () => {
   }
 
   if (isSuccess) {
-    const tenants = filterTenants(filter, data)
+    const tenants = dataFilter<NonNullable<typeof data>[number], TenantsSearchOptions>(data, filter)
     const paginatedTenants = tenants.slice(currentPage, currentPage + perPage)
 
     const onPageChange = (index: number) => {
@@ -33,6 +33,8 @@ const Search = () => {
     return (
       <div className="max-h-screen">
         <h1 className="text-5xl font-semibold text-center mb-20">Inquilinos</h1>
+
+        <GoBackBtn />
 
         <SearchForm onFilterChange={onFilterChange} />
 

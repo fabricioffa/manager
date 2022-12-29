@@ -1,8 +1,12 @@
-import { Filter } from "../../pages/inquilinos/pesquisar";
-
+import { ContractSearchOptions, contractsSearchOptionsSchema } from "../../server/schemas/contracts.schemas";
 
 type SearchFormProps = {
-  onFilterChange: (newFilterProperty: Partial<Filter>) => void
+  onFilterChange: (newFilterProperty: Partial<ContractSearchOptions>) => void
+}
+
+const isValidOption = (opt: string): opt is ContractSearchOptions['property'] => {
+  const { success } = contractsSearchOptionsSchema.pick({ property: true }).safeParse(opt)
+  return success
 }
 
 const SearchForm = ({onFilterChange}: SearchFormProps ) => {
@@ -24,7 +28,10 @@ const SearchForm = ({onFilterChange}: SearchFormProps ) => {
             <div>
               <label htmlFor="search-options">Opções de busca</label>
               <select className="border" name="search-options" id="search-options"
-                onChange={({ target: { value } }) => onFilterChange( {property: value} )}>
+                onChange={({ target: { value } }) => {
+                  if (!isValidOption(value)) return  
+                  onFilterChange({ property: value })
+                }}>
                 <option value="all">Tudo</option>
                 <option value="name">Nome</option>
                 <option value="profession">Profissão</option>

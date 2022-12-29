@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { ContractWithRelations } from "../../server/schemas/contracts.schemas";
 import { useDelete } from "../../utils/hooks";
+import type { RouterOutputs } from "../../utils/trpc";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const dateToString = (date: Date) => new Intl.DateTimeFormat('pt-BR').format(date)
 
 export type CardProps = {
-  contract: ContractWithRelations,
+  contract: NonNullable<RouterOutputs['contracts']['findAll'][number]>,
 }
 
 const Card = ({ contract }: CardProps) => {
@@ -15,13 +16,13 @@ const Card = ({ contract }: CardProps) => {
   return (
     <li className="grid bg-tenant border rounded-md shadow-inner text-lg p-4">
       <div className="grid grid-cols-[1.5rem_1fr] grid-rows-[3rem_auto] items-center gap-2">
-        <i className="fa-solid fa-user fa-xl justify-self-center"></i>
+        <FontAwesomeIcon icon="user" size="xl" className="justify-self-center" />
         <h3 className="col-start-2 text-xl font-semibold capitalize line-clamp-1">{contract.tenant.name}</h3>
-        <i className="fa-solid fa-house-chimney-window fa-xl justify-self-center"></i>
-        <p>{ `${contract.house.street}, ${contract.house.number}` }</p>
-        <i className="fa-solid fa-house-chimney-window fa-xl justify-self-center"></i>
+        <FontAwesomeIcon icon="house-chimney-window" size="xl" className="justify-self-center" />
+        <p>{`${contract.house.street}, ${contract.house.number}`}</p>
+        <FontAwesomeIcon icon="circle-dollar-to-slot" size="xl" className="justify-self-center" />
         <p>Aluguel: { Number(contract.rent)}</p>
-        <i className="fa-solid fa-house-chimney-window fa-xl justify-self-center"></i>
+        <FontAwesomeIcon icon="calendar-day" size="xl" className="justify-self-center" />
         <p>Início: { dateToString(contract.initialDate)}</p>
       </div>
       <div className="flex gap-2 mt-auto pt-4">

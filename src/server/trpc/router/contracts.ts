@@ -62,6 +62,12 @@ export const contractsRouter = router({
               number: true,
             },
           },
+          witnesses: {
+            select: {
+              id: true,
+              name: true,
+            }
+          }
         },
       });
     }),

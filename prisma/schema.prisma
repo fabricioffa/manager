@@ -52,7 +52,7 @@ model Tenant {
   electricityId  String?       @unique @map("electricity_id") @db.VarChar(50)
   lastPayment    DateTime?     @map("last_payment")
   obs            String?       @db.VarChar(255)
-  contract       Contract[]
+  contracts      Contract[]
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
@@ -81,7 +81,7 @@ model House {
   waterId       String     @unique @map("water_id") @db.VarChar(50)
   electricityId String     @unique @map("electricity_id") @db.VarChar(50)
   description   String?    @db.VarChar(4000)
-  contract      Contract[]
+  contracts      Contract[]
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 }

@@ -1,4 +1,4 @@
-import { HouseType } from "@prisma/client";
+import { HouseType, Prisma } from "@prisma/client";
 import z from "zod";
 
 export const createHouseSchema = z.object({
@@ -14,5 +14,12 @@ export const createHouseSchema = z.object({
   description: z.string().trim().max(4000).nullish().transform(val => val === '' ? null : val)
 });
 
+export const housesSearchOptionsSchema = z.object({
+  property: z.nativeEnum({ ...Prisma.HouseScalarFieldEnum, all: 'all' } as const),
+  caseSensitive: z.boolean().default(false),
+  query: z.string(),
+})
+
+export type HousesSearchOptions = z.TypeOf<typeof housesSearchOptionsSchema>;
 export type CreateHouseSchema = z.TypeOf<typeof createHouseSchema>;
 

@@ -25,6 +25,16 @@ export const createContractsSchema = contractsSchema
   .omit({ witnesses: true })
   .augment({ witnesses: z.array(witnessSchema) })
 
+
+  
+export const contractsSearchOptionsSchema = z.object({
+  property: z.nativeEnum({ ...Prisma.ContractScalarFieldEnum, all: 'all' } as const),
+  caseSensitive: z.boolean().default(false),
+  query: z.string(),
+})
+
+export type ContractSearchOptions = z.TypeOf<typeof contractsSearchOptionsSchema>;
+
 const contractWithRelations = Prisma.validator<Prisma.ContractArgs>()({
   include: {
     tenant: {

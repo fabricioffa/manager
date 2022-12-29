@@ -3,25 +3,23 @@ import { ItemsList } from "../../components/ItemsList";
 import Paginator from "../../components/Paginator";
 import Card from "../../components/contracts/Card"
 import SearchForm from "../../components/contracts/SearchForm";
-import { filterContracts } from "../../utils/functions";
+import { dataFilter, filterContracts } from "../../utils/functions";
 import { trpc } from "../../utils/trpc";
+import { ContractSearchOptions } from "../../server/schemas/contracts.schemas";
 
 const perPage = 10;
-const defaultFilter = { property: 'all', caseSensitive: false, query: '' };
-
-export type Filter = typeof defaultFilter;
 
 const SearchContract = () => {
   const { data: contracts, isSuccess } = trpc.contracts.findAll.useQuery()
-  const [filter, setFilter] = useState(defaultFilter)
+  const [filter, setFilter] = useState<ContractSearchOptions>({ property: 'all', caseSensitive: false, query: '' })
   const [currentPage, setCurrentPage] = useState(0)
 
-  const onFilterChange = (newFilterProperty: Partial<typeof filter>) => {
+  const onFilterChange = (newFilterProperty: Partial<ContractSearchOptions>) => {
     setFilter({...filter, ...newFilterProperty})
   }
 
   if (isSuccess) {
-    const filteredContracts = filterContracts(filter, contracts)
+    const filteredContracts = dataFilter<NonNullable<typeof contracts>[number], ContractSearchOptions>(contracts, filter)
     const paginatedContracts = filteredContracts.slice(currentPage, currentPage + perPage)
 
     const onPageChange = (index: number) => {

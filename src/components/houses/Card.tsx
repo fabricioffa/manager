@@ -1,9 +1,10 @@
-import { House } from "@prisma/client";
 import Link from "next/link";
 import { useDelete } from "../../utils/hooks";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { RouterOutputs } from "../../utils/trpc";
 
 export type CardProps = {
-  house: House
+  house: NonNullable<RouterOutputs['houses']['findAll'][number]>
 }
 
 const Card = ({ house }: CardProps) => {
@@ -12,16 +13,18 @@ const Card = ({ house }: CardProps) => {
   return (
     <li className="grid bg-house border rounded-md shadow-inner text-lg p-4">
       <div className="grid grid-cols-[1.5rem_1fr] grid-rows-[3rem_auto] items-center gap-2">
-        <i className="fa-solid fa-house-chimney-window fa-xl justify-self-center"></i>
+        <FontAwesomeIcon icon="location-dot" size="xl" className="justify-self-center" />
         <h3 className="col-start-2 text-xl font-semibold capitalize line-clamp-1">{`${house.street}, ${house.number}`}</h3>
-        <i className="fa-solid fa-phone fa-xl justify-self-center"></i>
-        <p>{ house.type}</p>
-        <i className="fa-solid fa-exclamation fa-2xl justify-self-center"></i>
+        <FontAwesomeIcon icon="house-chimney-window" size="xl" className="justify-self-center" />
+        <p className="capitalize">{ house.type}</p>
+        <FontAwesomeIcon icon="droplet" size="xl" className="justify-self-center" />
         <p className="line-clamp-1">{ house.waterId }</p>
-        <i className="fa-solid fa-exclamation fa-2xl justify-self-center"></i>
+        <FontAwesomeIcon icon="bolt" size="xl" className="justify-self-center" />
         <p className="line-clamp-1">{ house.electricityId }</p>
-        <i className="fa-solid fa-file-contract fa-xl justify-self-center"></i>
-        <p><a href="#">Contrato atual: #45</a></p>
+        <FontAwesomeIcon icon="file-contract" size="xl" className="justify-self-center" />
+        <p className="flex gap-2"> Contrato atual:
+          <Link className="hover:text-link hover:underline"  href={`/contratos/${house.contracts.at(0)?.id}`} key={house.contracts.at(0)?.id}>#1</Link>
+        </p>
       </div>
       <div className="flex gap-2 mt-auto pt-4">
         <Link href={`casas/${house.street}?id=${house.id}`} className="grow bg-blue-400 rounded-lg
