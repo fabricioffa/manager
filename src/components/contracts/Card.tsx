@@ -25,11 +25,11 @@ const Card = ({ contract }: CardProps) => {
         <p>Início: { dateToString(contract.initialDate)}</p>
       </div>
       <div className="flex gap-2 mt-auto pt-4">
-        <Link href={`${contract.id}?id=${contract.id}`} className="grow bg-blue-400 rounded-lg
+        <Link href={`/contratos/${contract.id}?id=${contract.id}`} className="grow bg-blue-400 rounded-lg
         border border-blue-700 text-white text-center font-semibold">
           Ver
         </Link>
-        <Link href={`editar?id=${contract.id}`} className="grow bg-blue-400 rounded-lg
+        <Link href={`/contratos/editar?id=${contract.id}`} className="grow bg-blue-400 rounded-lg
         border border-blue-700 text-white text-center font-semibold">
           Editar
         </Link>

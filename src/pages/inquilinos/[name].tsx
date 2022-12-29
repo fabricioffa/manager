@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router"
 import GoBackBtn from "../../components/goBackBtn";
-import { useDeleteTenant } from "../../utils/hooks";
+import { useDelete } from "../../utils/hooks";
 import { trpc } from "../../utils/trpc";
 
 
@@ -11,7 +11,7 @@ const TenantProfile = () => {
 
   const {data: tenant, isLoading, isError} = trpc.tenants.findOne.useQuery({id: stringId})
 
-  const deleteTenant = useDeleteTenant(stringId)
+  const deleteTenant = useDelete(stringId, 'tenants')
 
   if (isError) return <div>Deu BO. Dá refresh... sei lá :/ </div>
 

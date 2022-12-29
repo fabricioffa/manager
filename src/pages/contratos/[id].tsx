@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router"
 import GoBackBtn from "../../components/goBackBtn";
-import { useDeleteContract } from "../../utils/hooks";
+import { useDelete } from "../../utils/hooks";
 import { trpc } from "../../utils/trpc";
 
 const dateToString = (date: Date) => new Intl.DateTimeFormat('pt-BR').format(date)
@@ -12,7 +12,7 @@ const ContractProfile = () => {
 
   const {data: contract, isLoading, isError} = trpc.contracts.findOne.useQuery({id: stringId})
 
-  const deleteContract = useDeleteContract(stringId)
+  const deleteContract = useDelete(stringId, 'contracts')
 
   if (isError) return <div>Deu BO. Dá refresh... sei lá :/ </div>
 

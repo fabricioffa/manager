@@ -1,13 +1,13 @@
-import { Tenant } from "@prisma/client";
 import Link from "next/link";
 import { useDelete } from "../../utils/hooks";
+import { RouterOutputs } from "../../utils/trpc";
+
 
 export type CardProps = {
-  tenant: Tenant,
+  tenant: NonNullable <RouterOutputs['tenants']['findAll'][number]>,
 }
 
 const Card = ({ tenant }: CardProps) => {
-
   const deleteTenant = useDelete(tenant.id, 'tenants')
 
   return (
@@ -25,11 +25,11 @@ const Card = ({ tenant }: CardProps) => {
         <p><a href="#">Casa atual: #25</a></p>
       </div>
       <div className="flex gap-2 mt-auto pt-4">
-        <Link href={`${tenant.name}?id=${tenant.id}`} className="grow bg-blue-400 rounded-lg
+        <Link href={`/inquilinos/${tenant.name}?id=${tenant.id}`} className="grow bg-blue-400 rounded-lg
         border border-blue-700 text-white text-center font-semibold">
           Ver
         </Link>
-        <Link href={`editar?id=${tenant.id}`} className="grow bg-blue-400 rounded-lg
+        <Link href={`/inquilinos/editar?id=${tenant.id}`} className="grow bg-blue-400 rounded-lg
         border border-blue-700 text-white text-center font-semibold">
           Editar
         </Link>

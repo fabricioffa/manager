@@ -2,6 +2,7 @@ import { formWitnessSchema } from "./../../schemas/witnesses.schema";
 import { createContractsSchema } from "./../../schemas/contracts.schemas";
 import { router, protectedProcedure } from "../trpc";
 import { z } from "zod";
+import { getDayInFuture } from "../../../utils/functions";
 
 export const contractsRouter = router({
   create: protectedProcedure
@@ -62,6 +63,21 @@ export const contractsRouter = router({
             },
           },
         },
+      });
+    }),
+
+  dueToThisWeek: protectedProcedure
+    .query(async ({ ctx }) => {
+      return await ctx.prisma.contract.findMany({
+        where: {
+          dueDay: {
+            gte: new Date().getDate(),
+            // lte: getDayInFuture(7),
+          }
+        },
+        select: {
+          tenant: true
+        }
       });
     }),
 

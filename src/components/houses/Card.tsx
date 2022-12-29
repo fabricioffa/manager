@@ -24,11 +24,11 @@ const Card = ({ house }: CardProps) => {
         <p><a href="#">Contrato atual: #45</a></p>
       </div>
       <div className="flex gap-2 mt-auto pt-4">
-        <Link href={`${house.street}?id=${house.id}`} className="grow bg-blue-400 rounded-lg
+        <Link href={`casas/${house.street}?id=${house.id}`} className="grow bg-blue-400 rounded-lg
           border border-blue-700 text-white text-center font-semibold">
           Ver
         </Link>
-        <Link href={`editar?id=${house.id}`} className="grow bg-blue-400 rounded-lg
+        <Link href={`casas/editar?id=${house.id}`} className="grow bg-blue-400 rounded-lg
           border border-blue-700 text-white text-center font-semibold">
           Editar
         </Link>

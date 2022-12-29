@@ -1,11 +1,12 @@
+import { Prisma } from "@prisma/client";
 import { createPixKeysSchema } from "./../../schemas/pixKeys.schemas";
-import { CreateTenantSchema } from "./../../schemas/tenant.schema";
+import { createTenantSchema } from "./../../schemas/tenant.schema";
 import { router, protectedProcedure } from "./../trpc";
 import { z } from "zod";
 
 export const tenantsRouter = router({
   create: protectedProcedure
-    .input(CreateTenantSchema)
+    .input(createTenantSchema)
     .mutation(async ({ ctx, input }) => {
       const { pixKeys, ...tenantData } = input;
       if (pixKeys?.length) {
@@ -46,7 +47,37 @@ export const tenantsRouter = router({
     }),
 
   findAll: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.tenant.findMany();
+    return await ctx.prisma.tenant.findMany({
+      include: {
+        contract: {
+          select: {
+            id: true,
+            dueDay: true,
+            house: {
+              select: {
+                id: true,
+                street: true,
+                number: true,
+              },
+            }
+          }
+        }
+      }
+    });
+  }),
+
+  debitors: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.tenant.findMany({
+      where: {
+        debit: {
+          gt: 0
+        }
+      },
+
+      orderBy: {
+        debit: 'desc'
+      }
+    });
   }),
 
   selectData: protectedProcedure.query(async ({ ctx }) => {
@@ -61,7 +92,7 @@ export const tenantsRouter = router({
   edit: protectedProcedure
     .input(
       z.object({
-        tenantData: CreateTenantSchema.omit({ pixKeys: true }).partial(),
+        tenantData: createTenantSchema.omit({ pixKeys: true }).partial(),
         tenantId: z.string().cuid(),
         pixKeysData: z.array(createPixKeysSchema).nullish(),
       })

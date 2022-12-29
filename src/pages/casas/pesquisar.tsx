@@ -17,8 +17,8 @@ const HouseSearch = () => {
   const [filter, setFilter] = useState({property: 'all', caseSensitive: false, query: ''})
   const [currentPage, setCurrentPage] = useState(0)
 
-  const onFilterChange = (newFilterProperty: Partial<typeof filter>) => {
-    setFilter({...filter, ...newFilterProperty})
+  const onFilterChange = (newFilter: Partial<typeof filter>) => {
+    setFilter({...filter, ...newFilter})
   }
 
   if (isSuccess) {

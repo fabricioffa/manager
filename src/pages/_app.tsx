@@ -3,6 +3,7 @@ import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 
 import { trpc } from "../utils/trpc";
+import '../utils/fasIcons'
 
 import "../styles/globals.css";
 import Layout from "../components/Layout";

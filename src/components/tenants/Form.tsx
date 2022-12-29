@@ -1,5 +1,5 @@
-import type { CreateTenantSchema as CreateTenantSchemaType, TenantWithPixKeys } from "../../server/schemas/tenant.schema";
-import { CreateTenantSchema } from "../../server/schemas/tenant.schema";
+import type { createTenantSchema as CreateTenantSchemaType, TenantWithPixKeys } from "../../server/schemas/tenant.schema";
+import { createTenantSchema } from "../../server/schemas/tenant.schema";
 import { trpc } from "../../utils/trpc";
 
 import { useForm, SubmitHandler, useFieldArray, useFormState, SubmitErrorHandler } from "react-hook-form";
@@ -24,24 +24,24 @@ const Form = ({ tenant, action }: FormProps) => {
   const edit = trpc.tenants.edit.useMutation();
 
   const { register, handleSubmit, formState: { errors }, control } = useForm<CreateTenantSchemaType>({
-    resolver: zodResolver(CreateTenantSchema),
+    resolver: zodResolver(createTenantSchema),
     mode: "onBlur",
     defaultValues: {
-          name: tenant?.name,
-          email: tenant?.email,
-          maritalStatus: tenant?.maritalStatus,
-          profession: tenant?.profession,
-          cpf: tenant?.cpf,
-          rg: tenant?.rg,
-          rgEmitter: tenant?.rgEmitter || 'SSP/CE',
-          primaryPhone: tenant?.primaryPhone,
-          secondaryPhone: tenant?.secondaryPhone,
-          obs: tenant?.obs,
-          electricityId: tenant?.electricityId,
-          waterId: tenant?.waterId,
-          debit: Number(tenant?.debit) || 0,
-          pixKeys: tenant?.pixKeys,
-        }
+      name: tenant?.name,
+      email: tenant?.email,
+      maritalStatus: tenant?.maritalStatus,
+      profession: tenant?.profession,
+      cpf: tenant?.cpf,
+      rg: tenant?.rg,
+      rgEmitter: tenant?.rgEmitter || 'SSP/CE',
+      primaryPhone: tenant?.primaryPhone,
+      secondaryPhone: tenant?.secondaryPhone,
+      obs: tenant?.obs,
+      electricityId: tenant?.electricityId,
+      waterId: tenant?.waterId,
+      debit: Number(tenant?.debit) || 0,
+      pixKeys: tenant?.pixKeys,
+    }
   });
 
   const { fields, append, remove } = useFieldArray({ name: 'pixKeys', control });
@@ -55,7 +55,7 @@ const Form = ({ tenant, action }: FormProps) => {
 
   const onValid: SubmitHandler<CreateTenantSchema> = (rawData, e) => {
     if (action === "edit" && tenant) {
-      const { pixKeys: pixKeysData, ...tenantData} = getDirtyValues<CreateTenantSchema>(dirtyFields, rawData)
+      const { pixKeys: pixKeysData, ...tenantData } = getDirtyValues<CreateTenantSchema>(dirtyFields, rawData)
 
       edit.mutate({ tenantData, pixKeysData, tenantId: tenant.id }, {
         onSuccess() {
@@ -158,12 +158,12 @@ const Form = ({ tenant, action }: FormProps) => {
 
             <InputContainer label="Debito" id="debit" errorMsg={errors?.debit?.message} >
               <input className={inputDefaultStyle} type="number" autoComplete="on" min={0} step={.01} max={100000}
-                placeholder="0" id="debit"  {...register("debit", {valueAsNumber: true})} />
+                placeholder="0" id="debit"  {...register("debit", { valueAsNumber: true })} />
             </InputContainer>
 
             <InputContainer label="Último pagamento" id="lastPayment" errorMsg={errors?.lastPayment?.message} >
               <input className={inputDefaultStyle} type="date" id="lastPayment" min={lastYear} max={today}
-                defaultValue={tenant?.lastPayment?.toLocaleDateString('en-CA')} {...register("lastPayment", {valueAsDate: true})} />
+                defaultValue={tenant?.lastPayment?.toLocaleDateString('en-CA')} {...register("lastPayment", { valueAsDate: true })} />
             </InputContainer>
 
           </div>
@@ -193,10 +193,10 @@ const Form = ({ tenant, action }: FormProps) => {
               <div className="space-y-2">
                 {fields.map((field, index) => {
                   return (
-                      <fieldset className="flex items-center justify-center gap-x-6 gap-y-2" key={field.id}>
-                        <InputContainer parentClasses="w-full" label="Tipo de chave" id="type" errorMsg={errors?.pixKeys?.[index]?.keyType?.message}>
+                    <fieldset className="flex items-center justify-center gap-x-6 gap-y-2" key={field.id}>
+                      <InputContainer parentClasses="w-full" label="Tipo de chave" id="type" errorMsg={errors?.pixKeys?.[index]?.keyType?.message}>
                         <select className="mt-1 w-full rounded-md bg-gray-100 border-transparentfocus:border-gray-500 focus:outline-link py-2 px-3"
-                          id="type" {...register(`pixKeys.${index}.keyType` as const )}>
+                          id="type" {...register(`pixKeys.${index}.keyType` as const)}>
                           <option value="email">email</option>
                           <option value="cpf">cpf</option>
                           <option value="cnpj">cnpj</option>
@@ -207,19 +207,19 @@ const Form = ({ tenant, action }: FormProps) => {
 
                       <InputContainer parentClasses="w-full" label="Chave" id="key" errorMsg={errors.pixKeys?.[index]?.key?.message}>
                         <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={35}
-                          placeholder="006599975" id="key" {...register(`pixKeys.${index}.key` as const )} />
-                        </InputContainer>
+                          placeholder="006599975" id="key" {...register(`pixKeys.${index}.key` as const)} />
+                      </InputContainer>
 
-                      <input className="hidden" type="text" id="pixkey-id" readOnly {...register(`pixKeys.${index}.id` as const )} />
+                      <input className="hidden" type="text" id="pixkey-id" readOnly {...register(`pixKeys.${index}.id` as const)} />
 
                       <button className="self-end mb-3 text-red-500" type="button" aria-label="Remover esta chave" onClick={() => remove(index)}>
                         <i className="fa-solid fa-circle-minus"></i>
                       </button>
-                      </fieldset>
-                    );
-                  })}
+                    </fieldset>
+                  );
+                })}
               </div>
-           </section>
+            </section>
           </div>
 
 
