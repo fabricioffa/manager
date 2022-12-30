@@ -96,7 +96,7 @@ const HouseProfile = () => {
                     <li>
                       <span className="font-bold">Contratos passados: </span>
                       {
-                        pastContracts.map((pastContract, i) => (
+                        pastContracts.map(pastContract => (
                           <ul className="flex gap-3 pl-3 even:child:border-x even:child:border-black even:child:px-3" key={pastContract.id}>
                             <li>
                               <Link href={`/contratos/${pastContract.id}`}>
@@ -118,10 +118,6 @@ const HouseProfile = () => {
                 }
               </>
             }
-            {/* {house.tenant &&
-              <li>
-              </li>
-            } */}
           </ul>
         </div>
 

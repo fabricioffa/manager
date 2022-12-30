@@ -5,7 +5,7 @@ import Card from "../../components/contracts/Card"
 import SearchForm from "../../components/contracts/SearchForm";
 import { dataFilter } from "../../utils/functions";
 import { trpc } from "../../utils/trpc";
-import { ContractSearchOptions } from "../../server/schemas/contracts.schemas";
+import type { ContractSearchOptions } from "../../server/schemas/contracts.schemas";
 
 const perPage = 10;
 

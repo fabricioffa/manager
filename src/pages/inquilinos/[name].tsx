@@ -119,7 +119,7 @@ const TenantProfile = () => {
                     <li>
                       <span className="font-bold">Contratos atuais: </span>
                       {
-                        activeContracts.map((activeContract, i) => (
+                        activeContracts.map(activeContract => (
                           <ul className="flex gap-3 pl-3 even:child:border-x even:child:border-black even:child:px-3" key={activeContract.id}>
                             <li>
                               <Link href={`/contratos/${activeContract.id}`}>
@@ -142,7 +142,7 @@ const TenantProfile = () => {
                     <li>
                       <span className="font-bold">Contratos passados: </span>
                       {
-                        pastContracts.map((pastContract, i) => (
+                        pastContracts.map(pastContract => (
                           <ul className="flex gap-3 pl-3 even:child:border-x even:child:border-black even:child:px-3" key={pastContract.id}>
                             <li>
                               <Link href={`/contratos/${pastContract.id}`}>

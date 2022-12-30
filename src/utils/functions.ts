@@ -1,4 +1,4 @@
-import { Decimal } from "@prisma/client/runtime";
+import type { Decimal } from "@prisma/client/runtime";
 
 type BaseFilter = {
   property: string
