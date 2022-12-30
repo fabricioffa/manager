@@ -3,9 +3,9 @@ import Card from "../../components/houses/Card";
 import SearchForm from "../../components/houses/SearchForm";
 import { ItemsList } from "../../components/ItemsList";
 import Paginator from "../../components/Paginator";
-import { filterHouses, dataFilter } from "../../utils/functions";
+import { dataFilter } from "../../utils/functions";
 import { trpc } from "../../utils/trpc";
-import { HousesSearchOptions } from "../../server/schemas/house.schema";
+import type { HousesSearchOptions } from "../../server/schemas/house.schema";
 
 const perPage = 10;
 

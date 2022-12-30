@@ -1,8 +1,8 @@
-import type { createTenantSchema as CreateTenantSchemaType, TenantWithPixKeys } from "../../server/schemas/tenant.schema";
+import type { CreateTenant, TenantWithPixKeys } from "../../server/schemas/tenant.schema";
+import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 import { createTenantSchema } from "../../server/schemas/tenant.schema";
 import { trpc } from "../../utils/trpc";
-
-import { useForm, SubmitHandler, useFieldArray, useFormState, SubmitErrorHandler } from "react-hook-form";
+import { useForm, useFieldArray, useFormState } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputContainer from "../InputContainer";
 import { getDirtyValues } from "../../utils/zodHelpers";
@@ -15,7 +15,6 @@ interface FormProps {
   action: "create" | "edit";
 }
 
-
 const today = new Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "2-digit", day: "2-digit" }).format(Date.now())
 const lastYear = `${new Date().getFullYear()}-01-01`;
 
@@ -23,7 +22,7 @@ const Form = ({ tenant, action }: FormProps) => {
   const create = trpc.tenants.create.useMutation();
   const edit = trpc.tenants.edit.useMutation();
 
-  const { register, handleSubmit, formState: { errors }, control } = useForm<CreateTenantSchemaType>({
+  const { register, handleSubmit, formState: { errors }, control } = useForm<CreateTenant>({
     resolver: zodResolver(createTenantSchema),
     mode: "onBlur",
     defaultValues: {

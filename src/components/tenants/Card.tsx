@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useDelete } from "../../utils/hooks";
-import { RouterOutputs } from "../../utils/trpc";
+import type { RouterOutputs } from "../../utils/trpc";
 
 
 export type CardProps = {

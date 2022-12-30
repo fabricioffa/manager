@@ -1,10 +1,8 @@
 import { faker } from "@faker-js/faker";
 import { House, HouseType, KeyType, MaritalStatus, PrismaClient } from "@prisma/client";
 import type { Tenant } from "@prisma/client";
-import type { createTenantSchema } from "../src/server/schemas/tenant.schema";
+import type { CreateTenant } from "../src/server/schemas/tenant.schema";
 import type { CreateHouseSchema } from "../src/server/schemas/house.schema";
-import type { ContractsSchema } from "../src/server/schemas/contracts.schemas";
-import type { WitnessSchema } from "../src/server/schemas/witnesses.schema";
 
 const prisma = new PrismaClient();
 
@@ -40,7 +38,7 @@ const generateFakePixKeysData = (tenants: Tenant[]) =>
     clientId: id,
   }));
 
-const generateFakeTenantsData = (amount: number): CreateTenantSchema[] =>
+const generateFakeTenantsData = (amount: number): CreateTenant[] =>
   Array.from({
     length: amount,
   }).map(() => ({

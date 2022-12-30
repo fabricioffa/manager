@@ -78,7 +78,7 @@ export const contractsRouter = router({
         where: {
           dueDay: {
             gte: new Date().getDate(),
-            // lte: getDayInFuture(7),
+            lte: getDayInFuture(7),
           }
         },
         select: {

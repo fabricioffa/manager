@@ -1,4 +1,4 @@
-import { FieldNamesMarkedBoolean, FieldValues } from "react-hook-form";
+import type { FieldNamesMarkedBoolean, FieldValues } from "react-hook-form";
 
 const isRepetition = (numbersList: number[]) =>
   numbersList.every((number) => number === numbersList[0]);

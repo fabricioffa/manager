@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useDelete } from "../../utils/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { RouterOutputs } from "../../utils/trpc";
+import type { RouterOutputs } from "../../utils/trpc";
 
 export type CardProps = {
   house: NonNullable<RouterOutputs['houses']['findAll'][number]>

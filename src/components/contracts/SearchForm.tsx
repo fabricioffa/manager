@@ -1,4 +1,5 @@
-import { ContractSearchOptions, contractsSearchOptionsSchema } from "../../server/schemas/contracts.schemas";
+import { contractsSearchOptionsSchema } from "../../server/schemas/contracts.schemas";
+import type { ContractSearchOptions } from "../../server/schemas/contracts.schemas";
 
 type SearchFormProps = {
   onFilterChange: (newFilterProperty: Partial<ContractSearchOptions>) => void

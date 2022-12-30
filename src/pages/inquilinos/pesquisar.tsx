@@ -5,7 +5,7 @@ import Card from "../../components/tenants/Card"
 import SearchForm from "../../components/tenants/SearchForm";
 import { dataFilter } from "../../utils/functions";
 import { trpc } from "../../utils/trpc";
-import { TenantsSearchOptions } from "../../server/schemas/tenant.schema";
+import type { TenantsSearchOptions } from "../../server/schemas/tenant.schema";
 import GoBackBtn from "../../components/goBackBtn";
 
 const perPage = 10;

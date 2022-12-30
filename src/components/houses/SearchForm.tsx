@@ -1,4 +1,5 @@
-import { HousesSearchOptions, housesSearchOptionsSchema } from "../../server/schemas/house.schema";
+import type { HousesSearchOptions } from "../../server/schemas/house.schema";
+import { housesSearchOptionsSchema } from "../../server/schemas/house.schema";
 
 type SearchFormProps = {
   onFilterChange: (newFilterProperty: Partial<HousesSearchOptions>) => void
@@ -28,10 +29,10 @@ const SearchForm = ({ onFilterChange }: SearchFormProps) => {
             <div>
               <label htmlFor="search-options">Opções de busca</label>
               <select className="border" name="search-options" id="search-options"
-                   onChange={({ target: { value } }) => {
-                    if (!isValidOption(value)) return  
-                    onFilterChange({ property: value })
-                  }}>
+                onChange={({ target: { value } }) => {
+                  if (!isValidOption(value)) return
+                  onFilterChange({ property: value })
+                }}>
                 <option value="all">Tudo</option>
                 <option value="number">Número</option>
                 <option value="street">Rua</option>

@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { createPixKeysSchema } from "./../../schemas/pixKeys.schemas";
 import { createTenantSchema } from "./../../schemas/tenant.schema";
 import { router, protectedProcedure } from "./../trpc";
