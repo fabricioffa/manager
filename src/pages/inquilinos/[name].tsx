@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { useRouter } from "next/router"
-import GoBackBtn from "../../components/goBackBtn";
 import { useDelete } from "../../utils/hooks";
 import { trpc } from "../../utils/trpc";
 import { formatCurrency, formatDate } from "../../utils/functions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import { Loading } from "../../components/Loading";
 
 
 const TenantProfile = () => {
@@ -20,13 +20,11 @@ const TenantProfile = () => {
 
   if (isError) return <div>Deu BO. Dá refresh... sei lá :/ </div>
 
-  if (isLoading) return <div>Loading...</div>
-
+  if (isLoading) return <Loading />
 
   if (tenant)
     return (
       <div className="relative mx-auto px-6">
-        <GoBackBtn />
 
         <h1 className="text-4xl text-center capitalize">{tenant.name}</h1>
 

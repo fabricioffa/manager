@@ -6,7 +6,6 @@ import SearchForm from "../../components/tenants/SearchForm";
 import { dataFilter } from "../../utils/functions";
 import { trpc } from "../../utils/trpc";
 import type { TenantsSearchOptions } from "../../server/schemas/tenant.schema";
-import GoBackBtn from "../../components/goBackBtn";
 
 const perPage = 10;
 
@@ -33,8 +32,6 @@ const Search = () => {
     return (
       <div className="max-h-screen">
         <h1 className="text-5xl font-semibold text-center mb-20">Inquilinos</h1>
-
-        <GoBackBtn />
 
         <SearchForm onFilterChange={onFilterChange} />
 

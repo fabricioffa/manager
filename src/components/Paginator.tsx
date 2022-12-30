@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { FC } from "react";
 
 type PaginatorProps = {
@@ -34,7 +35,7 @@ const Paginator: FC<PaginatorProps> = ({
             className={`${linksClasses} ${shouldDisable("left")}`}
             onClick={() => onPageChange(currentPage - 1)}
           >
-            &lt;
+            <FontAwesomeIcon icon="caret-left" />
           </a>
         </li>
         {[...Array(pagesNumber)].map((v, i) => (
@@ -52,7 +53,7 @@ const Paginator: FC<PaginatorProps> = ({
             className={`${linksClasses} ${shouldDisable("right")}`}
             onClick={() => onPageChange(currentPage + 1)}
           >
-            &gt;
+            <FontAwesomeIcon icon="caret-right" />
           </a>
         </li>
       </ol>

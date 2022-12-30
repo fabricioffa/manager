@@ -5,7 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 import '../utils/fasIcons'
 
-import "../styles/globals.css";
+import "../styles/globals.scss";
 import Layout from "../components/Layout";
 
 const MyApp: AppType<{ session: Session | null }> = ({

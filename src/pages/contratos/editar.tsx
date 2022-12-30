@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import GoBackBtn from "../../components/goBackBtn";
 import Form from "../../components/contracts/Form";
 import { trpc } from "../../utils/trpc";
 
@@ -16,7 +15,6 @@ const EditContract = () => {
   if (contract) {
     return (
       <div className="container">
-        <GoBackBtn />
         <h1 className="text-5xl font-semibold text-center mb-14">Contratos</h1>
         <Form contract={contract} action={"edit"} />
       </div>

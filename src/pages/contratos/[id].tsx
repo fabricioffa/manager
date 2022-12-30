@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { useRouter } from "next/router"
-import GoBackBtn from "../../components/goBackBtn";
 import { useDelete } from "../../utils/hooks";
 import { trpc } from "../../utils/trpc";
 
@@ -22,7 +21,6 @@ const ContractProfile = () => {
   if (contract)
     return (
       <div className="relative mx-auto px-6">
-        <GoBackBtn />
 
         <h1 className="text-4xl text-center capitalize">{contract.id}</h1>
 

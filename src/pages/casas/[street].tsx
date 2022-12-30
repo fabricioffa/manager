@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import GoBackBtn from "../../components/goBackBtn";
 import { trpc } from "../../utils/trpc";
 import { useDelete } from "../../utils/hooks";
 import { formatCurrency } from "../../utils/functions";
@@ -16,7 +15,6 @@ const HouseProfile = () => {
   const activeContract = house?.contracts.find(({ endingDate }) => !endingDate)
   const pastContracts = house?.contracts.filter(({ endingDate }) => endingDate)
   const deleteHouse = useDelete(stringId, 'houses')
-  console.log(activeContract);
   
   if (isError) return <div>Deu BO. Dá refresh... sei lá :/ </div>;
 
