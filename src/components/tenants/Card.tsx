@@ -36,7 +36,7 @@ const Card = ({ tenant }: CardProps) => {
         {tenant.contracts &&
           <>
             <FontAwesomeIcon icon="file-contract" size="xl" className="justify-self-center" />
-            <p className="flex gap-2"> Contratos atuais:
+            <div className="flex gap-2"> Contratos atuais:
               {
                 tenant.contracts.map((contract, i) => (
                   <Link className="hover:text-link hover:underline" href={`/contratos/${contract.id}`} key={contract.id}>
@@ -47,7 +47,7 @@ const Card = ({ tenant }: CardProps) => {
                   </Link>
                 ))
               }
-            </p>
+            </div>
           </>
         }
         {tenant.contracts &&

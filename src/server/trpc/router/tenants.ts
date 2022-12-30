@@ -80,9 +80,23 @@ export const tenantsRouter = router({
           gt: 0
         }
       },
-
       orderBy: {
         debit: 'desc'
+      },
+      include: {
+        contracts: {
+          select: {
+            id: true,
+            dueDay: true,
+            house: {
+              select: {
+                id: true,
+                street: true,
+                number: true,
+              },
+            }
+          }
+        }
       }
     });
   }),

@@ -21,7 +21,7 @@ const Home: NextPage = () => {
         </ItemsList>
       </div>
 
-      <div>
+      {/* <div>
         <h2 className='text-2xl text-center font-medium mb-10'>Vencimentos da semana</h2>
         <ItemsList>
           {
@@ -30,7 +30,7 @@ const Home: NextPage = () => {
             ))
           }
         </ItemsList>
-      </div>
+      </div> */}
     </div>
   )
 }
