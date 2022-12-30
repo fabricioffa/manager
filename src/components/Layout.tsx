@@ -1,5 +1,6 @@
 import SideBar from "./SideBar";
 import { signIn, useSession } from "next-auth/react";
+import GoBackBtn from "./goBackBtn";
 
 export default function Layout({ children }: { children: JSX.Element }) {
   const { data: session } = useSession();
@@ -21,6 +22,7 @@ export default function Layout({ children }: { children: JSX.Element }) {
     <div className="grid lg:grid-cols-[max(20%,17rem)_1.6rem_1fr_1.6rem] grid-cols-[1.6rem_1fr_1.6rem]  min-h-screen w-full py-12 text-secondary">
       <SideBar />
       <main className="col-start-2 col-end-3 lg:col-start-3 lg:col-end-4">
+        <GoBackBtn />
         {children}
       </main>
     </div>

@@ -48,13 +48,13 @@ const Form = ({ tenant, action }: FormProps) => {
   const { dirtyFields, isDirty } = useFormState({ control })
   const { push } = useRouter()
 
-  const onInvalid: SubmitErrorHandler<CreateTenantSchema> = (errors) => { // TODO: DELENDUS
+  const onInvalid: SubmitErrorHandler<CreateTenant> = (errors) => { // TODO: DELENDUS
     console.log('errors', errors);
   }
 
-  const onValid: SubmitHandler<CreateTenantSchema> = (rawData, e) => {
+  const onValid: SubmitHandler<CreateTenant> = (rawData, e) => {
     if (action === "edit" && tenant) {
-      const { pixKeys: pixKeysData, ...tenantData } = getDirtyValues<CreateTenantSchema>(dirtyFields, rawData)
+      const { pixKeys: pixKeysData, ...tenantData } = getDirtyValues<CreateTenant>(dirtyFields, rawData)
 
       edit.mutate({ tenantData, pixKeysData, tenantId: tenant.id }, {
         onSuccess() {

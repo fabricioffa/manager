@@ -1,3 +1,5 @@
+import { Decimal } from "@prisma/client/runtime";
+
 type BaseFilter = {
   property: string
   caseSensitive: boolean
@@ -32,3 +34,9 @@ export const getDayInFuture = (days: number) => {
   today.setDate(today.getDate() + days);
   return today.getDate()
 }
+
+export const formatCurrency = (val: string | number | Decimal) =>
+  Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(val))
+
+
+export const formatDate = (date: Date) => new Intl.DateTimeFormat('pt-BR').format(date)

@@ -61,7 +61,7 @@ model Tenant {
 
 model PixKey {
   id       String  @id @default(cuid())
-  keyType     KeyType @map("key_type")
+  keyType  KeyType @map("key_type")
   key      String  @unique @db.VarChar(50)
   client   Tenant  @relation(fields: [clientId], references: [id])
   clientId String  @map("client_id")
@@ -81,22 +81,22 @@ model House {
   waterId       String     @unique @map("water_id") @db.VarChar(50)
   electricityId String     @unique @map("electricity_id") @db.VarChar(50)
   description   String?    @db.VarChar(4000)
-  contracts      Contract[]
+  contracts     Contract[]
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 }
 
 model Witness {
-  id             String    @id @default(cuid())
-  name           String    
-  rg             String    @db.VarChar(15) @unique
-  rgEmitter      String    @default("SSP/CE") @map("rg_emitter") @db.VarChar(50)
-  cpf            String    @unique @db.Char(11)
-  primaryPhone   String    @map("primary_phone") @db.VarChar(25)
-  secondaryPhone String?   @map("secondary_phone") @db.VarChar(25)
+  id             String   @id @default(cuid())
+  name           String
+  rg             String   @unique @db.VarChar(15)
+  rgEmitter      String   @default("SSP/CE") @map("rg_emitter") @db.VarChar(50)
+  cpf            String   @unique @db.Char(11)
+  primaryPhone   String   @map("primary_phone") @db.VarChar(25)
+  secondaryPhone String?  @map("secondary_phone") @db.VarChar(25)
   email          String?
   contract       Contract @relation(fields: [contractId], references: [id])
-  contractId    String   @map("contract_id")
+  contractId     String   @map("contract_id")
 
   @@unique([rg, rgEmitter])
   @@index([contractId])

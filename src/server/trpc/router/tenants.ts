@@ -41,6 +41,14 @@ export const tenantsRouter = router({
               keyType: true,
             },
           },
+          contracts: {
+            select: {
+              id: true,
+              dueDay: true,
+              rent: true,
+              endingDate: true,
+            }
+          }
         },
       });
     }),
@@ -49,9 +57,6 @@ export const tenantsRouter = router({
     return await ctx.prisma.tenant.findMany({
       include: {
         contracts: {
-          where: {
-            endingDate: null
-          },
           select: {
             id: true,
             dueDay: true,

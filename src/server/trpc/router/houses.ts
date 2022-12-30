@@ -14,6 +14,22 @@ export const housesRouter = router({
     .query(async ({ ctx, input: { id } }) => {
       return await ctx.prisma.house.findUnique({
         where: { id },
+        include: {
+          contracts: {
+            select: {
+              id: true,
+              endingDate: true,
+              dueDay: true,
+              rent: true,
+              tenant: {
+                select: {
+                  id: true,
+                  name: true
+                }
+              }
+            }
+          }
+        }
       });
     }),
   
@@ -28,8 +44,15 @@ export const housesRouter = router({
             },
             select: {
               id: true,
+              tenant: {
+                select: {
+                  id: true,
+                  name: true,
+                }
+              }
             }
-          }
+          },
+          
         }
       });
     }),
