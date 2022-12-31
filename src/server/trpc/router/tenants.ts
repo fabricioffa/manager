@@ -78,7 +78,10 @@ export const tenantsRouter = router({
       where: {
         debit: {
           gt: 0
-        }
+        },
+        contracts: {
+          some: {},
+        }  
       },
       orderBy: {
         debit: 'desc'

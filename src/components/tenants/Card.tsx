@@ -33,7 +33,7 @@ const Card = ({ tenant }: CardProps) => {
             <p className="text-red-500">{'Debito: ' + formatCurrency(tenant.debit)}</p>
           </>
         }
-        {tenant.contracts &&
+        {!!tenant.contracts.length &&
           <>
             <FontAwesomeIcon icon="file-contract" size="xl" className="justify-self-center" />
             <div className="flex gap-2"> Contratos atuais:
@@ -50,7 +50,7 @@ const Card = ({ tenant }: CardProps) => {
             </div>
           </>
         }
-        {tenant.contracts &&
+        {!!tenant.contracts.length &&
           <>
             <FontAwesomeIcon icon="house-chimney-window" size="xl" className="justify-self-center" />
             <p className="flex gap-2"> Casas atuais:
