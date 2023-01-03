@@ -97,7 +97,7 @@ const ContractProfile = () => {
           {
             !!contract.witnesses.length &&
             contract.witnesses.map((witness, i) => (
-              <div className="rounded-md border shadow-card p-4">
+              <div className="rounded-md border shadow-card p-4" key={witness.cpf}>
                 <h2 className="text-2xl text-center capitalize mb-7">{i === 0 ? 'Primeira' : 'Segunda'} Testemunha</h2>
                 <ul className="space-y-1">
                   <li>
