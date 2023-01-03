@@ -57,13 +57,6 @@ const generateFakeTenantsData = (amount: number): CreateTenant[] =>
     primaryPhone: faker.phone.number('(##) #####-####'),
     secondaryPhone: faker.helpers.maybe(faker.phone.number.bind(this, '(##) #####-####')),
     email: faker.helpers.maybe(faker.internet.email),
-    debit: faker.helpers.maybe(faker.datatype.float.bind(this, { max: 5000, precision: 0.01 }), { probability: 0.3 }),
-    waterId: faker.helpers.unique(faker.random.alphaNumeric, [25]),
-    electricityId: faker.helpers.unique(faker.random.alphaNumeric, [25]),
-    lastPayment: faker.date.between(
-      new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-      new Date(Date.now() + 15 * 24 * 60 * 60 * 1000)
-    ),
     obs: faker.helpers.maybe(faker.lorem.sentences, { probability: 0.2 }),
   }));
 
@@ -87,6 +80,10 @@ const generateFakeContractsData = (tenants: Tenant[], houses: House[]) =>
   tenants.map(({ id }, i) => {
     return {
       dueDay: faker.datatype.number({ min: 0, max: 31 }),
+      lastPayment: faker.date.between(
+        new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+        new Date(Date.now() + 15 * 24 * 60 * 60 * 1000)
+      ),
       initialDate: faker.date.between(faker.date.recent(15), faker.date.soon(15)),
       rent: faker.datatype.number({ min: 400, max: 1200, precision: 2 }),
       bail: faker.datatype.number({ min: 400, max: 1200, precision: 2 }),
@@ -97,11 +94,12 @@ const generateFakeContractsData = (tenants: Tenant[], houses: House[]) =>
         ) || 12,
       interest: 1,
       arrears: 10,
+      waterId: faker.random.alphaNumeric(25),
+      electricityId: faker.random.alphaNumeric(25),
       tenantId: id,
       houseId: houses[i]!.id
     }
-  })
-  ;
+  });
 
 async function main() {
   await prisma.contract.deleteMany();

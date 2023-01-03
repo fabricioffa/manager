@@ -4,6 +4,7 @@ import { trpc } from "../../utils/trpc";
 import { useDelete } from "../../utils/hooks";
 import { formatCurrency } from "../../utils/functions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Loading } from "../../components/Loading";
 
 const HouseProfile = () => {
   const {
@@ -12,13 +13,11 @@ const HouseProfile = () => {
   const stringId = id as string;
 
   const { data: house, isLoading, isError } = trpc.houses.findOne.useQuery({ id: stringId });
-  const activeContract = house?.contracts.find(({ endingDate }) => !endingDate)
-  const pastContracts = house?.contracts.filter(({ endingDate }) => endingDate)
   const deleteHouse = useDelete(stringId, 'houses')
-  
+
   if (isError) return <div>Deu BO. Dá refresh... sei lá :/ </div>;
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loading />
 
   if (house)
     return (
@@ -63,61 +62,40 @@ const HouseProfile = () => {
                 {house.description}
               </li>
             }
-            {
-              !!house.contracts.length &&
-              <>
-                {
-                  !!activeContract &&
-                  <>
-                    <li>
-                      <span className="font-bold">Inquilino: </span>
-                      <Link className="hover:text-blue-700" href={`inquilinos?id=${activeContract.tenant.id}`} >
-                        {activeContract.tenant.name}
-                      </Link>
-                    </li>
-                    <li>
-                      <span className="font-bold">Contrato Atual: </span>
-                      <ul className="flex gap-3 pl-3 even:child:border-x even:child:border-black even:child:px-3" key={activeContract.id}>
+            <ul className="space-y-1">
+              {
+                !!house.contracts.length &&
+                <li>
+                  <span className="font-bold">Contratos: </span>
+                  {
+                    house.contracts.map(contract => (
+                      <ul className={`relative grid grid-flow-col gap-3 w-fit pl-3 mr-5 
+                          even:child:border-x last:child:!border-r-0 last:child:!pr-0  even:child:border-black even:child:px-3
+                          after:absolute after:top-1/2 after:-right-1.5 after:-translate-y-1/2 after:translate-x-full 
+                          after:w-4 after:h-4 after:rounded-full ${contract.endingDate ? 'after:bg-red-500' : 'after:bg-green-500'}`}
+                        key={contract.id}>
                         <li>
-                          <Link href={`/contratos/${activeContract.id}`}>
-                            <FontAwesomeIcon icon='magnifying-glass' className="hover:text-link hover:scale-110"/>
+                          <Link href={`/contratos/${contract.id}`}>
+                            <FontAwesomeIcon icon='magnifying-glass' className="hover:text-link hover:scale-110" />
                           </Link>
                         </li>
                         <li>
-                          <span className="font-bold">Vencimento: </span> {activeContract.dueDay}
+                          <span className="font-bold">Vencimento: </span> {contract.dueDay}
                         </li>
                         <li>
-                          <span className="font-bold">Mensalidade: </span> {formatCurrency(activeContract.rent)}
+                          <span className="font-bold">Mensalidade: </span> {formatCurrency(contract.rent)}
+                        </li>
+                        <li>
+                          <Link href={`/inquilinos/${contract.tenant.name}?id=${contract.tenant.id}`} className="hover:text-link hover:underline">
+                            <span className="font-bold">Inquilino: </span> {contract.tenant.name}
+                          </Link>
                         </li>
                       </ul>
-                    </li>
-                    {
-                    !!pastContracts?.length &&
-                    <li>
-                      <span className="font-bold">Contratos passados: </span>
-                      {
-                        pastContracts.map(pastContract => (
-                          <ul className="flex gap-3 pl-3 even:child:border-x even:child:border-black even:child:px-3" key={pastContract.id}>
-                            <li>
-                              <Link href={`/contratos/${pastContract.id}`}>
-                                <FontAwesomeIcon icon='magnifying-glass' className="hover:text-link hover:scale-110"/>
-                              </Link>
-                            </li>
-                            <li>
-                              <span className="font-bold">Vencimento: </span> {pastContract.dueDay}
-                            </li>
-                            <li>
-                              <span className="font-bold">Mensalidade: </span> {formatCurrency(pastContract.rent)}
-                            </li>
-                          </ul>
-                        ))
-                      }
-                    </li>
+                    ))
                   }
-                  </>
-                }
-              </>
-            }
+                </li>
+              }
+            </ul>
           </ul>
         </div>
 

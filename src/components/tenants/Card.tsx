@@ -27,12 +27,12 @@ const Card = ({ tenant }: CardProps) => {
         }
         <FontAwesomeIcon icon="phone" size="xl" className="justify-self-center" />
         <address><a href="tel:5585988044019">{tenant.primaryPhone}</a></address>
-        { tenant.debit &&
+        {/* { tenant.debit &&
           <>
             <FontAwesomeIcon icon="exclamation" size="xl" className="justify-self-center" />
-            <p className="text-red-500">{'Debito: ' + formatCurrency(tenant.debit)}</p>
+            <p className="text-red-500">{'Débito: ' + formatCurrency(tenant.debit)}</p>
           </>
-        }
+        } */}
         {!!tenant.contracts.length &&
           <>
             <FontAwesomeIcon icon="file-contract" size="xl" className="justify-self-center" />
@@ -67,10 +67,6 @@ const Card = ({ tenant }: CardProps) => {
             </p>
           </>
         }
-        <FontAwesomeIcon icon="droplet" size="xl" className="justify-self-center" />
-        <p className="line-clamp-1">{tenant.waterId}</p>
-        <FontAwesomeIcon icon="bolt" size="xl" className="justify-self-center" />
-        <p className="line-clamp-1">{tenant.electricityId}</p>
       </div>
       <div className="flex gap-2 mt-auto pt-4">
         <Link href={`/inquilinos/${tenant.name}?id=${tenant.id}`} className="grow bg-blue-400 rounded-lg

@@ -9,14 +9,11 @@ import { getDirtyValues } from "../../utils/zodHelpers";
 import { useRouter } from "next/router";
 
 const inputDefaultStyle =
-  "mt-1 neighborhood  w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0 focus:outline-link py-2 px-3";
+  "mt-1 neighborhood w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0 focus:outline-link py-2 px-3";
 interface FormProps {
   tenant?: TenantWithPixKeys;
   action: "create" | "edit";
 }
-
-const today = new Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "2-digit", day: "2-digit" }).format(Date.now())
-const lastYear = `${new Date().getFullYear()}-01-01`;
 
 const Form = ({ tenant, action }: FormProps) => {
   const create = trpc.tenants.create.useMutation();
@@ -36,9 +33,6 @@ const Form = ({ tenant, action }: FormProps) => {
       primaryPhone: tenant?.primaryPhone,
       secondaryPhone: tenant?.secondaryPhone,
       obs: tenant?.obs,
-      electricityId: tenant?.electricityId,
-      waterId: tenant?.waterId,
-      debit: Number(tenant?.debit) || 0,
       pixKeys: tenant?.pixKeys,
     }
   });
@@ -143,26 +137,6 @@ const Form = ({ tenant, action }: FormProps) => {
             <InputContainer parentClasses="md:col-span-full lg:col-span-1" label="Email" id="email" errorMsg={errors?.email?.message} >
               <input className={inputDefaultStyle} type="email" inputMode="email" autoComplete="email" maxLength={255}
                 placeholder="fulano@email.com" id="email" {...register("email")} />
-            </InputContainer>
-
-            <InputContainer label="Número do Cliente" id="electricity-id" errorMsg={errors?.electricityId?.message} >
-              <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={255}
-                placeholder="006599975" id="electricity-id" required {...register("electricityId")} />
-            </InputContainer>
-
-            <InputContainer label="Número de Inscrição" id="water-id" errorMsg={errors?.waterId?.message} >
-              <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={255}
-                placeholder="006599975" id="water-id" required {...register("waterId")} />
-            </InputContainer>
-
-            <InputContainer label="Debito" id="debit" errorMsg={errors?.debit?.message} >
-              <input className={inputDefaultStyle} type="number" autoComplete="on" min={0} step={.01} max={100000}
-                placeholder="0" id="debit"  {...register("debit", { valueAsNumber: true })} />
-            </InputContainer>
-
-            <InputContainer label="Último pagamento" id="lastPayment" errorMsg={errors?.lastPayment?.message} >
-              <input className={inputDefaultStyle} type="date" id="lastPayment" min={lastYear} max={today}
-                defaultValue={tenant?.lastPayment?.toLocaleDateString('en-CA')} {...register("lastPayment", { valueAsDate: true })} />
             </InputContainer>
 
           </div>

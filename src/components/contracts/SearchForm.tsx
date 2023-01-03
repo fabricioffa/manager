@@ -33,18 +33,17 @@ const SearchForm = ({ onFilterChange }: SearchFormProps) => {
                 onFilterChange({ property: value })
               }}>
               <option value="all">Tudo</option>
-              <option value="name">Nome</option>
-              <option value="profession">Profissão</option>
-              <option value="maritalStatus">Estado Civíl</option>
-              <option value="rg">RG</option>
-              <option value="rgEmitter">Orgão Emisor</option>
-              <option value="cpf">CPF</option>
-              <option value="primaryPhone">Telefone Principal</option>
-              <option value="secondaryPhone">Telefone Secundário</option>
-              <option value="email">Email</option>
-              <option value="electricityId">Id da Enel</option>
-              <option value="waterId">Id da Cagece</option>
-              <option value="obs">Observação</option>
+              <option value="dueDay">Vencimento</option>
+              <option value="initialDate">Data de início</option>
+              <option value="rent">Aluguel</option>
+              <option value="endingDate">Data do fim</option>
+              <option value="duration">Duração</option>
+              <option value="bail">Caução</option>
+              <option value="interest">Jurus</option>
+              <option value="arrear">Mora</option>
+              <option value="lastPayment">Data do último pagamento</option>
+              <option value="waterId">Número do Cliente</option>
+              <option value="electricityId">Número de Inscrição</option>
             </select>
           </div>
           <div className="flex items-center gap-2">

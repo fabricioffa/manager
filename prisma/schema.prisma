@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fieldReference"]
 }
 
 datasource db {
@@ -46,11 +47,7 @@ model Tenant {
   primaryPhone   String        @map("primary_phone") @db.VarChar(25)
   secondaryPhone String?       @map("secondary_phone") @db.VarChar(25)
   email          String?
-  debit          Decimal?
   pixKeys        PixKey[]
-  waterId        String?       @unique @map("water_id") @db.VarChar(50)
-  electricityId  String?       @unique @map("electricity_id") @db.VarChar(50)
-  lastPayment    DateTime?     @map("last_payment")
   obs            String?       @db.VarChar(255)
   contracts      Contract[]
   createdAt      DateTime      @default(now())
@@ -103,22 +100,25 @@ model Witness {
 }
 
 model Contract {
-  id          String    @id @default(cuid())
-  dueDay      Int?      @map("due_date") @db.TinyInt() //dia de pagamento
-  initialDate DateTime  @map("initial_date")
-  endingDate  DateTime? @map("ending_date")
-  rent        Decimal   @db.Decimal(7, 2)
-  bail        Decimal   @db.Decimal(7, 2)
-  duration    Int       @default(12) @db.TinyInt()
-  interest    Decimal   @default(1.00) @db.Decimal(4, 2) //
-  arrears     Decimal   @default(10.00) @db.Decimal(4, 2) // mora
-  witnesses   Witness[]
-  tenant      Tenant    @relation(fields: [tenantId], references: [id])
-  tenantId    String    @map("tenant_id")
-  house       House     @relation(fields: [houseId], references: [id])
-  houseId     String    @map("house_id")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id            String    @id @default(cuid())
+  dueDay        Int?      @map("due_date") @db.TinyInt()
+  lastPayment   DateTime? @map("last_payment")
+  initialDate   DateTime  @map("initial_date")
+  endingDate    DateTime? @map("ending_date")
+  rent          Decimal   @db.Decimal(7, 2)
+  bail          Decimal   @db.Decimal(7, 2)
+  duration      Int       @default(12) @db.TinyInt()
+  interest      Decimal   @default(1.00) @db.Decimal(4, 2)
+  arrears       Decimal   @default(10.00) @db.Decimal(4, 2)
+  waterId       String?   @map("water_id") @db.VarChar(50)
+  electricityId String?   @map("electricity_id") @db.VarChar(50)
+  witnesses     Witness[]
+  tenant        Tenant    @relation(fields: [tenantId], references: [id])
+  tenantId      String    @map("tenant_id")
+  house         House     @relation(fields: [houseId], references: [id])
+  houseId       String    @map("house_id")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@unique([houseId, tenantId, initialDate])
   @@index([houseId])

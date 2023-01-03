@@ -47,6 +47,13 @@ export const tenantsRouter = router({
               dueDay: true,
               rent: true,
               endingDate: true,
+              house: {
+                select: {
+                  id: true,
+                  street: true,
+                  number: true,
+                }
+              }
             }
           }
         },
@@ -76,15 +83,11 @@ export const tenantsRouter = router({
   debitors: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.tenant.findMany({
       where: {
-        debit: {
-          gt: 0
-        },
         contracts: {
-          some: {},
+          some: {
+
+          },
         }  
-      },
-      orderBy: {
-        debit: 'desc'
       },
       include: {
         contracts: {

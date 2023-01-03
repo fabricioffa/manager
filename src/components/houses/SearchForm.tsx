@@ -38,8 +38,8 @@ const SearchForm = ({ onFilterChange }: SearchFormProps) => {
               <option value="complement">Complemento</option>
               <option value="city">Cidade</option>
               <option value="type">Tipo</option>
-              <option value="electricityId">Id da Enel</option>
-              <option value="waterId">Id da Cagece</option>
+              <option value="electricityId">Número da Instalação</option>
+              <option value="waterId">Hidrômetro</option>
             </select>
           </div>
           <div className="flex items-center gap-2">

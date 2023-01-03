@@ -34,6 +34,10 @@ const Card = ({ contract }: CardProps) => {
             <p>Término: {formatDate(contract.endingDate)}</p>
           </>
         }
+        <FontAwesomeIcon icon="droplet" size="xl" className="justify-self-center" />
+        <p className="line-clamp-1">{contract.waterId}</p>
+        <FontAwesomeIcon icon="bolt" size="xl" className="justify-self-center" />
+        <p className="line-clamp-1">{contract.electricityId}</p>
       </div>
       <div className="flex gap-2 mt-auto pt-4">
         <Link href={`/contratos/${contract.id}?id=${contract.id}`} className="grow bg-blue-400 rounded-lg

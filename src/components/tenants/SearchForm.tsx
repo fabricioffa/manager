@@ -43,8 +43,8 @@ const SearchForm = ({ onFilterChange }: SearchFormProps) => {
               <option value="primaryPhone">Telefone Principal</option>
               <option value="secondaryPhone">Telefone Secundário</option>
               <option value="email">Email</option>
-              <option value="electricityId">Id da Enel</option>
-              <option value="waterId">Id da Cagece</option>
+              {/* <option value="electricityId">Número do Cliente</option> */}
+              {/* <option value="waterId">Número de Inscrição</option> */}
               <option value="obs">Observação</option>
             </select>
           </div>

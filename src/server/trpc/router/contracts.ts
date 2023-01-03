@@ -40,7 +40,17 @@ export const contractsRouter = router({
               number: true,
             },
           },
-          witnesses: true,
+          witnesses: {
+            select: {
+              name: true,
+              cpf: true,
+              rg: true,
+              rgEmitter: true,
+              primaryPhone: true,
+              secondaryPhone: true,
+              email: true
+            }
+          },
         },
       });
     }),

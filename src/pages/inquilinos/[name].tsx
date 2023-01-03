@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router"
 import { useDelete } from "../../utils/hooks";
 import { trpc } from "../../utils/trpc";
-import { formatCurrency, formatDate } from "../../utils/functions";
+import { formatCurrency } from "../../utils/functions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Loading } from "../../components/Loading";
@@ -13,10 +13,7 @@ const TenantProfile = () => {
   const stringId = id as string
 
   const { data: tenant, isLoading, isError } = trpc.tenants.findOne.useQuery({ id: stringId })
-
   const deleteTenant = useDelete(stringId, 'tenants')
-  const activeContracts = tenant?.contracts?.filter(contract => !contract.endingDate)
-  const pastContracts = tenant?.contracts?.filter(contract => contract.endingDate)
 
   if (isError) return <div>Deu BO. Dá refresh... sei lá :/ </div>
 
@@ -69,33 +66,6 @@ const TenantProfile = () => {
                   <span className="capitalize">{tenant.email}</span>
                 </li>
               }
-            </ul>
-          </div>
-
-          <div className="rounded-md border shadow-card p-4">
-            <h2 className="text-2xl text-center capitalize mb-7">Locação</h2>
-            <ul className="space-y-1">
-              {
-                tenant.debit &&
-                <li>
-                  <span className="font-bold capitalize">Débito: </span>
-                  {formatCurrency(tenant.debit)}
-                </li>
-              }
-              <li>
-                <span className="font-bold">Número do Cliente: </span>
-                {tenant.electricityId}
-              </li>
-              <li>
-                <span className="font-bold">Número de Inscrição: </span>
-                {tenant.waterId}
-              </li>
-              {tenant.lastPayment &&
-                <li>
-                  <span className="font-bold">Último pagamento: </span>
-                  {formatDate(tenant.lastPayment)}
-                </li>
-              }
               {tenant.pixKeys &&
                 <li>
                   <span className="font-bold">Chaves Pix:</span>
@@ -111,56 +81,42 @@ const TenantProfile = () => {
                   </ul>
                 </li>
               }
+            </ul>
+          </div>
+
+          <div className="rounded-md border shadow-card p-4">
+            <h2 className="text-2xl text-center capitalize mb-7">Locações</h2>
+            <ul className="space-y-1">
               {
                 !!tenant.contracts.length &&
-                <>
+                <li>
+                  <span className="font-bold">Contratos: </span>
                   {
-                    !!activeContracts?.length &&
-                    <li>
-                      <span className="font-bold">Contratos atuais: </span>
-                      {
-                        activeContracts.map(activeContract => (
-                          <ul className="flex gap-3 pl-3 even:child:border-x even:child:border-black even:child:px-3" key={activeContract.id}>
-                            <li>
-                              <Link href={`/contratos/${activeContract.id}`}>
-                                <FontAwesomeIcon icon='magnifying-glass' className="hover:text-link hover:scale-110" />
-                              </Link>
-                            </li>
-                            <li>
-                              <span className="font-bold">Vencimento: </span> {activeContract.dueDay}
-                            </li>
-                            <li>
-                              <span className="font-bold">Mensalidade: </span> {formatCurrency(activeContract.rent)}
-                            </li>
-                          </ul>
-                        ))
-                      }
-                    </li>
+                    tenant.contracts.map(contract => (
+                      <ul className={`relative flex gap-3 w-fit pl-3 even:child:border-x last:child:!border-r-0 even:child:border-black even:child:px-3
+                          after:absolute after:top-1/2 after:-right-1.5 after:-translate-y-1/2 after:translate-x-full 
+                          after:w-4 after:h-4 after:rounded-full ${contract.endingDate ? 'after:bg-red-500' : 'after:bg-green-500'}`}
+                        key={contract.id}>
+                        <li>
+                          <Link href={`/contratos/${contract.id}`}>
+                            <FontAwesomeIcon icon='magnifying-glass' className="hover:text-link hover:scale-110" />
+                          </Link>
+                        </li>
+                        <li>
+                          <span className="font-bold">Vencimento: </span> {contract.dueDay}
+                        </li>
+                        <li>
+                          <span className="font-bold">Mensalidade: </span> {formatCurrency(contract.rent)}
+                        </li>
+                        <li>
+                          <Link href={`/casas/${contract.house.street}?id=${contract.house.id}`} className="hover:text-link hover:underline">
+                            <span className="font-bold">Casa: </span> {`${contract.house.street}, ${contract.house.number}`}
+                          </Link>
+                        </li>
+                      </ul>
+                    ))
                   }
-                  {
-                    !!pastContracts?.length &&
-                    <li>
-                      <span className="font-bold">Contratos passados: </span>
-                      {
-                        pastContracts.map(pastContract => (
-                          <ul className="flex gap-3 pl-3 even:child:border-x even:child:border-black even:child:px-3" key={pastContract.id}>
-                            <li>
-                              <Link href={`/contratos/${pastContract.id}`}>
-                                <FontAwesomeIcon icon='magnifying-glass' className="hover:text-link hover:scale-110" />
-                              </Link>
-                            </li>
-                            <li>
-                              <span className="font-bold">Vencimento: </span> {pastContract.dueDay}
-                            </li>
-                            <li>
-                              <span className="font-bold">Mensalidade: </span> {formatCurrency(pastContract.rent)}
-                            </li>
-                          </ul>
-                        ))
-                      }
-                    </li>
-                  }
-                </>
+                </li>
               }
             </ul>
           </div>

@@ -12,13 +12,13 @@ const Home: NextPage = () => {
 
       <div>
         <h2 className='text-2xl text-center font-medium mb-10'>Atrasados</h2>
-        <ItemsList>
+        {/* <ItemsList>
           {
             debitors.map(debitor => (
               <Card key={debitor.id} tenant={debitor} />
             ))
           }
-        </ItemsList>
+        </ItemsList> */}
       </div>
 
       {/* <div>
