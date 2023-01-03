@@ -2,8 +2,6 @@ import Link from "next/link";
 import { useDelete } from "../../utils/hooks";
 import type { RouterOutputs } from "../../utils/trpc";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { formatCurrency } from "../../utils/functions";
-
 
 export type CardProps = {
   tenant: NonNullable<RouterOutputs['tenants']['findAll'][number]>,

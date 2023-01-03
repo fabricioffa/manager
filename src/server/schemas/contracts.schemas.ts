@@ -40,51 +40,6 @@ export const contractsSearchOptionsSchema = z.object({
 })
 
 export type ContractSearchOptions = z.TypeOf<typeof contractsSearchOptionsSchema>;
-
-const contractWithRelations = Prisma.validator<Prisma.ContractArgs>()({
-  include: {
-    tenant: {
-      select: {
-        id: true,
-        name: true,
-      },
-    },
-    house: {
-      select: {
-        id: true,
-        street: true,
-        number: true,
-      },
-    },
-  },
-});
-
-const contractWithAllRelations = Prisma.validator<Prisma.ContractArgs>()({
-  include: {
-    tenant: {
-      select: {
-        id: true,
-        name: true,
-      },
-    },
-    house: {
-      select: {
-        id: true,
-        street: true,
-        number: true,
-      },
-    },
-    witnesses: true,
-  },
-});
-
-export type ContractWithRelations = Prisma.ContractGetPayload<
-  typeof contractWithRelations
->;
-export type ContractWithAllRelations = Prisma.ContractGetPayload<
-  typeof contractWithAllRelations
->;
-
 export type CreateContractsSchema = z.TypeOf<typeof createContractsSchema>;
 export type ContractsSchema = z.TypeOf<typeof contractsSchema>;
 

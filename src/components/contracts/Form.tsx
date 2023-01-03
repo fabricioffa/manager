@@ -1,4 +1,5 @@
 import { trpc } from "../../utils/trpc";
+import type { RouterOutputs } from "../../utils/trpc";
 import { contractsSchema } from "../../server/schemas/contracts.schemas";
 import type { ContractsSchema, ContractWithAllRelations } from "../../server/schemas/contracts.schemas";
 import { useForm, useFormState } from "react-hook-form";
@@ -11,7 +12,7 @@ import { useRouter } from "next/router";
 const inputDefaultStyle =
   "mt-1 neighborhood  w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0 focus:outline-link py-2 px-3";
 interface FormProps {
-  contract?: ContractWithAllRelations;
+  contract?: NonNullable<RouterOutputs['contracts']['findOne']>;
   action: "create" | "edit";
 }
 
