@@ -1,7 +1,7 @@
 import { trpc } from "../../utils/trpc";
 import type { RouterOutputs } from "../../utils/trpc";
 import { contractsSchema } from "../../server/schemas/contracts.schemas";
-import type { ContractsSchema, ContractWithAllRelations } from "../../server/schemas/contracts.schemas";
+import type { ContractsSchema } from "../../server/schemas/contracts.schemas";
 import { useForm, useFormState } from "react-hook-form";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
