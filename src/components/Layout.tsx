@@ -7,19 +7,19 @@ export default function Layout({ children }: { children: JSX.Element }) {
 
   if (!session)
     return (
-      <>
-        <div className="text-9xl text-center">Manager?</div>
+      <div className="grid grid-rows-2 h-screen">
+        <h1 className="text-9xl text-center mt-28">Manager</h1>
         <button
-          className="neighborhood  mx-auto text-6xl mt-40"
+          className="block bg-link rounded-md text-6xl text-white mb-auto mx-auto pt-3 pb-6 px-8 hover:bg-link/90 active:scale-95 "
           onClick={() => signIn()}
         >
-          Log in
+          Login
         </button>
-      </>
+      </div>
     );
 
   return (
-    <div className="grid lg:grid-cols-[max(20%,17rem)_1.6rem_1fr_1.6rem] grid-cols-[1.6rem_1fr_1.6rem]  min-h-screen w-full py-12 text-secondary">
+    <div className="grid lg:grid-cols-[max(20%,17rem)_1.6rem_1fr_1.6rem] grid-cols-[1.6rem_1fr_1.6rem] min-h-screen w-full py-12 text-secondary">
       <SideBar />
       <main className="col-start-2 col-end-3 lg:col-start-3 lg:col-end-4">
         <GoBackBtn />

@@ -2,7 +2,7 @@ import { formWitnessSchema } from "./../../schemas/witnesses.schema";
 import { createContractsSchema } from "./../../schemas/contracts.schemas";
 import { router, protectedProcedure } from "../trpc";
 import { z } from "zod";
-import { getDayInFuture } from "../../../utils/functions";
+import { daysUntilNextSaturday } from "../../../utils/functions";
 
 export const contractsRouter = router({
   create: protectedProcedure
@@ -88,13 +88,65 @@ export const contractsRouter = router({
       return await ctx.prisma.contract.findMany({
         where: {
           dueDay: {
-            gte: new Date().getDate(),
-            lte: getDayInFuture(7),
+            in: daysUntilNextSaturday()
           }
         },
-        select: {
-          tenant: true
-        }
+        include: {
+          tenant: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          house: {
+            select: {
+              id: true,
+              street: true,
+              number: true,
+            },
+          },
+          witnesses: {
+            select: {
+              id: true,
+              name: true,
+            }
+          }
+        },
+      });
+    }),
+
+  debitors: protectedProcedure
+    .query(async ({ ctx }) => {
+      return await ctx.prisma.contract.findMany({
+        where: {
+          AND: {
+            dueDay: {
+              lt: new Date().getDate()
+            },
+
+          }
+        },
+        include: {
+          tenant: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          house: {
+            select: {
+              id: true,
+              street: true,
+              number: true,
+            },
+          },
+          witnesses: {
+            select: {
+              id: true,
+              name: true,
+            }
+          }
+        },
       });
     }),
 

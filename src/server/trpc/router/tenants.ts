@@ -80,33 +80,6 @@ export const tenantsRouter = router({
     });
   }),
 
-  debitors: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.tenant.findMany({
-      where: {
-        contracts: {
-          some: {
-
-          },
-        }  
-      },
-      include: {
-        contracts: {
-          select: {
-            id: true,
-            dueDay: true,
-            house: {
-              select: {
-                id: true,
-                street: true,
-                number: true,
-              },
-            }
-          }
-        }
-      }
-    });
-  }),
-
   selectData: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.tenant.findMany({
       select: {

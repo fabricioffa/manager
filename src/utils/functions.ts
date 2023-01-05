@@ -1,4 +1,5 @@
 import type { Decimal } from "@prisma/client/runtime";
+import { date } from "zod";
 
 type BaseFilter = {
   property: string
@@ -29,14 +30,43 @@ export const dataFilter = <Item extends Record<string, unknown>, Filter extends 
     });
 };
 
-export const getDayInFuture = (days: number) => {
+export const daysUntilNextSaturday = () => {
   const today = new Date();
-  today.setDate(today.getDate() + days);
-  return today.getDate()
+  const numberOfDaysUntilSaturday = 7 - today.getDay()
+  return Array.from({ length: numberOfDaysUntilSaturday }).map((day, i) => {
+    if (i) today.setDate(today.getDate() + 1);
+    return today.getDate()
+  })
+
 }
 
 export const formatCurrency = (val: string | number | Decimal) =>
   Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(val))
 
-
 export const formatDate = (date: Date) => new Intl.DateTimeFormat('pt-BR').format(date)
+
+const dueDate = 15;
+const lastPayment = new Date(2023, 0, 14)
+
+const pastMonthDate = () => {
+  const pastMonth = new Date();
+  pastMonth.setMonth(pastMonth.getMonth() - 1);
+  return pastMonth
+}
+
+
+
+// const format = (date) => new Intl.DateTimeFormat('pt-BR').format(date)
+
+
+// console.log('lastPayment', new Intl.DateTimeFormat('pt-BR').format(lastPayment))
+
+// const isOK = (dueDay, lastPayment) => {
+//   console.log(format(lastPayment),'>' , format(new Date(pastMonthDate().getFullYear(), pastMonthDate().getMonth(), dueDay)), lastPayment > new Date(pastMonthDate().getFullYear(), pastMonthDate().getMonth(), dueDay))
+//   console.log(format(lastPayment),'<' , format(new Date(new Date().getFullYear(), new Date().getMonth(), dueDay)), lastPayment < new Date(new Date().getFullYear(), new Date().getMonth(), dueDay))
+
+//   return lastPayment > new Date(pastMonthDate().getFullYear(), pastMonthDate().getMonth(), dueDay) &&
+//   lastPayment < new Date(new Date().getFullYear(), new Date().getMonth(), dueDay)
+// }
+
+// console.log('isLate(dueDate, lastPayment)', isOK(dueDate, lastPayment))

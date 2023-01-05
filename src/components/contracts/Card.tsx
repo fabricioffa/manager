@@ -27,6 +27,8 @@ const Card = ({ contract }: CardProps) => {
         <p>Aluguel: {formatCurrency(contract.rent)}</p>
         <FontAwesomeIcon icon="calendar-day" size="xl" className="justify-self-center" />
         <p>Início: {formatDate(contract.initialDate)}</p>
+        <FontAwesomeIcon icon="calendar-day" size="xl" className="justify-self-center" />
+        <p>Vencimento: {contract.dueDay}</p>
         {
           !!contract.endingDate &&
           <>
