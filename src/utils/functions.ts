@@ -45,13 +45,47 @@ export const formatCurrency = (val: string | number | Decimal) =>
 
 export const formatDate = (date: Date) => new Intl.DateTimeFormat('pt-BR').format(date)
 
-const dueDate = 15;
-const lastPayment = new Date(2023, 0, 14)
 
-const pastMonthDate = () => {
+export const pastMonthDate = () => {
   const pastMonth = new Date();
   pastMonth.setMonth(pastMonth.getMonth() - 1);
   return pastMonth
+}
+
+export function getFirstAndLastDayOfCurrentMonth() {
+  const today = new Date();
+  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  return {
+    firstDay: firstDay,
+    lastDay: lastDay
+  }
+}
+
+export const pastMonthLastDay = () => {
+  let today = new Date();
+  return new Date(today.getFullYear(), today.getMonth(), 0)
+}
+
+export const currentDueDate = (dueDay: number) => {
+  const today = new Date()
+  return new Date(today.getFullYear(), today.getMonth(), dueDay)
+}
+
+// export const diffDays = (minuend: Date, subtrahend: Date) => {
+//   const utcMinuend = Date.UTC(minuend.getFullYear(), minuend.getMonth(), minuend.getDate(), minuend.getHours(), minuend.getMinutes(), minuend.getSeconds(), minuend.getMilliseconds());
+//   const utcSubtrahend = Date.UTC(subtrahend.getFullYear(), subtrahend.getMonth(), subtrahend.getsubtrahend(), subtrahend.getHours(), subtrahend.getMinutes(), subtrahend.getSeconds(), subtrahend.getMilliseconds());
+//   return minuend
+// }
+
+export const calculateLateDebit = (rent: number, arreas: number, interest: number, dueDate: Date) =>  {
+  const today = new Date();
+  if (today < dueDate) return rent
+  const lateMonths = today.getMonth() - dueDate.getMonth() + (12 * (today.getFullYear() - dueDate.getFullYear()));
+  const arreasAmount = rent * (arreas / 100)
+  const interestAmount = rent * (interest * lateMonths / 100);
+  const totalAmountDue = rent + arreasAmount + interestAmount;
+  return totalAmountDue;
 }
 
 

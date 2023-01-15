@@ -41,7 +41,6 @@ const SearchForm = ({ onFilterChange }: SearchFormProps) => {
               <option value="bail">Caução</option>
               <option value="interest">Jurus</option>
               <option value="arrear">Mora</option>
-              <option value="lastPayment">Data do último pagamento</option>
               <option value="waterId">Número do Cliente</option>
               <option value="electricityId">Número de Inscrição</option>
             </select>

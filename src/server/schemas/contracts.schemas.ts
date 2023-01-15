@@ -11,10 +11,6 @@ const last10Years = new Date(new Date().getFullYear() - 10, 0, 1)
 export const contractsSchema = z.object({
   dueDay: z.preprocess((val) => Number(val), z.number().positive().max(31)),
   initialDate: z.date().min(limits.fiftyYearsBefore).max(limits.fiftyYearsAfter),
-  lastPayment: z.preprocess((arg) => {
-    if (arg instanceof Date && arg?.toDateString() === 'Invalid Date') return undefined
-  }
-    , z.date().min(last10Years).max(new Date()).optional()), endingDate: z.date().min(limits.fiftyYearsBefore).max(limits.fiftyYearsAfter).nullish(),
   rent: z.preprocess((val) => Number(val), z.number().positive().max(99999)),
   bail: z.preprocess((val) => Number(val), z.number().positive().max(99999)),
   duration: z.preprocess((val) => Number(val), z.number().positive().max(100).default(12)),

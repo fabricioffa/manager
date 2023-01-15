@@ -16,7 +16,6 @@ interface FormProps {
   action: "create" | "edit";
 }
 
-const lastYear = `${new Date().getFullYear()}-01-01`;
 const fiveYearsBack = `${new Date().getFullYear() - 5}-01-01`;
 const fiveYearsAfter = `${new Date().getFullYear() + 5}-01-01`;
 const today = new Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "2-digit", day: "2-digit" }).format(Date.now())
@@ -148,11 +147,6 @@ const Form = ({ contract, action }: FormProps) => {
               </select>
             </InputContainer>
           }
-
-          <InputContainer label="Último pagamento" id="lastPayment" errorMsg={errors?.lastPayment?.message} >
-            <input className={inputDefaultStyle} type="date" id="lastPayment" min={lastYear} max={today}
-              defaultValue={contract?.lastPayment?.toLocaleDateString('en-CA')} {...register("lastPayment", { valueAsDate: true })} />
-          </InputContainer>
 
           <InputContainer label="Número do Cliente" id="electricity-id" errorMsg={errors?.electricityId?.message} >
             <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={255}

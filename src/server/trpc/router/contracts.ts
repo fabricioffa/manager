@@ -2,7 +2,7 @@ import { formWitnessSchema } from "./../../schemas/witnesses.schema";
 import { createContractsSchema } from "./../../schemas/contracts.schemas";
 import { router, protectedProcedure } from "../trpc";
 import { z } from "zod";
-import { daysUntilNextSaturday } from "../../../utils/functions";
+import { currentDueDate, daysUntilNextSaturday, pastMonthLastDay } from "../../../utils/functions";
 
 export const contractsRouter = router({
   create: protectedProcedure
@@ -191,4 +191,36 @@ export const contractsRouter = router({
         where: { id },
       });
     }),
+  
+  createDebits: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      const contractsMissingDebits = await ctx.prisma.contract.findMany({
+        select: {
+          rent: true,
+          dueDay: true,
+          id: true,
+          },
+          where: {
+            debits: {
+              none: {
+                dueDate: {
+                  gt: pastMonthLastDay()
+                }
+              }
+            }
+          }
+      })
+
+      if (!contractsMissingDebits.length) return 'No contracts missing debits'
+      
+      const debitsData = contractsMissingDebits.map(contract => ({
+            amount: Number(contract.rent),
+            dueDate: currentDueDate(contract.dueDay),
+            contractId: contract.id
+      }))
+        
+      return await ctx.prisma.debit.createMany({
+        data: debitsData, skipDuplicates: true
+      })
+    }),  
 });

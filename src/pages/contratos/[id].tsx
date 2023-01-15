@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router"
 import { useDelete } from "../../utils/hooks";
 import { trpc } from "../../utils/trpc";
-import { formatCurrency, formatDate } from "../../utils/functions";
+import { formatCurrency } from "../../utils/functions";
 import { Loading } from "../../components/Loading";
 
 const dateToString = (date: Date) => new Intl.DateTimeFormat('pt-BR').format(date)
@@ -71,12 +71,6 @@ const ContractProfile = () => {
                 <span className="font-bold capitalize">Multa: </span>
                 <span className="capitalize">{Number(contract.arrears)}%</span>
               </li>
-              {contract.lastPayment &&
-                <li>
-                  <span className="font-bold">Último pagamento: </span>
-                  {formatDate(contract.lastPayment)}
-                </li>
-              }
               {
                 !!contract.electricityId &&
                 <li>

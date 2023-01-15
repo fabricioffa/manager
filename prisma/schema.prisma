@@ -101,8 +101,7 @@ model Witness {
 
 model Contract {
   id            String    @id @default(cuid())
-  dueDay        Int?      @map("due_date") @db.TinyInt()
-  lastPayment   DateTime? @map("last_payment")
+  dueDay        Int       @map("due_day") @db.TinyInt()
   initialDate   DateTime  @map("initial_date")
   endingDate    DateTime? @map("ending_date")
   rent          Decimal   @db.Decimal(7, 2)
@@ -117,12 +116,26 @@ model Contract {
   tenantId      String    @map("tenant_id")
   house         House     @relation(fields: [houseId], references: [id])
   houseId       String    @map("house_id")
+  debits        Debit[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   @@unique([houseId, tenantId, initialDate])
   @@index([houseId])
   @@index([tenantId])
+}
+
+model Debit {
+  id         String   @id @default(cuid())
+  contract   Contract @relation(fields: [contractId], references: [id])
+  contractId String   @map("contract_id")
+  amount     Decimal
+  dueDate    DateTime
+  paidAt     DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([contractId])
 }
 
 // Necessary for Next auth

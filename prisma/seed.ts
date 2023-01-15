@@ -79,11 +79,7 @@ const generateFakeWitnessData = () => ({
 const generateFakeContractsData = (tenants: Tenant[], houses: House[]) =>
   tenants.map(({ id }, i) => {
     return {
-      dueDay: faker.datatype.number({ min: 0, max: 31 }),
-      lastPayment: faker.date.between(
-        new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-        new Date(Date.now() + 15 * 24 * 60 * 60 * 1000)
-      ),
+      dueDay: faker.datatype.number({ min: 1, max: 31 }),
       initialDate: faker.date.between(faker.date.recent(15), faker.date.soon(15)),
       rent: faker.datatype.number({ min: 400, max: 1200, precision: 2 }),
       bail: faker.datatype.number({ min: 400, max: 1200, precision: 2 }),
@@ -102,6 +98,7 @@ const generateFakeContractsData = (tenants: Tenant[], houses: House[]) =>
   });
 
 async function main() {
+  await prisma.debit.deleteMany();
   await prisma.contract.deleteMany();
   await prisma.house.deleteMany();
   await prisma.pixKey.deleteMany();

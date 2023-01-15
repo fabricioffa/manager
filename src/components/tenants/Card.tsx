@@ -51,7 +51,8 @@ const Card = ({ tenant }: CardProps) => {
         {!!tenant.contracts.length &&
           <>
             <FontAwesomeIcon icon="house-chimney-window" size="xl" className="justify-self-center" />
-            <p className="flex gap-2"> Casas atuais:
+          <div className="flex gap-2"> 
+            <p>Casas atuais:</p>
               {
                 tenant.contracts.map(({ house }, i) => (
                   <Link className="hover:text-link hover:underline" href={`/casas/${house.street}?id=${house.id}`} key={house.id}>
@@ -62,7 +63,7 @@ const Card = ({ tenant }: CardProps) => {
                   </Link>
                 ))
               }
-            </p>
+            </div>
           </>
         }
       </div>
