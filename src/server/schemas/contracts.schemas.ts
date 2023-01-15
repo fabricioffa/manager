@@ -6,7 +6,6 @@ const limits = {
   fiftyYearsBefore: new Date(new Date().getFullYear() - 5, 0, 1),
   fiftyYearsAfter: new Date(new Date().getFullYear() + 5, 0, 1),
 };
-const last10Years = new Date(new Date().getFullYear() - 10, 0, 1)
 
 export const contractsSchema = z.object({
   dueDay: z.preprocess((val) => Number(val), z.number().positive().max(31)),

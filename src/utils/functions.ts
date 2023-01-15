@@ -63,7 +63,7 @@ export function getFirstAndLastDayOfCurrentMonth() {
 }
 
 export const pastMonthLastDay = () => {
-  let today = new Date();
+  const today = new Date();
   return new Date(today.getFullYear(), today.getMonth(), 0)
 }
 
