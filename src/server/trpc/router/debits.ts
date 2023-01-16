@@ -49,6 +49,6 @@ export const debitsRouter = router({
           }
         })
       })
-      return {updates: await Promise.all(updates), lateDebits}
+      return {updates: await Promise.all(updates)}
     }),
 });
