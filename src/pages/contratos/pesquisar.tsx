@@ -3,7 +3,7 @@ import { ItemsList } from "../../components/ItemsList";
 import Paginator from "../../components/Paginator";
 import Card from "../../components/contracts/Card"
 import SearchForm from "../../components/contracts/SearchForm";
-import { dataFilter } from "../../utils/functions";
+import { dataFilter } from "../../utils/function/prod";
 import { trpc } from "../../utils/trpc";
 import type { ContractSearchOptions } from "../../server/schemas/contracts.schemas";
 
@@ -15,7 +15,7 @@ const SearchContract = () => {
   const [currentPage, setCurrentPage] = useState(0)
 
   const onFilterChange = (newFilterProperty: Partial<ContractSearchOptions>) => {
-    setFilter({...filter, ...newFilterProperty})
+    setFilter({ ...filter, ...newFilterProperty })
   }
 
   if (isSuccess) {
@@ -27,24 +27,24 @@ const SearchContract = () => {
       setCurrentPage(index);
     }
 
-  return (
-    <div className="max-h-screen">
-      <h1 className="text-5xl font-semibold text-center mb-20">Contratos</h1>
+    return (
+      <div className="max-h-screen">
+        <h1 className="text-5xl font-semibold text-center mb-20">Contratos</h1>
 
-      <SearchForm onFilterChange={onFilterChange}/>
+        <SearchForm onFilterChange={onFilterChange} />
 
-      <ItemsList>
-        {
-        paginatedContracts.map(contract => (
-            <Card key={contract.id} contract={contract}  />
-          ))
-        }
-      </ItemsList>
+        <ItemsList>
+          {
+            paginatedContracts.map(contract => (
+              <Card key={contract.id} contract={contract} />
+            ))
+          }
+        </ItemsList>
 
-      <Paginator currentPage={currentPage} perPage={perPage} totalCount={filteredContracts?.length ?? 0} onPageChange={onPageChange} />
-    </div>
-  )
-}
+        <Paginator currentPage={currentPage} perPage={perPage} totalCount={filteredContracts?.length ?? 0} onPageChange={onPageChange} />
+      </div>
+    )
+  }
 }
 
 export default SearchContract

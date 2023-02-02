@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useDelete } from "../../utils/hooks";
 import type { RouterOutputs } from "../../utils/trpc";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { formatCurrency, formatDate } from "../../utils/functions";
+import { formatCurrency, formatDate } from "../../utils/function/prod";
 
 export type CardProps = {
   contract: NonNullable<RouterOutputs['contracts']['findAll'][number]>,
@@ -13,7 +13,7 @@ const Card = ({ contract }: CardProps) => {
   const deleteContract = useDelete(contract.id, 'contracts')
 
   return (
-    <li className="grid bg-tenant border rounded-md shadow-inner text-lg p-4">
+    <li className="grid border rounded-md shadow-card text-lg p-4">
       <div className="grid grid-cols-[1.5rem_1fr] grid-rows-[3rem_auto] items-center gap-2">
         <FontAwesomeIcon icon="user" size="xl" className="justify-self-center" />
         <Link href={`/inquilinos/${contract.tenant.name}?id=${contract.tenant.id}`} className="hover:text-link">

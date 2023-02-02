@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { trpc } from "../../utils/trpc";
 import { useDelete } from "../../utils/hooks";
-import { formatCurrency } from "../../utils/functions";
+import { formatCurrency } from "../../utils/function/prod";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Loading } from "../../components/Loading";
 
@@ -69,9 +69,9 @@ const HouseProfile = () => {
                   <span className="font-bold">Contratos: </span>
                   {
                     house.contracts.map(contract => (
-                      <ul className={`relative grid grid-flow-col gap-3 w-fit pl-3 mr-5 
+                      <ul className={`relative grid grid-flow-col gap-3 w-fit pl-3 mr-5
                           even:child:border-x last:child:!border-r-0 last:child:!pr-0  even:child:border-black even:child:px-3
-                          after:absolute after:top-1/2 after:-right-1.5 after:-translate-y-1/2 after:translate-x-full 
+                          after:absolute after:top-1/2 after:-right-1.5 after:-translate-y-1/2 after:translate-x-full
                           after:w-4 after:h-4 after:rounded-full ${contract.endingDate ? 'after:bg-red-500' : 'after:bg-green-500'}`}
                         key={contract.id}>
                         <li>

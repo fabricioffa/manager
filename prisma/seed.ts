@@ -3,6 +3,7 @@ import { House, HouseType, KeyType, MaritalStatus, PrismaClient } from "@prisma/
 import type { Tenant } from "@prisma/client";
 import type { CreateTenant } from "../src/server/schemas/tenant.schema";
 import type { CreateHouseSchema } from "../src/server/schemas/house.schema";
+import { generateCpf } from "../src/utils/function/dev";
 
 const prisma = new PrismaClient();
 
@@ -48,10 +49,7 @@ const generateFakeTenantsData = (amount: number): CreateTenant[] =>
       { allowLeadingZeros: true },
     ]),
     rgEmitter: faker.random.word(),
-    cpf: faker.helpers.unique(faker.random.numeric, [
-      11,
-      { allowLeadingZeros: true },
-    ]),
+    cpf: generateCpf(faker),
     maritalStatus: faker.helpers.arrayElement(maritalStatuses),
     profession: faker.name.jobTitle(),
     primaryPhone: faker.phone.number('(##) #####-####'),
@@ -67,10 +65,7 @@ const generateFakeWitnessData = () => ({
     { allowLeadingZeros: true },
   ]),
   rgEmitter: faker.random.word(),
-  cpf: faker.helpers.unique(faker.random.numeric, [
-    11,
-    { allowLeadingZeros: true },
-  ]),
+  cpf: generateCpf(faker),
   primaryPhone: faker.phone.number('(##) #####-####'),
   secondaryPhone: faker.helpers.maybe(faker.phone.number.bind(this, '(##) #####-####')),
   email: faker.helpers.maybe(faker.internet.email),

@@ -34,7 +34,7 @@ export const createPixKeysSchema = z.object({
     }
 
     if (keyType === 'cpf') {
-      const result = new CpfValidator().isCpfValid(key)
+      const result = new CpfValidator(key).isCpfValid()
       if (!result.isCPF) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

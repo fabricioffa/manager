@@ -3,7 +3,7 @@ import { ItemsList } from "../../components/ItemsList";
 import Paginator from "../../components/Paginator";
 import Card from "../../components/tenants/Card"
 import SearchForm from "../../components/tenants/SearchForm";
-import { dataFilter } from "../../utils/functions";
+import { dataFilter } from "../../utils/function/prod";
 import { trpc } from "../../utils/trpc";
 import type { TenantsSearchOptions } from "../../server/schemas/tenant.schema";
 

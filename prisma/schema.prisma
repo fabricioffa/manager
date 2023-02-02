@@ -129,7 +129,7 @@ model Debit {
   id         String   @id @default(cuid())
   contract   Contract @relation(fields: [contractId], references: [id])
   contractId String   @map("contract_id")
-  amount     Decimal
+  amount     Decimal @db.Decimal(7, 2)
   dueDate    DateTime
   paidAt     DateTime?
   createdAt  DateTime @default(now())

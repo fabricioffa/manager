@@ -8,7 +8,7 @@ export const createTenantSchema = z.object({
   rg: z.string().trim().min(1),
   rgEmitter: z.string().trim().min(1).default("SSP/CE"),
   cpf: z.string().trim().length(11).superRefine((val, ctx) => {
-    const result = new CpfValidator().isCpfValid(val)
+    const result = new CpfValidator(val).isCpfValid()
     if (!result.isCPF) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

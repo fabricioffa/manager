@@ -2,14 +2,14 @@ import Link from "next/link";
 import { useRouter } from "next/router"
 import { useDelete } from "../../utils/hooks";
 import { trpc } from "../../utils/trpc";
-import { formatCurrency } from "../../utils/functions";
+import { formatCurrency } from "../../utils/function/prod";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Loading } from "../../components/Loading";
 
 
 const TenantProfile = () => {
-  const { query: { id } } = useRouter();
+  const { query: { id } } = useRouter(); //TODO: USE ZOD
   const stringId = id as string
 
   const { data: tenant, isLoading, isError } = trpc.tenants.findOne.useQuery({ id: stringId })
@@ -94,7 +94,7 @@ const TenantProfile = () => {
                   {
                     tenant.contracts.map(contract => (
                       <ul className={`relative flex gap-3 w-fit pl-3 even:child:border-x last:child:!border-r-0 even:child:border-black even:child:px-3
-                          after:absolute after:top-1/2 after:-right-1.5 after:-translate-y-1/2 after:translate-x-full 
+                          after:absolute after:top-1/2 after:-right-1.5 after:-translate-y-1/2 after:translate-x-full
                           after:w-4 after:h-4 after:rounded-full ${contract.endingDate ? 'after:bg-red-500' : 'after:bg-green-500'}`}
                         key={contract.id}>
                         <li>

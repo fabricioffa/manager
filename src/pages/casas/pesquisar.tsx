@@ -3,7 +3,7 @@ import Card from "../../components/houses/Card";
 import SearchForm from "../../components/houses/SearchForm";
 import { ItemsList } from "../../components/ItemsList";
 import Paginator from "../../components/Paginator";
-import { dataFilter } from "../../utils/functions";
+import { dataFilter } from "../../utils/function/prod";
 import { trpc } from "../../utils/trpc";
 import type { HousesSearchOptions } from "../../server/schemas/house.schema";
 
@@ -11,11 +11,11 @@ const perPage = 10;
 
 const HouseSearch = () => {
   const { data, isSuccess } = trpc.houses.findAll.useQuery()
-  const [filter, setFilter] = useState<HousesSearchOptions>({property: 'all', caseSensitive: false, query: ''})
+  const [filter, setFilter] = useState<HousesSearchOptions>({ property: 'all', caseSensitive: false, query: '' })
   const [currentPage, setCurrentPage] = useState(0)
 
   const onFilterChange = (newFilter: Partial<HousesSearchOptions>) => {
-    setFilter({...filter, ...newFilter})
+    setFilter({ ...filter, ...newFilter })
   }
 
   if (isSuccess) {
@@ -28,24 +28,24 @@ const HouseSearch = () => {
       setCurrentPage(index);
     }
 
-  return (
-    <div className="max-h-screen">
-      <h1 className="text-5xl font-semibold text-center mb-20">Casas</h1>
+    return (
+      <div className="max-h-screen">
+        <h1 className="text-5xl font-semibold text-center mb-20">Casas</h1>
 
-      <SearchForm onFilterChange={onFilterChange}/>
+        <SearchForm onFilterChange={onFilterChange} />
 
-      <ItemsList>
-        {
-        paginatedHouses.map(house => (
-            <Card key={house.id} house={house} />
-          ))
-        }
-      </ItemsList>
+        <ItemsList>
+          {
+            paginatedHouses.map(house => (
+              <Card key={house.id} house={house} />
+            ))
+          }
+        </ItemsList>
 
-      <Paginator currentPage={currentPage} perPage={perPage} totalCount={houses?.length ?? 0} onPageChange={onPageChange} />
-    </div>
-  )
-}
+        <Paginator currentPage={currentPage} perPage={perPage} totalCount={houses?.length ?? 0} onPageChange={onPageChange} />
+      </div>
+    )
+  }
 }
 
 export default HouseSearch

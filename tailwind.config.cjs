@@ -1,8 +1,11 @@
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      
+
       container: {
         center: true
       },
@@ -25,7 +28,7 @@ module.exports = {
       },
       boxShadow: {
         card: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px !important'
-      }
+      },
     },
   },
   plugins: [

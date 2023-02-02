@@ -2,7 +2,7 @@ import { formWitnessSchema } from "./../../schemas/witnesses.schema";
 import { createContractsSchema } from "./../../schemas/contracts.schemas";
 import { router, protectedProcedure } from "../trpc";
 import { z } from "zod";
-import { currentDueDate, daysUntilNextSaturday, pastMonthLastDay } from "../../../utils/functions";
+import { currentDueDate, daysUntilNextSaturday, pastMonthLastDay } from "../../../utils/function/prod";
 
 export const contractsRouter = router({
   create: protectedProcedure
@@ -115,41 +115,6 @@ export const contractsRouter = router({
       });
     }),
 
-  debitors: protectedProcedure
-    .query(async ({ ctx }) => {
-      return await ctx.prisma.contract.findMany({
-        where: {
-          AND: {
-            dueDay: {
-              lt: new Date().getDate()
-            },
-
-          }
-        },
-        include: {
-          tenant: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-          house: {
-            select: {
-              id: true,
-              street: true,
-              number: true,
-            },
-          },
-          witnesses: {
-            select: {
-              id: true,
-              name: true,
-            }
-          }
-        },
-      });
-    }),
-
   edit: protectedProcedure
     .input(
       z.object({
@@ -191,7 +156,7 @@ export const contractsRouter = router({
         where: { id },
       });
     }),
-  
+
   createDebits: protectedProcedure
     .mutation(async ({ ctx }) => {
       const contractsMissingDebits = await ctx.prisma.contract.findMany({
@@ -199,28 +164,31 @@ export const contractsRouter = router({
           rent: true,
           dueDay: true,
           id: true,
-          },
-          where: {
-            debits: {
-              none: {
-                dueDate: {
-                  gt: pastMonthLastDay()
-                }
+        },
+        where: {
+          debits: {
+            none: {
+              dueDate: {
+                gt: pastMonthLastDay()
               }
             }
           }
+        }
       })
 
+      // if (!contractsMissingDebits.length) return
       if (!contractsMissingDebits.length) return 'No contracts missing debits'
-      
+
       const debitsData = contractsMissingDebits.map(contract => ({
-            amount: Number(contract.rent),
-            dueDate: currentDueDate(contract.dueDay),
-            contractId: contract.id
+        amount: Number(contract.rent),
+        dueDate: currentDueDate(contract.dueDay),
+        contractId: contract.id
       }))
-        
-      return await ctx.prisma.debit.createMany({
+
+      const debits = await ctx.prisma.debit.createMany({
         data: debitsData, skipDuplicates: true
       })
-    }),  
+
+      return { debits }
+    }),
 });

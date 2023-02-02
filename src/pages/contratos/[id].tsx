@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router"
 import { useDelete } from "../../utils/hooks";
 import { trpc } from "../../utils/trpc";
-import { formatCurrency } from "../../utils/functions";
+import { formatCurrency } from "../../utils/function/prod";
 import { Loading } from "../../components/Loading";
 
 const dateToString = (date: Date) => new Intl.DateTimeFormat('pt-BR').format(date)

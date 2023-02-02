@@ -1,9 +1,10 @@
 import SideBar from "./SideBar";
 import { signIn, useSession } from "next-auth/react";
 import GoBackBtn from "./goBackBtn";
+import Image from "next/image";
 
 export default function Layout({ children }: { children: JSX.Element }) {
-  const { data: session } = useSession();
+  const { data: session, } = useSession();
 
   if (!session)
     return (
@@ -17,6 +18,13 @@ export default function Layout({ children }: { children: JSX.Element }) {
         </button>
       </div>
     );
+
+  if (session.user?.role !== 'ADMIN')
+    return (
+      <div className="w-screen h-screen">
+        <Image className="w-full h-full object-contain" src="/images/not-mama.webp" alt="Baby: not mamma!" />
+      </div>
+    )
 
   return (
     <div className="grid lg:grid-cols-[max(20%,17rem)_1.6rem_1fr_1.6rem] grid-cols-[1.6rem_1fr_1.6rem] min-h-screen w-full py-12 text-secondary">

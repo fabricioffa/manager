@@ -17,7 +17,7 @@ interface FormProps {
 }
 
 const Form = ({ house, action }: FormProps) => {
-  
+
   const create = trpc.houses.create.useMutation();
   const edit = trpc.houses.edit.useMutation();
 
@@ -72,7 +72,7 @@ const Form = ({ house, action }: FormProps) => {
         push('/casas/pesquisar')
       },
     });
-  }; 
+  };
 
   return (
     <form onSubmit={handleSubmit(onValid, onInvalid)}>
@@ -94,7 +94,7 @@ const Form = ({ house, action }: FormProps) => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
           <InputContainer label="Rua" id="street" errorMsg={errors?.street?.message}>
-            <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={191}
+            <input className={inputDefaultStyle} type="text" autoComplete="address-level3" maxLength={191}
               placeholder="R. das Laranjeiras" id="street" {...register("street")} />
           </InputContainer>
 

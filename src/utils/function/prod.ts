@@ -29,6 +29,20 @@ export const dataFilter = <Item extends Record<string, unknown>, Filter extends 
     });
 };
 
+export const castToNumbersArray = (str: string) =>
+  Array.from(str, (char) => Number(char));
+
+export const isRepetition = (numbersList: number[]) =>
+  numbersList.every((number) => number === numbersList[0]);
+
+export const hasRightLength = (str: string | unknown[], targetLength: number) =>
+  str.length === targetLength
+
+export const noRepetition = (val: string) => {
+  const arrayVal = castToNumbersArray(val)
+  return !isRepetition(arrayVal)
+}
+
 export const daysUntilNextSaturday = () => {
   const today = new Date();
   const numberOfDaysUntilSaturday = 7 - today.getDay()
@@ -42,13 +56,16 @@ export const daysUntilNextSaturday = () => {
 export const formatCurrency = (val: string | number | Decimal) =>
   Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(val))
 
-export const formatDate = (date: Date) => new Intl.DateTimeFormat('pt-BR').format(date)
+export const formatDate = (date: Date, options?: Intl.DateTimeFormatOptions) => {
+  return new Intl.DateTimeFormat('pt-BR', options).format(date)
+}
 
+export const formatCpf = (cpf: string) => `${cpf.slice(0,3)}.${cpf.slice(3,6)}.${cpf.slice(6,9)}-${cpf.slice(9)}`
 
-export const pastMonthDate = () => {
-  const pastMonth = new Date();
-  pastMonth.setMonth(pastMonth.getMonth() - 1);
-  return pastMonth
+export const pastMonthDate = (date: Date = new Date()) => {
+  const newDate = new Date(date);
+  newDate.setMonth(date.getMonth() - 1);
+  return newDate
 }
 
 export function getFirstAndLastDayOfCurrentMonth() {
@@ -77,7 +94,7 @@ export const currentDueDate = (dueDay: number) => {
 //   return minuend
 // }
 
-export const calculateLateDebit = (rent: number, arreas: number, interest: number, dueDate: Date) =>  {
+export const calculateLateDebit = (rent: number, arreas: number, interest: number, dueDate: Date) => {
   const today = new Date();
   if (today < dueDate) return rent
   const lateMonths = today.getMonth() - dueDate.getMonth() + (12 * (today.getFullYear() - dueDate.getFullYear()));
@@ -87,19 +104,9 @@ export const calculateLateDebit = (rent: number, arreas: number, interest: numbe
   return totalAmountDue;
 }
 
-
-
-// const format = (date) => new Intl.DateTimeFormat('pt-BR').format(date)
-
-
-// console.log('lastPayment', new Intl.DateTimeFormat('pt-BR').format(lastPayment))
-
-// const isOK = (dueDay, lastPayment) => {
-//   console.log(format(lastPayment),'>' , format(new Date(pastMonthDate().getFullYear(), pastMonthDate().getMonth(), dueDay)), lastPayment > new Date(pastMonthDate().getFullYear(), pastMonthDate().getMonth(), dueDay))
-//   console.log(format(lastPayment),'<' , format(new Date(new Date().getFullYear(), new Date().getMonth(), dueDay)), lastPayment < new Date(new Date().getFullYear(), new Date().getMonth(), dueDay))
-
-//   return lastPayment > new Date(pastMonthDate().getFullYear(), pastMonthDate().getMonth(), dueDay) &&
-//   lastPayment < new Date(new Date().getFullYear(), new Date().getMonth(), dueDay)
-// }
-
-// console.log('isLate(dueDate, lastPayment)', isOK(dueDate, lastPayment))
+export const toMonthInputFormat = (date: Date = new Date()) => new Intl.DateTimeFormat('en-CA').format(date).slice(0, -3)
+export const slugfy = (str: string) => str
+ .normalize("NFD")
+ .replace(/\p{Diacritic}/gu, "")
+ .toLowerCase()
+ .replaceAll(' ', '-')

@@ -1,47 +1,41 @@
 import type { FieldNamesMarkedBoolean, FieldValues } from "react-hook-form";
-
-const isRepetition = (numbersList: number[]) =>
-  numbersList.every((number) => number === numbersList[0]);
-
-const castToNumbersArray = (str: string) =>
-  Array.from(str, (char) => Number(char));
-
-const hasRightLength = (str: string | unknown[], targetLength: number) =>
-  str.length === targetLength
-
-export const noRepetition = (val: string) => {
-  const ArrayVal = castToNumbersArray(val)
-  return !isRepetition(ArrayVal)
-}
+import { castToNumbersArray, hasRightLength, isRepetition } from "./function/prod";
 
 export class CpfValidator { //TODO: refactor
-  isCpfValid(cpf: string) {
-    const cleanCPf = castToNumbersArray(cpf);
+  result = { isCPF: true, message: "CPF válido!" }
+  public cpf: number[]
 
-    if (!hasRightLength(cleanCPf, 11))
-      return { isCPF: false, message: `O CPF deve ter 11 digitos. Este tem ${cleanCPf.length}` };
+  constructor(cpf: string) {
+    this.cpf = castToNumbersArray(cpf)
+  }
 
-    if (isRepetition(cleanCPf))
+  getCtrlDigit(position: 'first' | 'second') {
+    const total = this.getCtrlTotal(position)
+    return 11 - (total % 11) > 9 ? 0 : 11 - (total % 11)
+  }
+
+  public getCtrlTotal(position: 'first' | 'second') {
+    return this.cpf
+      .slice(0, position === 'first' ? -2 : -1)
+      .reduce((ac, curr, i) => ac + curr * (10 - i), 0);
+  }
+
+  public validateCtrlDigit(position: 'first' | 'second') {
+    const validCtrlDigit = this.getCtrlDigit(position);
+    const ctrlDigitPosition = position === 'first' ? 9 : 10
+    if (validCtrlDigit !== this.cpf[ctrlDigitPosition])
+      this.result = { isCPF: false, message: `Penúltimo número inválido. Deveria ser: ${validCtrlDigit}` };
+  }
+
+  isCpfValid() {
+    if (isRepetition(this.cpf))
       return { isCPF: false, message: "O CPF não pode ser uma sequência de números iguais." };
 
+    this.validateCtrlDigit("first")
+    if (!this.result.isCPF) return this.result
 
-    let total = cleanCPf
-      .slice(0, -2)
-      .reduce((ac, vl, i) => ac + vl * (10 - i), 0);
-
-    let ctrl = 11 - (total % 11) > 9 ? 0 : 11 - (total % 11);
-
-    if (ctrl !== cleanCPf[9])
-      return { isCPF: false, message: "Penúltimo número inválido." };
-
-    total = cleanCPf.slice(0, -1).reduce((ac, vl, i) => ac + vl * (11 - i), 0);
-
-    ctrl = 11 - (total % 11) > 9 ? 0 : 11 - (total % 11);
-
-    if (ctrl !== cleanCPf[10])
-      return { isCPF: false, message: "Último número inválido." };
-
-    return { isCPF: true, message: "CPF válido!" };
+    this.validateCtrlDigit("second")
+    return this.result
   }
 }
 
@@ -72,19 +66,19 @@ export class CnpjValidator {
       }
 
     if ((remainder > 1 || remainder <= 10) && ctrlDigit !== (11 - remainder))
-    return {
-      isCNPJ: false,
-      message: `${msgSubject} número deveria ser ${11 - remainder}`
-    }
+      return {
+        isCNPJ: false,
+        message: `${msgSubject} número deveria ser ${11 - remainder}`
+      }
     return this.result
   }
 
   isCnpjValid() {
     if (!hasRightLength(this.cnpj, 14))
-      return { isCNPJ: false, message: `O CNPJ deve ter 14 dígitos, mas tem ${this.cnpj.length}.`};
+      return { isCNPJ: false, message: `O CNPJ deve ter 14 dígitos, mas tem ${this.cnpj.length}.` };
 
     if (isRepetition(this.cnpj))
-      return { isCNPJ: false, message: "O CNPJ não pode ser uma sequência de números iguais."};
+      return { isCNPJ: false, message: "O CNPJ não pode ser uma sequência de números iguais." };
 
     this.result = this.isCtrlDigitValid('first')
     if (!this.result.isCNPJ) return this.result
