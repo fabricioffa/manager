@@ -126,14 +126,14 @@ model Contract {
 }
 
 model Debit {
-  id         String   @id @default(cuid())
-  contract   Contract @relation(fields: [contractId], references: [id])
-  contractId String   @map("contract_id")
-  amount     Decimal @db.Decimal(7, 2)
+  id         String    @id @default(cuid())
+  contract   Contract  @relation(fields: [contractId], references: [id])
+  contractId String    @map("contract_id")
+  amount     Decimal   @db.Decimal(7, 2)
   dueDate    DateTime
   paidAt     DateTime?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   @@index([contractId])
 }

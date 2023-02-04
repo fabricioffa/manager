@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
-import { ReceiptSchema } from "../server/schemas/receipt.schema";
-import { formatCpf, formatDate } from './function/prod'
+import type { ReceiptSchema } from "../server/schemas/receipt.schema";
+import { formatCpf, formatCurrency, formatDate } from './function/prod'
 import NumberToWord from "./NumberToWord";
 
 type Line = {
@@ -10,22 +10,7 @@ type Line = {
 
 export default class Receipt {
   private readonly doc = new jsPDF({ unit: 'mm', })
-  private readonly staticText = {
-    title: 'Recibo',
-    body: [
-      'Recebi de',
-      ', inscrito no CPF',
-      'o valor de',
-      'correspondente ao aluguel do mês de',
-      'do imóvel situado em',
-      'E para clareza confirmo o presente na cidade de',
-      'no dia',
-    ] as const,
-    footer: [
-      'Assinatura:',
-      'Nome por extenso:',
-    ] as const
-  }
+  private readonly titleText = 'Recibo'
 
   private readonly firstParagraph = [
     {
@@ -33,7 +18,7 @@ export default class Receipt {
       bolds: [1, 3]
     },
     {
-      texts: ['o valor de ', this.receipt.amount.toFixed(2), ' (', formatDate(this.receipt.rentingPeriod, { month: 'long', year: 'numeric' }), '),'],
+      texts: ['o valor de ', formatCurrency(this.receipt.amount), ' (', NumberToWord.format(this.receipt.amount), '),'],
       bolds: [1, 3]
     },
     {
@@ -68,7 +53,7 @@ export default class Receipt {
     },
   ]
 
-  private readonly lineHeight = this.doc.getTextDimensions('Uma linha').h + 1.5
+  private readonly lineHeight = this.doc.setFontSize(16).getTextDimensions('Uma linha').h + 1.5
 
   private readonly page = {
     w: this.doc.internal.pageSize.width,
@@ -83,44 +68,45 @@ export default class Receipt {
     w: this.page.w - (this.page.m * 2),
     h: 105,
     mx: 8,
-    my: 6,
+    mt: 15,
+    mb: 6,
     rounded: 2,
     bgColor: [219, 234, 254] as const
   } as const
 
   private readonly title = {
     x: this.page.w / 2,
-    y: this.page.m + this.mainBox.my + this.doc.getTextDimensions(this.staticText.title).h - 2,
-    h: this.doc.getTextDimensions(this.staticText.title).h,
-    text: this.staticText.title,
+    y: this.page.m + this.mainBox.mt / 2 + this.doc.setFontSize(19).getTextDimensions(this.titleText).h * .3 ,
+    h: this.doc.setFontSize(19).getTextDimensions(this.titleText).h,
+    text: this.titleText,
     fontSize: 19,
-  }
-
-  private readonly numberBox = {
-    x: this.page.w - this.page.m,
-    y: this.page.m / 2,
-    w: this.doc.getTextDimensions('Nº 0000').w,
-    h: this.lineHeight + 3,
-    bgColor: [255, 255, 255] as const,
-    rounded: this.mainBox.rounded,
   }
 
   private readonly body = {
     x: this.page.m + this.mainBox.mx,
-    y: this.title.y + this.title.h,
+    y: this.mainBox.y + this.mainBox.mt,
     w: this.mainBox.w - (this.mainBox.mx * 2),
-    h: this.lineHeight * (this.firstParagraph.length + this.secondParagraph.length + 1.5 ),
+    h: this.lineHeight * (this.firstParagraph.length + this.secondParagraph.length + 1.5),
     mx: 4,
     my: 10,
     bgColor: [255, 255, 255] as const,
     rounded: this.mainBox.rounded,
   } as const
 
+  private readonly numberBox = {
+    x: this.page.w - this.page.m - this.mainBox.mx - this.doc.getTextDimensions('Nº 0000').w,
+    y: this.page.m + this.body.my / 2 - 2.5 ,
+    w: this.doc.getTextDimensions('Nº 0000').w,
+    h: this.lineHeight + 3,
+    bgColor: [255, 255, 255] as const,
+    rounded: this.mainBox.rounded,
+  }
+
   private readonly footer = {
     x: this.page.m + this.mainBox.mx,
-    y: this.title.y + this.title.h + this.body.h + 4,
+    y: this.body.y + this.body.h + 4,
     w: this.mainBox.w - (this.mainBox.mx * 2),
-    h: this.lineHeight * (this.footerParagraph.length + 1.5 ),
+    h: this.lineHeight * (this.footerParagraph.length + 1.5),
     mx: 4,
     my: 10,
     bgColor: [255, 255, 255] as const,
@@ -133,20 +119,17 @@ export default class Receipt {
 
   public makePdf() {
     const pdfNumber = (this.pastPaidDebitsCount + 1).toString().padStart(4, '0')
-
     this.doc.setFillColor(...this.mainBox.bgColor)
       .roundedRect(this.mainBox.x, this.mainBox.y, this.mainBox.w, this.mainBox.h, this.mainBox.rounded, this.mainBox.rounded, 'F')
       .setFont('Times', 'bold')
       .setFontSize(this.title.fontSize)
       .text(this.title.text, this.title.x, this.title.y, { align: 'center' })
       .setFillColor(...this.body.bgColor)
-      .roundedRect(this.numberBox.x - 33, this.numberBox.y + 7.5, this.numberBox.w + 5, this.numberBox.h, this.numberBox.rounded, this.numberBox.rounded, 'F')
-      .setFont('Times', 'normal')
-      .text(`Nº ${pdfNumber}`, this.numberBox.x - 20, this.numberBox.y + 15, {align: 'center'})
-      .setFillColor(...this.body.bgColor)
+      .roundedRect(this.numberBox.x, this.numberBox.y, this.numberBox.w, this.numberBox.h, this.numberBox.rounded, this.numberBox.rounded, 'F')
       .roundedRect(this.body.x, this.body.y, this.body.w, this.body.h, this.body.rounded, this.body.rounded, 'F')
       .roundedRect(this.footer.x, this.footer.y, this.footer.w, this.footer.h, this.footer.rounded, this.footer.rounded, 'F')
 
+    this.writeLine([`Nº ${pdfNumber}`], [], this.numberBox.x + 3, this.numberBox.y + 7)
     this.writeParagraph(this.firstParagraph, this.body.x + this.body.mx, this.body.y + this.body.my)
     this.writeParagraph(this.secondParagraph, this.body.x + this.body.mx, this.body.y + this.body.my + this.lineHeight * 4 + 4)
     this.writeParagraph(this.footerParagraph, this.body.x + this.body.mx, this.footer.y + this.footer.my)

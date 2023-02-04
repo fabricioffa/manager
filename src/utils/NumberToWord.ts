@@ -18,7 +18,7 @@ export default class NumberToWord {
 
   public static format(n: number) {
     const digits = n.toFixed(2).replace(/\D/, '').padStart(8, '0').split('')
-    if (n < 20) return NumberToWord.units[n]
+    if (n < 20) return NumberToWord.units[n] as string
     const thousands = digits.slice(0, 3)
     const hundreds = digits.slice(3, 6)
     const decimals = digits.slice(6)
@@ -31,7 +31,6 @@ export default class NumberToWord {
     const decimalsText = NumberToWord.hasDecimals ? NumberToWord.formatBlock('decimals', ...['0', ...decimals]) : ''
     const hasFullOrNoHundred = Number(hundreds.join('')) < 100 || (hundreds[0] !== '0' && hundreds.slice(1).join('') === '00')
     const hasConjunction = NumberToWord.hasThousands && hasFullOrNoHundred
-
     return `${thousandsText} ${hasConjunction ? 'e' : ''} ${hundredsText} ${decimalsText}`.trim().replaceAll('  ', ' ');
   }
 

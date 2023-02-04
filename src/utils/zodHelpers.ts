@@ -90,18 +90,6 @@ export class CnpjValidator {
   }
 }
 
-
-// export function nullifyEmptyString <T extends FieldValues>(data: T ) { //TODO: check if 11 becomes null by default
-//   let newData: T = data;
-//   for (const field in data) {
-//     if (data[field] === '') {
-//       newData = { ...newData, [field]: null};
-//     }
-//   }
-//   return newData;
-// }
-
-
 export function getDirtyValues<T extends FieldValues>(dirtyFields: FieldNamesMarkedBoolean<T>, allValues: T): Partial<T> {
   return Object.keys(dirtyFields).reduce((dirtyValues, field) => {
     const dirtyField = dirtyFields[field as keyof FieldNamesMarkedBoolean<T>]

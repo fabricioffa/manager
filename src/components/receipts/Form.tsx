@@ -1,12 +1,12 @@
 import type { ReceiptSchema } from "../../server/schemas/receipt.schema";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
-import { RouterOutputs, trpc } from "../../utils/trpc";
+import type { RouterOutputs } from "../../utils/trpc";
+import { trpc } from "../../utils/trpc";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputContainer from "../InputContainer";
 import { receiptSchema } from "../../server/schemas/receipt.schema";
 import { pastMonthDate, slugfy, toMonthInputFormat } from "../../utils/function/prod";
-import { jsPDF } from "jspdf";
 import Receipt from "../../utils/Receipt";
 
 const inputDefaultStyle = `mt-1 neighborhood w-full rounded-md bg-gray-100 border-transparent
@@ -37,14 +37,14 @@ const Form = ({ debit }: FormProps) => {
     console.log('%c errors', 'color: red', errors);
   }
 
-  const onValid: SubmitHandler<ReceiptSchema> = async (receiptData, e) => {
+  const onValid: SubmitHandler<ReceiptSchema> = async receiptData => {
     const receipt = new Receipt(receiptData, pastPaidDebitsCount)
 
     const pdf = receipt.makePdf();
-    // pdf.save(`recibo-${slugfy(receiptData.tenant.name)}-${toMonthInputFormat(pastMonthDate(receiptData.rentingPeriod))}`)
-    const pdfUrl = pdf.output('bloburi')
-    const iframe = "<iframe class='h-[100vh]' width='100%' height='100%' src='" + pdfUrl + "'></iframe>"
-    document.getElementById("pdf-preview").innerHTML = iframe;
+    pdf.save(`recibo-${slugfy(receiptData.tenant.name)}-${toMonthInputFormat(pastMonthDate(receiptData.rentingPeriod))}`)
+    // const pdfUrl = pdf.output('bloburi')
+    // const iframe = "<iframe class='h-[100vh]' width='100%' height='100%' src='" + pdfUrl + "'></iframe>"
+    // document.getElementById("pdf-preview").innerHTML = iframe;
 
   };
 
