@@ -1,6 +1,9 @@
 import type { FieldNamesMarkedBoolean, FieldValues } from "react-hook-form";
-import { castToNumbersArray, hasRightLength, isRepetition } from "./function/prod";
+import { castToNumbersArray, isRepetition, validateMobile } from "./function/prod";
 
+
+export const isValidMobileRefiner = [validateMobile, { message: 'Celular inválido. Terceiro dígito incorreto' }] as const
+export const isRepetitionRefiner = [isRepetition, { message: 'Caracteres repetidos são inválidos' }] as const
 export class CpfValidator { //TODO: refactor
   result = { isCPF: true, message: "CPF válido!" }
   public cpf: number[]
@@ -24,13 +27,10 @@ export class CpfValidator { //TODO: refactor
     const validCtrlDigit = this.getCtrlDigit(position);
     const ctrlDigitPosition = position === 'first' ? 9 : 10
     if (validCtrlDigit !== this.cpf[ctrlDigitPosition])
-      this.result = { isCPF: false, message: `Penúltimo número inválido. Deveria ser: ${validCtrlDigit}` };
+      this.result = { isCPF: false, message: `${position === 'first' ? 'Penúltimo' : 'Último'} número inválido. Deveria ser: ${validCtrlDigit}` };
   }
 
   isCpfValid() {
-    if (isRepetition(this.cpf))
-      return { isCPF: false, message: "O CPF não pode ser uma sequência de números iguais." };
-
     this.validateCtrlDigit("first")
     if (!this.result.isCPF) return this.result
 
@@ -38,7 +38,6 @@ export class CpfValidator { //TODO: refactor
     return this.result
   }
 }
-
 export class CnpjValidator {
   private readonly cnpj: number[]
   private result = { isCNPJ: true, message: "CNPJ válido!" }
@@ -48,14 +47,13 @@ export class CnpjValidator {
 
   private isCtrlDigitValid(position: 'first' | 'last') {
     const ctrlNumbers = position === 'first'
-      ? [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
-      : [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+      ? [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2] as const
+      : [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2] as const
 
     const ctrlDigit = this.cnpj.at(position === 'first' ? -2 : -1)
     const total = this.cnpj
       .slice(0, position === 'first' ? -2 : -1)
       .reduce((ac, cur, i) => ac + cur * ctrlNumbers[i]!, 0); //TODO: refactor
-
     const remainder = total % 11;
     const msgSubject = position === 'first' ? 'Penúltimo' : 'Último'
 
@@ -74,18 +72,11 @@ export class CnpjValidator {
   }
 
   isCnpjValid() {
-    if (!hasRightLength(this.cnpj, 14))
-      return { isCNPJ: false, message: `O CNPJ deve ter 14 dígitos, mas tem ${this.cnpj.length}.` };
-
-    if (isRepetition(this.cnpj))
-      return { isCNPJ: false, message: "O CNPJ não pode ser uma sequência de números iguais." };
-
     this.result = this.isCtrlDigitValid('first')
     if (!this.result.isCNPJ) return this.result
 
     this.result = this.isCtrlDigitValid('last')
     if (!this.result.isCNPJ) return this.result
-
     return this.result
   }
 }
@@ -105,3 +96,5 @@ export function getDirtyValues<T extends FieldValues>(dirtyFields: FieldNamesMar
     return { ...dirtyValues, [field as keyof T]: fieldValue } // TODO:  versão anterior tinha bug com valores falsy. Devem ser permitidos
   }, {} as Partial<T>)
 }
+
+

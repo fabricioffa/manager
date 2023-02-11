@@ -100,11 +100,11 @@ const Form = ({ contract, action }: FormProps) => {
           </InputContainer>
 
           <InputContainer label="Aluguel" id="rent" errorMsg={errors?.rent?.message} >
-            <input className={inputDefaultStyle} type="number" autoComplete="on" id="rent" required {...register("rent")} />
+            <input className={inputDefaultStyle} type="number" inputMode="decimal" autoComplete="on" id="rent" required {...register("rent")} />
           </InputContainer>
 
           <InputContainer label="Caução" id="bail" errorMsg={errors?.bail?.message} >
-            <input className={inputDefaultStyle} type="number" autoComplete="on" id="bail" required {...register("bail")} />
+            <input className={inputDefaultStyle} type="number" inputMode="decimal" autoComplete="on" id="bail" required {...register("bail")} />
           </InputContainer>
 
           <InputContainer label="Duração" id="duration" errorMsg={errors?.duration?.message} >
@@ -112,11 +112,11 @@ const Form = ({ contract, action }: FormProps) => {
           </InputContainer>
 
           <InputContainer label="Juros" id="interest" errorMsg={errors?.interest?.message} >
-            <input className={inputDefaultStyle} type="number" autoComplete="on" id="interest" required {...register("interest")} />
+            <input className={inputDefaultStyle} type="number" inputMode="decimal" autoComplete="on" id="interest" required {...register("interest")} />
           </InputContainer>
 
           <InputContainer label="Mora" id="arrears" errorMsg={errors?.arrears?.message} >
-            <input className={inputDefaultStyle} type="number" autoComplete="on" id="arrears" required {...register("arrears")} />
+            <input className={inputDefaultStyle} type="number" inputMode="decimal" autoComplete="on" id="arrears" required {...register("arrears")} />
           </InputContainer>
 
           <InputContainer label="Data inicial" id="initial-date" errorMsg={errors?.initialDate?.message} >
@@ -170,39 +170,39 @@ const Form = ({ contract, action }: FormProps) => {
               </legend>
 
               <div className="grid md:grid-cols-2 gap-x-6 gap-y-2">
-                <InputContainer parentClasses="col-span-full" label="Nome" id="name" errorMsg={errors?.witnesses?.[index]?.name?.message}>
+                <InputContainer parentClasses="col-span-full" label="Nome" id={`name-${index}`} errorMsg={errors?.witnesses?.[index]?.name?.message}>
                   <input className={inputDefaultStyle} type="text" autoComplete="name" maxLength={255}
-                    placeholder="Fulano da Silva" id="name" required {...register(`witnesses.${index}.name` as const)} />
+                    placeholder="Fulano da Silva" id={`name-${index}`} required {...register(`witnesses.${index}.name` as const)} />
                 </InputContainer>
 
-                <InputContainer label="RG" id="rg" errorMsg={errors?.witnesses?.[index]?.rg?.message}>
+                <InputContainer label="RG" id={`rg-${index}`} errorMsg={errors?.witnesses?.[index]?.rg?.message}>
                   <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={255}
-                    placeholder="220436629" id="rg" required {...register(`witnesses.${index}.rg` as const)} />
+                    placeholder="220436629" id={`rg-${index}`} required {...register(`witnesses.${index}.rg` as const)} />
                 </InputContainer>
 
-                <InputContainer label="Orgão emissor" id="rgEmitter" errorMsg={errors?.witnesses?.[index]?.rgEmitter?.message} >
+                <InputContainer label="Orgão emissor" id={`rgEmitter-${index}`} errorMsg={errors?.witnesses?.[index]?.rgEmitter?.message} >
                   <input className={inputDefaultStyle + ' uppercase'} type="text" autoComplete="on" maxLength={255} defaultValue="SSP/CE"
-                    placeholder="SSP/CE" id="rgEmitter" required {...register(`witnesses.${index}.rgEmitter` as const)} />
+                    placeholder="SSP/CE" id={`rgEmitter-${index}`} required {...register(`witnesses.${index}.rgEmitter` as const)} />
                 </InputContainer>
 
-                <InputContainer label="CPF" id="cpf" errorMsg={errors?.witnesses?.[index]?.cpf?.message} >
+                <InputContainer label="CPF" id={`cpf-${index}`} errorMsg={errors?.witnesses?.[index]?.cpf?.message} >
                   <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={255}
-                    placeholder="22610091001" id="cpf" required {...register(`witnesses.${index}.cpf` as const)} />
+                    placeholder="22610091001" id={`cpf-${index}`} required {...register(`witnesses.${index}.cpf` as const)} />
                 </InputContainer>
 
-                <InputContainer label="Telefone principal" id="primary-phone" errorMsg={errors?.witnesses?.[index]?.primaryPhone?.message} >
+                <InputContainer label="Telefone principal" id={`primary-phone-${index}`} errorMsg={errors?.witnesses?.[index]?.primaryPhone?.message} >
                   <input className={inputDefaultStyle} type="tel" inputMode="tel" autoComplete="tel" maxLength={255}
-                    placeholder="85985964823" id="primary-phone" required {...register(`witnesses.${index}.primaryPhone` as const)} />
+                    placeholder="85985964823" id={`primary-phone-${index}`} required {...register(`witnesses.${index}.primaryPhone` as const)} />
                 </InputContainer>
 
-                <InputContainer label="Telefone secundário" id="secondary-phone" errorMsg={errors?.witnesses?.[index]?.secondaryPhone?.message} >
+                <InputContainer label="Telefone secundário" id={`secondary-phone-${index}`} errorMsg={errors?.witnesses?.[index]?.secondaryPhone?.message} >
                   <input className={inputDefaultStyle} type="tel" inputMode="tel" autoComplete="tel" maxLength={255}
-                    placeholder="85985964823" id="secondary-phone" {...register(`witnesses.${index}.secondaryPhone` as const)} />
+                    placeholder="85985964823" id={`secondary-phone-${index}`} {...register(`witnesses.${index}.secondaryPhone` as const)} />
                 </InputContainer>
 
-                <InputContainer parentClasses="md:col-span-full lg:col-span-1" label="Email" id="email" errorMsg={errors?.witnesses?.[index]?.email?.message} >
+                <InputContainer parentClasses="md:col-span-full lg:col-span-1" label="Email" id={`email-${index}`} errorMsg={errors?.witnesses?.[index]?.email?.message} >
                   <input className={inputDefaultStyle} type="email" inputMode="email" autoComplete="email" maxLength={255}
-                    placeholder="fulano@email.com" id="email" {...register(`witnesses.${index}.email` as const)} />
+                    placeholder="fulano@email.com" id={`email-${index}`} {...register(`witnesses.${index}.email` as const)} />
                 </InputContainer>
 
                 {contract?.witnesses[index]?.id &&

@@ -6,22 +6,14 @@ import Card from '../components/contracts/Card';
 import DebitorCard from '../components/DebitorCard';
 
 const Home: NextPage = () => {
-  const { data: dueToThisWeek = [], refetch: dueToThisWeekRefetch } = trpc.contracts.dueToThisWeek.useQuery()
-  const { data: lateDebits = [], refetch: lateDebitsRefetch } = trpc.debits.lateDebits.useQuery()
-  const fazUp = async () => {
-    const res = await fetch(location.href + '/api/update')
-    dueToThisWeekRefetch()
-    lateDebitsRefetch()
-    console.log(await res.json());
-
-  }
+  const { data: dueToThisWeek = [] } = trpc.contracts.dueToThisWeek.useQuery()
+  const { data: lateDebits = [] } = trpc.debits.lateDebits.useQuery()
 
   return (
     <div>
       <h1 className='text-4xl text-center font-bold my-10'>Bem vindo</h1>
 
-      <button className='bg-link text-white px-10 py-8 rounded-md' onClick={fazUp}>Faz up</button>
-      <div className='max-w-[75vw] mb-20 '>
+      <div className='max-w-[75vw] mb-20'>
         <h2 className='text-2xl text-center font-medium mb-10'>Vencimentos da semana</h2>
         <Swiper
           spaceBetween={20}

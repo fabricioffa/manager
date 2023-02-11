@@ -1,4 +1,6 @@
 import type { Decimal } from "@prisma/client/runtime";
+import type { ChangeEvent } from "react";
+import type { FieldPath, FieldValues, UseFormReturn, FieldPathValue } from "react-hook-form";
 
 type BaseFilter = {
   property: string
@@ -29,19 +31,15 @@ export const dataFilter = <Item extends Record<string, unknown>, Filter extends 
     });
 };
 
+export const injectCharAt = (str: string, char: string, pos: number) => str.slice(0, pos) + char + str.slice(pos)
 export const castToNumbersArray = (str: string) =>
   Array.from(str, (char) => Number(char));
 
-export const isRepetition = (numbersList: number[]) =>
-  numbersList.every((number) => number === numbersList[0]);
+export const isRepetition = (str: string) =>
+  !str.split('').every(char => char === str.charAt(0))
 
 export const hasRightLength = (str: string | unknown[], targetLength: number) =>
   str.length === targetLength
-
-export const noRepetition = (val: string) => {
-  const arrayVal = castToNumbersArray(val)
-  return !isRepetition(arrayVal)
-}
 
 export const daysUntilNextSaturday = () => {
   const today = new Date();
@@ -50,7 +48,6 @@ export const daysUntilNextSaturday = () => {
     if (i) today.setDate(today.getDate() + 1);
     return today.getDate()
   })
-
 }
 
 export const formatCurrency = (val: string | number | Decimal) =>
@@ -59,8 +56,6 @@ export const formatCurrency = (val: string | number | Decimal) =>
 export const formatDate = (date: Date, options?: Intl.DateTimeFormatOptions) => {
   return new Intl.DateTimeFormat('pt-BR', options).format(date)
 }
-
-export const formatCpf = (cpf: string) => `${cpf.slice(0,3)}.${cpf.slice(3,6)}.${cpf.slice(6,9)}-${cpf.slice(9)}`
 
 export const pastMonthDate = (date: Date = new Date()) => {
   const newDate = new Date(date);
@@ -106,7 +101,59 @@ export const calculateLateDebit = (rent: number, arreas: number, interest: numbe
 
 export const toMonthInputFormat = (date: Date = new Date()) => new Intl.DateTimeFormat('en-CA').format(date).slice(0, -3)
 export const slugfy = (str: string) => str
- .normalize("NFD")
- .replace(/\p{Diacritic}/gu, "")
- .toLowerCase()
- .replaceAll(' ', '-')
+  .normalize("NFD")
+  .replace(/\p{Diacritic}/gu, "")
+  .toLowerCase()
+  .replaceAll(' ', '-')
+
+export const cleanValIfString = (val: unknown) => typeof val === 'string' ? val.replace(/\D/gi, '') : val
+
+export const formatCpf = (cpf: string) => {
+  return [9, 6, 3]
+    .reduce(
+      (formattedCpf, position) => formattedCpf.charAt(position)
+        ? injectCharAt(formattedCpf, position < 9 ? '.' : '-', position)
+        : formattedCpf
+      , cpf.replace(/\D/gi, ''))
+    .slice(0, 14)
+}
+
+export const formatPhone = (phone: string) => {
+  const cleanPhone = phone.replace(/\D/gi, '')
+  let formattedPhone = cleanPhone
+  if (cleanPhone.charAt(7)) formattedPhone = injectCharAt(formattedPhone, '-', 7)
+  if (cleanPhone.charAt(2)) formattedPhone = '(' +  injectCharAt(formattedPhone, ') ', 2)
+  return formattedPhone.slice(0, 15)
+}
+
+export const formatCnpj = (cnpj: string) => {
+  const cleanCnpj = cnpj.replace(/\D/gi, '')
+  let formattedCnpj = cleanCnpj
+  if (cleanCnpj.charAt(12)) formattedCnpj = injectCharAt(formattedCnpj, '-', 12)
+  if (cleanCnpj.charAt(8)) formattedCnpj = injectCharAt(formattedCnpj, '/', 8)
+  if (cleanCnpj.charAt(5)) formattedCnpj = injectCharAt(formattedCnpj, '.', 5)
+  if (cleanCnpj.charAt(2)) formattedCnpj = injectCharAt(formattedCnpj, '.', 2)
+  return formattedCnpj.slice(0, 18)
+}
+
+export const validateMobile = (phone: string) => phone.length === 11
+  ? phone.charAt(2) === '9'
+  : true
+
+type FieldName<TFieldValues extends FieldValues> = FieldPath<TFieldValues>
+type formatOnChangeProps<TFieldValues extends FieldValues> = {
+  field: FieldPath<TFieldValues>,
+  formatFunc: (str: string) => FieldPathValue<TFieldValues, FieldName<TFieldValues>>,
+  setValue: Pick<UseFormReturn<TFieldValues>, 'setValue'>['setValue']
+}
+
+export const formatOnChange = <TFieldValues extends FieldValues>({ field, formatFunc, setValue }: formatOnChangeProps<TFieldValues>) =>
+  ({ target }: ChangeEvent<HTMLInputElement>) => {
+    const prevCursorPos = target.selectionStart || 0
+    const prevLenght = target.value.length
+    setValue(field, formatFunc(target.value), { shouldDirty: false, shouldTouch: false, shouldValidate: false })
+    const nextCursorPos = ((prevCursorPos < target.value.length) && (prevLenght === target.value.length))
+      ? prevCursorPos
+      : target.value.length
+    target.setSelectionRange(nextCursorPos, nextCursorPos)
+  }

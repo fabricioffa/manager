@@ -1,5 +1,7 @@
-import type { CreateTenant, TenantWithPixKeys } from "../../server/schemas/tenant.schema";
+import type { CreateTenant } from "../../server/schemas/tenant.schema";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
+import type { RouterOutputs } from "../../utils/trpc";
+import type { ChangeEvent } from "react";
 import { createTenantSchema } from "../../server/schemas/tenant.schema";
 import { trpc } from "../../utils/trpc";
 import { useForm, useFieldArray, useFormState } from "react-hook-form";
@@ -7,19 +9,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import InputContainer from "../InputContainer";
 import { getDirtyValues } from "../../utils/zodHelpers";
 import { useRouter } from "next/router";
+import { formatCnpj, formatCpf, formatOnChange, formatPhone } from "../../utils/function/prod";
 
 const inputDefaultStyle =
   "mt-1 neighborhood w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0 focus:outline-link py-2 px-3";
 interface FormProps {
-  tenant?: TenantWithPixKeys;
+  tenant?: RouterOutputs['tenants']['findOne'];
   action: "create" | "edit";
 }
 
 const Form = ({ tenant, action }: FormProps) => {
   const create = trpc.tenants.create.useMutation();
   const edit = trpc.tenants.edit.useMutation();
-
-  const { register, handleSubmit, formState: { errors }, control } = useForm<CreateTenant>({
+  const { register, handleSubmit, formState: { errors }, control, setValue, getValues } = useForm<CreateTenant>({
     resolver: zodResolver(createTenantSchema),
     mode: "onBlur",
     defaultValues: {
@@ -90,12 +92,12 @@ const Form = ({ tenant, action }: FormProps) => {
         <div className="space-y-2">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
             <InputContainer label="Nome" id="name" errorMsg={errors?.name?.message} >
-              <input className={inputDefaultStyle} type="text" autoComplete="name" maxLength={255}
+              <input className={inputDefaultStyle} type="text" autoComplete="name" maxLength={191}
                 placeholder="Fulano da Silva" id="name" required {...register("name")} />
             </InputContainer>
 
             <InputContainer label="Profissão" id="profession" errorMsg={errors?.profession?.message} >
-              <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={255}
+              <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={100}
                 placeholder="Sapateiro" id="profession" required {...register("profession")} />
             </InputContainer>
 
@@ -110,32 +112,38 @@ const Form = ({ tenant, action }: FormProps) => {
             </InputContainer>
 
             <InputContainer label="RG" id="rg" errorMsg={errors?.rg?.message}>
-              <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={255}
+              <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={15}
                 placeholder="220436629" id="rg" required {...register("rg")} />
             </InputContainer>
 
             <InputContainer label="Orgão emissor" id="rgEmitter" errorMsg={errors?.rgEmitter?.message} >
-              <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={255}
+              <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={10}
                 placeholder="220436629" id="rgEmitter" required {...register("rgEmitter")} />
             </InputContainer>
 
             <InputContainer label="CPF" id="cpf" errorMsg={errors?.cpf?.message} >
-              <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={255}
-                placeholder="22610091001" id="cpf" required {...register("cpf")} />
+              <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={14}
+                placeholder="123.456.789-11" id="cpf" required {...register("cpf", {
+                  onChange: formatOnChange<CreateTenant>({field: 'cpf', formatFunc: formatCpf, setValue: setValue})
+                })} />
             </InputContainer>
 
             <InputContainer label="Telefone principal" id="primary-phone" errorMsg={errors?.primaryPhone?.message} >
-              <input className={inputDefaultStyle} type="tel" inputMode="tel" autoComplete="tel" maxLength={255}
-                placeholder="85985964823" id="primary-phone" required {...register("primaryPhone")} />
+              <input className={inputDefaultStyle} type="tel" inputMode="tel" autoComplete="tel" minLength={14} maxLength={15}
+                placeholder="(85) 99876-5495" id="primary-phone" required {...register("primaryPhone", {
+                  onChange: formatOnChange<CreateTenant>({field: 'primaryPhone', formatFunc: formatPhone, setValue: setValue})
+                })} />
             </InputContainer>
 
             <InputContainer label="Telefone secundário" id="secondary-phone" errorMsg={errors?.secondaryPhone?.message} >
-              <input className={inputDefaultStyle} type="tel" inputMode="tel" autoComplete="tel" maxLength={255}
-                placeholder="85985964823" id="secondary-phone" {...register("secondaryPhone")} />
+              <input className={inputDefaultStyle} type="tel" inputMode="tel" autoComplete="tel" minLength={14} maxLength={15}
+                placeholder="(85) 99876-5495" id="secondary-phone" {...register("secondaryPhone", {
+                  onChange: formatOnChange<CreateTenant>({field: 'secondaryPhone', formatFunc: formatPhone, setValue: setValue})
+                })} />
             </InputContainer>
 
             <InputContainer parentClasses="md:col-span-full lg:col-span-1" label="Email" id="email" errorMsg={errors?.email?.message} >
-              <input className={inputDefaultStyle} type="email" inputMode="email" autoComplete="email" maxLength={255}
+              <input className={inputDefaultStyle} type="email" inputMode="email" autoComplete="email" maxLength={191}
                 placeholder="fulano@email.com" id="email" {...register("email")} />
             </InputContainer>
 
@@ -145,7 +153,7 @@ const Form = ({ tenant, action }: FormProps) => {
             <div className="flex flex-col gap-6 ">
               <InputContainer label="Observações" id="obs" errorMsg={errors?.obs?.message} >
                 <textarea className={inputDefaultStyle + " resize-none"} placeholder="Paga atrasado, faz bagunça..."
-                  spellCheck id="obs" cols={30} rows={8} {...register("obs")} />
+                  spellCheck id="obs" cols={30} rows={8} maxLength={2000} {...register("obs")} />
               </InputContainer>
 
               <button className="bg-link disabled:bg-slate-200 rounded-lg text-lg font-semibold text-white mt-auto py-3 px-8"
@@ -157,7 +165,7 @@ const Form = ({ tenant, action }: FormProps) => {
             <section>
               <div className="flex items-center justify-center gap-3">
                 <h3 className="text-lg text-center font-medium ">Chaves de Pix</h3>
-                <button className="text-green-600" type="button" aria-label="Acrescentar chave"
+                <button className="text-3xl text-green-600" type="button" aria-label="Acrescentar chave"
                   onClick={() => append({ key: '', keyType: 'email', id: '' })}>
                   <i className="fa-solid fa-circle-plus"></i>
                 </button>
@@ -167,9 +175,11 @@ const Form = ({ tenant, action }: FormProps) => {
                 {fields.map((field, index) => {
                   return (
                     <fieldset className="flex items-center justify-center gap-x-6 gap-y-2" key={field.id}>
-                      <InputContainer parentClasses="w-full" label="Tipo de chave" id="type" errorMsg={errors?.pixKeys?.[index]?.keyType?.message}>
+                      <InputContainer parentClasses="self-start w-full" label="Tipo de chave" id={`type-${index}`} errorMsg={errors?.pixKeys?.[index]?.keyType?.message}>
                         <select className="mt-1 w-full rounded-md bg-gray-100 border-transparentfocus:border-gray-500 focus:outline-link py-2 px-3"
-                          id="type" {...register(`pixKeys.${index}.keyType` as const)}>
+                          id={`type-${index}`} {...register(`pixKeys.${index}.keyType` as const, {
+                            deps: [`pixKeys.${index}.key`],
+                          })}>
                           <option value="email">email</option>
                           <option value="cpf">cpf</option>
                           <option value="cnpj">cnpj</option>
@@ -178,14 +188,23 @@ const Form = ({ tenant, action }: FormProps) => {
                         </select>
                       </InputContainer>
 
-                      <InputContainer parentClasses="w-full" label="Chave" id="key" errorMsg={errors.pixKeys?.[index]?.key?.message}>
+                      <InputContainer parentClasses="self-start w-full" label="Chave" id={`key-${index}`} errorMsg={errors.pixKeys?.[index]?.key?.message}>
                         <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={35}
-                          placeholder="006599975" id="key" {...register(`pixKeys.${index}.key` as const)} />
+                          placeholder="006599975" id={`key-${index}`} {...register(`pixKeys.${index}.key` as const, {
+                            onChange: (e: ChangeEvent<HTMLInputElement>) => {
+                              if (getValues(`pixKeys.${index}.keyType`) === 'cpf')
+                                formatOnChange<CreateTenant>({field: `pixKeys.${index}.key`, formatFunc: formatCpf, setValue: setValue})(e)
+                              if (getValues(`pixKeys.${index}.keyType`) === 'celular')
+                                formatOnChange<CreateTenant>({field: `pixKeys.${index}.key`, formatFunc: formatPhone, setValue: setValue})(e)
+                              if (getValues(`pixKeys.${index}.keyType`) === 'cnpj')
+                                formatOnChange<CreateTenant>({field: `pixKeys.${index}.key`, formatFunc: formatCnpj, setValue: setValue})(e)
+                            }
+                          })} />
                       </InputContainer>
 
                       <input className="hidden" type="text" id="pixkey-id" readOnly {...register(`pixKeys.${index}.id` as const)} />
 
-                      <button className="self-end mb-3 text-red-500" type="button" aria-label="Remover esta chave" onClick={() => remove(index)}>
+                      <button className="self-center text-3xl text-red-500" type="button" aria-label="Remover esta chave" onClick={() => remove(index)}>
                         <i className="fa-solid fa-circle-minus"></i>
                       </button>
                     </fieldset>

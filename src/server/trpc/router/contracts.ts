@@ -91,6 +91,9 @@ export const contractsRouter = router({
             in: daysUntilNextSaturday()
           }
         },
+        orderBy: {
+          dueDay: 'asc'
+        },
         include: {
           tenant: {
             select: {

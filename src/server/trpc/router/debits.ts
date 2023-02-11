@@ -92,6 +92,9 @@ export const debitsRouter = router({
           },
           paidAt: null,
         },
+        orderBy: {
+          amount: 'desc',
+        },
         select: {
           id: true,
           amount: true,

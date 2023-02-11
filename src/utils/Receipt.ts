@@ -76,7 +76,7 @@ export default class Receipt {
 
   private readonly title = {
     x: this.page.w / 2,
-    y: this.page.m + this.mainBox.mt / 2 + this.doc.setFontSize(19).getTextDimensions(this.titleText).h * .3 ,
+    y: this.page.m + this.mainBox.mt / 2 + this.doc.setFontSize(19).getTextDimensions(this.titleText).h * .3,
     h: this.doc.setFontSize(19).getTextDimensions(this.titleText).h,
     text: this.titleText,
     fontSize: 19,
@@ -95,7 +95,7 @@ export default class Receipt {
 
   private readonly numberBox = {
     x: this.page.w - this.page.m - this.mainBox.mx - this.doc.getTextDimensions('Nº 0000').w,
-    y: this.page.m + this.body.my / 2 - 2.5 ,
+    y: this.page.m + this.body.my / 2 - 2.5,
     w: this.doc.getTextDimensions('Nº 0000').w,
     h: this.lineHeight + 3,
     bgColor: [255, 255, 255] as const,
