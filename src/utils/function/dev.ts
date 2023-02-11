@@ -1,5 +1,5 @@
 import type { Faker } from "@faker-js/faker";
-import { castToNumbersArray, isRepetition } from "./prod";
+import { isRepetition } from "./prod";
 import { CpfValidator } from "../zodHelpers";
 
 export const generateCpf = (faker: Faker) => {
@@ -10,7 +10,7 @@ export const generateCpf = (faker: Faker) => {
       11,
       { allowLeadingZeros: true },
     ]);
-    isBaseInvalid = isRepetition(castToNumbersArray(cpf))
+    isBaseInvalid = isRepetition(cpf)
   }
   const firstCtrlDigit = new CpfValidator(cpf).getCtrlDigit('first')
   cpf = `${cpf.slice(0, -2)}${firstCtrlDigit}0`
