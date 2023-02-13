@@ -1,5 +1,5 @@
 import { KeyType } from "@prisma/client";
-import z from "zod";
+import z from "./../../utils/my-zod";
 import { CnpjValidator, CpfValidator, isRepetitionRefiner, isValidMobileRefiner } from "../../utils/zodHelpers";
 import { cleanValIfString } from "../../utils/function/prod";
 

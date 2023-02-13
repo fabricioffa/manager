@@ -6,8 +6,8 @@ import { cleanValIfString } from '../../utils/function/prod';
 
 export const createTenantSchema = z.object({
   name: z.string().trim().min(1),
-  rg: z.preprocess(cleanValIfString, z.string().trim().min(1).max(15)),
-  rgEmitter: z.string().trim().min(1).max(10).default("SSP/CE"),
+  rg: z.preprocess(cleanValIfString, z.string().trim().min(5).max(15)),
+  rgEmitter: z.string().trim().min(2).max(10).default("SSP/CE"),
   cpf: z.preprocess(cleanValIfString, z.string().trim().length(11).superRefine((val, ctx) => {
     const result = new CpfValidator(val).isCpfValid()
     if (!result.isCPF) {

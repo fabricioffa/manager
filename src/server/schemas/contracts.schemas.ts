@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import z from "zod";
+import z from "./../../utils/my-zod";
 import { formWitnessSchema, witnessSchema } from "./witnesses.schema";
 
 const limits = {
@@ -10,9 +10,9 @@ const limits = {
 export const contractsSchema = z.object({
   dueDay: z.preprocess((val) => Number(val), z.number().positive().max(31)),
   initialDate: z.date().min(limits.fiftyYearsBefore).max(limits.fiftyYearsAfter),
-  rent: z.preprocess((val) => Number(val), z.number().positive().max(99999)),
-  bail: z.preprocess((val) => Number(val), z.number().positive().max(99999)),
-  duration: z.preprocess((val) => Number(val), z.number().positive().max(100).default(12)),
+  rent: z.preprocess((val) => Number(val), z.number().positive().max(99_999)),
+  bail: z.preprocess((val) => Number(val), z.number().positive().max(99_999)),
+  duration: z.preprocess((val) => Number(val), z.number().positive().min(1).max(100).default(12)),
   interest: z.preprocess((val) => Number(val), z.number().positive().max(100).default(1)),
   arrears: z.preprocess((val) => Number(val), z.number().positive().max(100).default(10)),
   waterId: z.string().trim().nullish().or(z.literal("")),

@@ -112,17 +112,17 @@ const Form = ({ tenant, action }: FormProps) => {
             </InputContainer>
 
             <InputContainer label="RG" id="rg" errorMsg={errors?.rg?.message}>
-              <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={15}
+              <input className={inputDefaultStyle} type="text" autoComplete="on" minLength={5} maxLength={15}
                 placeholder="220436629" id="rg" required {...register("rg")} />
             </InputContainer>
 
             <InputContainer label="Orgão emissor" id="rgEmitter" errorMsg={errors?.rgEmitter?.message} >
-              <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={10}
+              <input className={inputDefaultStyle} type="text" autoComplete="on" minLength={2} maxLength={10}
                 placeholder="220436629" id="rgEmitter" required {...register("rgEmitter")} />
             </InputContainer>
 
             <InputContainer label="CPF" id="cpf" errorMsg={errors?.cpf?.message} >
-              <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={14}
+              <input className={inputDefaultStyle} type="text" autoComplete="on" minLength={14} maxLength={14}
                 placeholder="123.456.789-11" id="cpf" required {...register("cpf", {
                   onChange: formatOnChange<CreateTenant>({field: 'cpf', formatFunc: formatCpf, setValue: setValue})
                 })} />

@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import InputContainer from "../InputContainer";
 import { getDirtyValues } from "../../utils/zodHelpers";
 import { useRouter } from "next/router";
+import { formatCpf, formatOnChange, formatPhone } from "../../utils/function/prod";
 
 const inputDefaultStyle =
   "mt-1 neighborhood  w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0 focus:outline-link py-2 px-3";
@@ -27,7 +28,7 @@ const Form = ({ contract, action }: FormProps) => {
   const { data: tenants, isSuccess: loadedTenants } = trpc.tenants.selectData.useQuery()
   const { data: houses, isSuccess: loadedHouses } = trpc.houses.selectData.useQuery()
 
-  const { register, handleSubmit, formState: { errors }, control, } = useForm<ContractsSchema>({
+  const { register, handleSubmit, formState: { errors }, control, setValue } = useForm<ContractsSchema>({
     resolver: zodResolver(contractsSchema),
     mode: "onBlur",
     defaultValues: {
@@ -100,23 +101,23 @@ const Form = ({ contract, action }: FormProps) => {
           </InputContainer>
 
           <InputContainer label="Aluguel" id="rent" errorMsg={errors?.rent?.message} >
-            <input className={inputDefaultStyle} type="number" inputMode="decimal" autoComplete="on" id="rent" required {...register("rent")} />
+            <input className={inputDefaultStyle} type="number" inputMode="decimal" autoComplete="on" step={0.01} max={99_999} id="rent" required {...register("rent")} />
           </InputContainer>
 
           <InputContainer label="Caução" id="bail" errorMsg={errors?.bail?.message} >
-            <input className={inputDefaultStyle} type="number" inputMode="decimal" autoComplete="on" id="bail" required {...register("bail")} />
+            <input className={inputDefaultStyle} type="number" inputMode="decimal" autoComplete="on" step={0.01} max={99_999} id="bail" required {...register("bail")} />
           </InputContainer>
 
           <InputContainer label="Duração" id="duration" errorMsg={errors?.duration?.message} >
-            <input className={inputDefaultStyle} type="number" autoComplete="on" id="duration" required {...register("duration")} />
+            <input className={inputDefaultStyle} type="number" autoComplete="on" step={1} min={1} max={100} id="duration" required {...register("duration")} />
           </InputContainer>
 
           <InputContainer label="Juros" id="interest" errorMsg={errors?.interest?.message} >
-            <input className={inputDefaultStyle} type="number" inputMode="decimal" autoComplete="on" id="interest" required {...register("interest")} />
+            <input className={inputDefaultStyle} type="number" inputMode="decimal" autoComplete="on" step={0.01} max={100} id="interest" required {...register("interest")} />
           </InputContainer>
 
           <InputContainer label="Mora" id="arrears" errorMsg={errors?.arrears?.message} >
-            <input className={inputDefaultStyle} type="number" inputMode="decimal" autoComplete="on" id="arrears" required {...register("arrears")} />
+            <input className={inputDefaultStyle} type="number" inputMode="decimal" autoComplete="on" step={0.01} max={100} id="arrears" required {...register("arrears")} />
           </InputContainer>
 
           <InputContainer label="Data inicial" id="initial-date" errorMsg={errors?.initialDate?.message} >
@@ -171,37 +172,43 @@ const Form = ({ contract, action }: FormProps) => {
 
               <div className="grid md:grid-cols-2 gap-x-6 gap-y-2">
                 <InputContainer parentClasses="col-span-full" label="Nome" id={`name-${index}`} errorMsg={errors?.witnesses?.[index]?.name?.message}>
-                  <input className={inputDefaultStyle} type="text" autoComplete="name" maxLength={255}
+                  <input className={inputDefaultStyle} type="text" autoComplete="name" maxLength={191}
                     placeholder="Fulano da Silva" id={`name-${index}`} required {...register(`witnesses.${index}.name` as const)} />
                 </InputContainer>
 
                 <InputContainer label="RG" id={`rg-${index}`} errorMsg={errors?.witnesses?.[index]?.rg?.message}>
-                  <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={255}
+                  <input className={inputDefaultStyle} type="text" autoComplete="on" minLength={5} maxLength={15}
                     placeholder="220436629" id={`rg-${index}`} required {...register(`witnesses.${index}.rg` as const)} />
                 </InputContainer>
 
                 <InputContainer label="Orgão emissor" id={`rgEmitter-${index}`} errorMsg={errors?.witnesses?.[index]?.rgEmitter?.message} >
-                  <input className={inputDefaultStyle + ' uppercase'} type="text" autoComplete="on" maxLength={255} defaultValue="SSP/CE"
+                  <input className={inputDefaultStyle + ' uppercase'} type="text" autoComplete="on" minLength={2} maxLength={10} defaultValue="SSP/CE"
                     placeholder="SSP/CE" id={`rgEmitter-${index}`} required {...register(`witnesses.${index}.rgEmitter` as const)} />
                 </InputContainer>
 
                 <InputContainer label="CPF" id={`cpf-${index}`} errorMsg={errors?.witnesses?.[index]?.cpf?.message} >
-                  <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={255}
-                    placeholder="22610091001" id={`cpf-${index}`} required {...register(`witnesses.${index}.cpf` as const)} />
+                  <input className={inputDefaultStyle} type="text" autoComplete="on" minLength={14} maxLength={14}
+                    placeholder="123.456.789-11" id={`cpf-${index}`} required {...register(`witnesses.${index}.cpf` as const, {
+                  onChange: formatOnChange<ContractsSchema>({field: `witnesses.${index}.cpf`, formatFunc: formatCpf, setValue: setValue})
+                })} />
                 </InputContainer>
 
                 <InputContainer label="Telefone principal" id={`primary-phone-${index}`} errorMsg={errors?.witnesses?.[index]?.primaryPhone?.message} >
-                  <input className={inputDefaultStyle} type="tel" inputMode="tel" autoComplete="tel" maxLength={255}
-                    placeholder="85985964823" id={`primary-phone-${index}`} required {...register(`witnesses.${index}.primaryPhone` as const)} />
+                  <input className={inputDefaultStyle} type="tel" inputMode="tel" autoComplete="tel" minLength={14} maxLength={15}
+                    placeholder="(85) 99876-5495" id={`primary-phone-${index}`} required {...register(`witnesses.${index}.primaryPhone` as const, {
+                      onChange: formatOnChange<ContractsSchema>({field: `witnesses.${index}.primaryPhone`, formatFunc: formatPhone, setValue: setValue})
+                })} />
                 </InputContainer>
 
                 <InputContainer label="Telefone secundário" id={`secondary-phone-${index}`} errorMsg={errors?.witnesses?.[index]?.secondaryPhone?.message} >
-                  <input className={inputDefaultStyle} type="tel" inputMode="tel" autoComplete="tel" maxLength={255}
-                    placeholder="85985964823" id={`secondary-phone-${index}`} {...register(`witnesses.${index}.secondaryPhone` as const)} />
+                  <input className={inputDefaultStyle} type="tel" inputMode="tel" autoComplete="tel" minLength={14} maxLength={15}
+                    placeholder="(85) 99876-5495" id={`secondary-phone-${index}`} {...register(`witnesses.${index}.secondaryPhone` as const, {
+                      onChange: formatOnChange<ContractsSchema>({field: `witnesses.${index}.secondaryPhone`, formatFunc: formatPhone, setValue: setValue})
+                    })} />
                 </InputContainer>
 
                 <InputContainer parentClasses="md:col-span-full lg:col-span-1" label="Email" id={`email-${index}`} errorMsg={errors?.witnesses?.[index]?.email?.message} >
-                  <input className={inputDefaultStyle} type="email" inputMode="email" autoComplete="email" maxLength={255}
+                  <input className={inputDefaultStyle} type="email" inputMode="email" autoComplete="email" maxLength={191}
                     placeholder="fulano@email.com" id={`email-${index}`} {...register(`witnesses.${index}.email` as const)} />
                 </InputContainer>
 

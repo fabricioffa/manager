@@ -73,7 +73,7 @@ model House {
   complement    String
   neighborhood  String     @db.VarChar(100)
   city          String     @db.VarChar(100)
-  iptu          String     @db.Char(14)
+  iptu          String     @db.VarChar(20)
   type          HouseType  @default(residencial)
   waterId       String     @unique @map("water_id") @db.VarChar(50)
   electricityId String     @unique @map("electricity_id") @db.VarChar(50)
@@ -87,7 +87,7 @@ model Witness {
   id             String   @id @default(cuid())
   name           String
   rg             String   @unique @db.VarChar(15)
-  rgEmitter      String   @default("SSP/CE") @map("rg_emitter") @db.VarChar(50)
+  rgEmitter      String   @default("SSP/CE") @map("rg_emitter") @db.VarChar(10)
   cpf            String   @unique @db.Char(11)
   primaryPhone   String   @map("primary_phone") @db.VarChar(25)
   secondaryPhone String?  @map("secondary_phone") @db.VarChar(25)

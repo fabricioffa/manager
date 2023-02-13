@@ -119,7 +119,7 @@ const Form = ({ house, action }: FormProps) => {
           </InputContainer>
 
           <InputContainer label="IPTU" id="iptu" errorMsg={errors?.iptu?.message}>
-            <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={14}
+            <input className={inputDefaultStyle} type="text" autoComplete="on" minLength={5} maxLength={20}
               placeholder="Fortaleza" id="iptu" {...register("iptu")} />
           </InputContainer>
 
