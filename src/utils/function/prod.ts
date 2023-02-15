@@ -99,7 +99,9 @@ export const calculateLateDebit = (rent: number, arreas: number, interest: numbe
   return totalAmountDue;
 }
 
-export const toMonthInputFormat = (date: Date = new Date()) => new Intl.DateTimeFormat('en-CA').format(date).slice(0, -3)
+export const toMonthInputFormat = (date: Date = new Date()) =>
+  new Intl.DateTimeFormat('pt-BR').format(date).slice(3).split('/').reverse().join('-')
+
 export const slugfy = (str: string) => str
   .normalize("NFD")
   .replace(/\p{Diacritic}/gu, "")
@@ -122,7 +124,7 @@ export const formatPhone = (phone: string) => {
   const cleanPhone = phone.replace(/\D/gi, '')
   let formattedPhone = cleanPhone
   if (cleanPhone.charAt(7)) formattedPhone = injectCharAt(formattedPhone, '-', 7)
-  if (cleanPhone.charAt(2)) formattedPhone = '(' +  injectCharAt(formattedPhone, ') ', 2)
+  if (cleanPhone.charAt(2)) formattedPhone = '(' + injectCharAt(formattedPhone, ') ', 2)
   return formattedPhone.slice(0, 15)
 }
 

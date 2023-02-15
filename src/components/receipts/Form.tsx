@@ -20,7 +20,7 @@ interface FormProps {
 }
 
 const Form = ({ debit }: FormProps) => {
-  const {data: pastPaidDebitsCount} = trpc.debits.pastPaidDebitsCount.useQuery({contractId: debit.contract.id})
+  const { data: pastPaidDebitsCount } = trpc.debits.pastPaidDebitsCount.useQuery({ contractId: debit.contract.id })
 
   const { register, handleSubmit, formState: { errors } } = useForm<ReceiptSchema>({
     resolver: zodResolver(receiptSchema),
@@ -96,7 +96,7 @@ const Form = ({ debit }: FormProps) => {
 
           <InputContainer label="Data de emissão" id="date" errorMsg={errors?.date?.message} >
             <input className={inputDefaultStyle} type="date" min={fiveYearsBack} max={fiveYearsAfter}
-              defaultValue={new Date().toLocaleDateString('en-CA')} id="date"
+              defaultValue={new Date().toLocaleDateString('fr-CA')} id="date"
               {...register("date", { valueAsDate: true })} />
           </InputContainer>
 
