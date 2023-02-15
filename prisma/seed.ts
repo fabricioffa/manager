@@ -94,31 +94,46 @@ const generateFakeContractsData = (tenants: Tenant[], houses: House[]) =>
 
 async function main() {
   await prisma.debit.deleteMany();
+  console.log('Debits deleted')
   await prisma.contract.deleteMany();
+  console.log('Contracts deleted')
   await prisma.house.deleteMany();
+  console.log('Houses deleted')
   await prisma.pixKey.deleteMany();
+  console.log('Pixkeys deleted')
   await prisma.tenant.deleteMany();
+  console.log('Tenants deleted')
   await prisma.witness.deleteMany();
+  console.log('Witnesses deleted')
+
 
   await prisma.house.createMany({
     data: generateFakeHousesData(80),
     skipDuplicates: true,
   });
+
+  console.log('Created houses')
+
   await prisma.tenant.createMany({
     data: generateFakeTenantsData(70),
     skipDuplicates: true,
   });
+  console.log('Created tenants')
   const tenants = await prisma.tenant.findMany();
+  console.log('Got all tenants')
   const houses = await prisma.house.findMany();
+  console.log('Got all houses')
   await prisma.pixKey.createMany({
     data: generateFakePixKeysData(tenants),
     skipDuplicates: true,
   });
+  console.log('Created pixKeys')
   const someTenants = tenants.slice(0, 40)
 
   await prisma.contract.createMany({
     data: generateFakeContractsData(someTenants, houses)
   })
+  console.log('Created contracts')
 
   const contracts = await prisma.contract.findMany();
 
@@ -136,6 +151,9 @@ async function main() {
       }
     })
   })
+  console.log('Created witnesses')
+  console.log('That\'s it')
+
 }
 
 main()
