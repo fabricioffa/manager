@@ -9,6 +9,7 @@ import InputContainer from "../InputContainer";
 import { getDirtyValues } from "../../utils/zodHelpers";
 import { useRouter } from "next/router";
 import { formatCpf, formatOnChange, formatPhone } from "../../utils/function/prod";
+import { WitnessSchema } from "../../server/schemas/witnesses.schema";
 
 const inputDefaultStyle =
   "mt-1 neighborhood  w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0 focus:outline-link py-2 px-3";
@@ -20,6 +21,13 @@ interface FormProps {
 const fiveYearsBack = `${new Date().getFullYear() - 5}-01-01`;
 const fiveYearsAfter = `${new Date().getFullYear() + 5}-01-01`;
 const today = new Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "2-digit", day: "2-digit" }).format(Date.now())
+
+const formatWitness = (witness: WitnessSchema) => ({
+  ...witness,
+  cpf: formatCpf(witness.cpf),
+  primaryPhone: formatPhone(witness.primaryPhone),
+  secondaryPhone: formatPhone(witness.secondaryPhone || ''),
+})
 
 const Form = ({ contract, action }: FormProps) => {
   const create = trpc.contracts.create.useMutation();
@@ -42,7 +50,7 @@ const Form = ({ contract, action }: FormProps) => {
       waterId: contract?.waterId,
       houseId: contract?.houseId,
       tenantId: contract?.tenantId,
-      witnesses: contract?.witnesses
+      witnesses: contract?.witnesses.map(witness => formatWitness(witness))
     }
   });
 

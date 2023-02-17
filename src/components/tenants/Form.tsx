@@ -2,6 +2,7 @@ import type { CreateTenant } from "../../server/schemas/tenant.schema";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 import type { RouterOutputs } from "../../utils/trpc";
 import type { ChangeEvent } from "react";
+import type { CreatePixKeysSchema } from "../../server/schemas/pixKeys.schemas";
 import { createTenantSchema } from "../../server/schemas/tenant.schema";
 import { trpc } from "../../utils/trpc";
 import { useForm, useFieldArray, useFormState } from "react-hook-form";
@@ -18,6 +19,15 @@ interface FormProps {
   action: "create" | "edit";
 }
 
+const formatKey = (pixKey: CreatePixKeysSchema) => {
+  switch (pixKey.keyType) {
+    case 'cpf': return {...pixKey, key: formatCpf(pixKey.key)}
+    case 'cnpj': return {...pixKey, key: formatCnpj(pixKey.key)}
+    case 'celular': return {...pixKey, key: formatPhone(pixKey.key)}
+    default: pixKey
+  }
+}
+
 const Form = ({ tenant, action }: FormProps) => {
   const create = trpc.tenants.create.useMutation();
   const edit = trpc.tenants.edit.useMutation();
@@ -29,13 +39,13 @@ const Form = ({ tenant, action }: FormProps) => {
       email: tenant?.email,
       maritalStatus: tenant?.maritalStatus,
       profession: tenant?.profession,
-      cpf: tenant?.cpf,
+      cpf: formatCpf(tenant?.cpf || ''),
       rg: tenant?.rg,
       rgEmitter: tenant?.rgEmitter || 'SSP/CE',
-      primaryPhone: tenant?.primaryPhone,
-      secondaryPhone: tenant?.secondaryPhone,
+      primaryPhone: formatPhone(tenant?.primaryPhone || ''),
+      secondaryPhone: formatPhone(tenant?.secondaryPhone || ''),
       obs: tenant?.obs,
-      pixKeys: tenant?.pixKeys,
+      pixKeys: tenant?.pixKeys.map(pixKey => formatKey(pixKey)),
     }
   });
 

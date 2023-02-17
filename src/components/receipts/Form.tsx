@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputContainer from "../InputContainer";
 import { receiptSchema } from "../../server/schemas/receipt.schema";
-import { pastMonthDate, slugfy, toMonthInputFormat } from "../../utils/function/prod";
+import { formatCpf, formatOnChange, pastMonthDate, slugfy, toMonthInputFormat } from "../../utils/function/prod";
 import Receipt from "../../utils/Receipt";
 
 const inputDefaultStyle = `mt-1 neighborhood w-full rounded-md bg-gray-100 border-transparent
@@ -22,14 +22,17 @@ interface FormProps {
 const Form = ({ debit }: FormProps) => {
   const { data: pastPaidDebitsCount } = trpc.debits.pastPaidDebitsCount.useQuery({ contractId: debit.contract.id })
 
-  const { register, handleSubmit, formState: { errors } } = useForm<ReceiptSchema>({
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm<ReceiptSchema>({
     resolver: zodResolver(receiptSchema),
     mode: "onBlur",
     defaultValues: {
       amount: Number(debit.amount),
       city: 'Fortaleza',
       house: debit.contract.house,
-      tenant: debit.contract.tenant
+      tenant: {
+        name: debit.contract.tenant.name,
+        cpf: formatCpf(debit.contract.tenant.cpf)
+      }
     }
   });
 
@@ -41,7 +44,7 @@ const Form = ({ debit }: FormProps) => {
     const receipt = new Receipt(receiptData, pastPaidDebitsCount)
 
     const pdf = receipt.makePdf();
-    pdf.save(`recibo-${slugfy(receiptData.tenant.name)}-${toMonthInputFormat(pastMonthDate(receiptData.rentingPeriod))}`)
+    pdf.save(`recibo-${slugfy(receiptData.tenant.name)}-${toMonthInputFormat(pastMonthDate(receiptData.rentingPeriod))}.pdf`)
     // const pdfUrl = pdf.output('bloburi')
     // const iframe = "<iframe class='h-[100vh]' width='100%' height='100%' src='" + pdfUrl + "'></iframe>"
     // document.getElementById("pdf-preview").innerHTML = iframe;
@@ -65,7 +68,9 @@ const Form = ({ debit }: FormProps) => {
 
           <InputContainer label="CPF" id="cpf" errorMsg={errors?.tenant?.cpf?.message}>
             <input className={inputDefaultStyle} type="text" autoComplete="on" maxLength={11}
-              placeholder="775" id="cpf" {...register("tenant.cpf")} />
+              placeholder="775" id="cpf" {...register("tenant.cpf", {
+                onChange: formatOnChange<ReceiptSchema>({field: 'tenant.cpf', formatFunc: formatCpf, setValue: setValue})
+              })} />
           </InputContainer>
 
           <InputContainer label="Nome" id="name" errorMsg={errors?.tenant?.name?.message}>
