@@ -9,19 +9,19 @@ import type { TenantsSearchOptions } from "../../server/schemas/tenant.schema";
 
 const perPage = 10;
 
-const defaultFilter: TenantsSearchOptions = { property: 'all', caseSensitive: false, query: '' };
+const defaultFilter = { property: 'all', caseSensitive: false, query: '' } as const;
 
 const Search = () => {
   const [filter, setFilter] = useState<TenantsSearchOptions>(defaultFilter)
   const [currentPage, setCurrentPage] = useState(0)
-  const { data, isSuccess } = trpc.tenants.findAll.useQuery()
+  const { data } = trpc.tenants.findAll.useQuery()
 
   const onFilterChange = (newFilterProperty: Partial<TenantsSearchOptions>) => {
     setFilter({ ...filter, ...newFilterProperty })
   }
 
-  if (isSuccess) {
-    const tenants = dataFilter<NonNullable<typeof data>[number], TenantsSearchOptions>(data, filter)
+  if (data) {
+    const tenants = dataFilter(data, filter)
     const paginatedTenants = tenants.slice(currentPage, currentPage + perPage)
 
     const onPageChange = (index: number) => {

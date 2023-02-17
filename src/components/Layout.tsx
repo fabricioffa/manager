@@ -1,5 +1,5 @@
 import SideBar from "./SideBar";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import GoBackBtn from "./goBackBtn";
 import Image from "next/image";
 
@@ -23,6 +23,7 @@ export default function Layout({ children }: { children: JSX.Element }) {
     return (
       <div className="w-screen h-screen">
         <Image className="w-full h-full object-contain" src="/images/not-mama.webp" alt="Baby: not mamma!" />
+        <button className='p-2 border-r-lg pl-8 font-bold text-lg' onClick={() => signOut()}>Log out</button>
       </div>
     )
 

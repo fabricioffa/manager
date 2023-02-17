@@ -11,3 +11,5 @@ export const generateCpf = (faker: Faker) => {
   const secondCtrlDigit = new CpfValidator(cpf).getCtrlDigit('second')
   return cpf.slice(0, -1) + secondCtrlDigit
 }
+
+

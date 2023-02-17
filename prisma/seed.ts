@@ -93,6 +93,10 @@ const generateFakeContractsData = (tenants: Tenant[], houses: House[]) =>
   });
 
 async function main() {
+  prisma.account.deleteMany()
+  prisma.session.deleteMany()
+  prisma.user.deleteMany()
+  prisma.verificationToken.deleteMany()
   await prisma.debit.deleteMany();
   console.log('Debits deleted')
   await prisma.contract.deleteMany();
