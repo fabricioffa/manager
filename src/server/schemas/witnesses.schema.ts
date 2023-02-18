@@ -1,7 +1,6 @@
 import z from "./../../utils/my-zod";
 import { name, rg, rgEmitter, cpf, primaryPhone, secondaryPhone, email } from "./base.schemas";
 
-
 export const witnessSchema = z.object({
   name,
   rg,
