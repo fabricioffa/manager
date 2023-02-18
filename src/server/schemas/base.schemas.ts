@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { nullifyEmptyStr, stripOfNonNumeric, stripOfNonNumericOrNullifyEmptyStr } from "../../utils/function/prod";
 import { CnpjValidator, CpfValidator, isRepetitionRefiner, isValidMobileRefiner } from "../../utils/zodHelpers";
 import z from "./../../utils/my-zod";
@@ -35,3 +36,8 @@ export const cnpj = z.preprocess(stripOfNonNumeric, z.string().length(14).refine
   }
 );
 
+export const baseSearchOptionsSchema = (anyEnum: z.EnumLike) => z.object({
+  property: z.nativeEnum({ ...anyEnum, all: 'all' } as const),
+  caseSensitive: z.boolean().default(false),
+  query: z.string(),
+})
