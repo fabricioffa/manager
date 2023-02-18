@@ -1,4 +1,4 @@
-import type { Decimal } from "@prisma/client/runtime";
+import type { Decimal } from "@prisma/client/runtime/library";
 import type { ChangeEvent } from "react";
 import type { FieldPath, FieldValues, UseFormReturn, FieldPathValue } from "react-hook-form";
 
@@ -108,7 +108,14 @@ export const slugfy = (str: string) => str
   .toLowerCase()
   .replaceAll(' ', '-')
 
-export const cleanValIfString = (val: unknown) => typeof val === 'string' ? val.replace(/\D/gi, '') : val
+
+export const stripOfNonNumeric = <T>(val: T) => typeof val === 'string' ? val.replace(/\D/gi, '') : val
+export const nullifyEmptyStr = (val: unknown) => typeof val === 'string' && val === '' ? null : val
+export const stripOfNonNumericOrNullifyEmptyStr = <T>(val: T) => {
+  if (typeof val === 'string')
+    return val === '' ? null : val.replace(/\D/gi, '')
+  return val
+}
 
 export const formatCpf = (cpf: string) => {
   return [9, 6, 3]

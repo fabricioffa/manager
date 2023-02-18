@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import z from "./../../utils/my-zod";
 import { formWitnessSchema, witnessSchema } from "./witnesses.schema";
+import { electricityId, waterId } from "./base.schemas";
 
 const limits = {
   fiftyYearsBefore: new Date(new Date().getFullYear() - 5, 0, 1),
@@ -8,15 +9,15 @@ const limits = {
 };
 
 export const contractsSchema = z.object({
-  dueDay: z.preprocess((val) => Number(val), z.number().positive().max(31)),
+  dueDay: z.number({ coerce: true }).positive().max(31),
   initialDate: z.date().min(limits.fiftyYearsBefore).max(limits.fiftyYearsAfter),
-  rent: z.preprocess((val) => Number(val), z.number().positive().max(99_999)),
-  bail: z.preprocess((val) => Number(val), z.number().positive().max(99_999)),
-  duration: z.preprocess((val) => Number(val), z.number().positive().min(1).max(100).default(12)),
-  interest: z.preprocess((val) => Number(val), z.number().positive().max(100).default(1)),
-  arrears: z.preprocess((val) => Number(val), z.number().positive().max(100).default(10)),
-  waterId: z.string().trim().nullish().or(z.literal("")),
-  electricityId: z.string().trim().nullish().or(z.literal("")),
+  rent: z.number({ coerce: true }).positive().max(99_999),
+  bail: z.number({ coerce: true }).positive().max(99_999),
+  duration: z.number({ coerce: true }).positive().max(100).default(12),
+  interest: z.number({ coerce: true }).positive().max(100).default(1),
+  arrears: z.number({ coerce: true }).positive().max(100).default(10),
+  waterId: waterId.nullish(),
+  electricityId: electricityId.nullish(),
   tenantId: z.string().cuid(),
   houseId: z.string().cuid(),
   witnesses: z.array(formWitnessSchema),
@@ -24,9 +25,7 @@ export const contractsSchema = z.object({
 
 export const createContractsSchema = contractsSchema
   .omit({ witnesses: true })
-  .augment({ witnesses: z.array(witnessSchema) })
-
-
+  .extend({ witnesses: z.array(witnessSchema) })
 
 export const contractsSearchOptionsSchema = z.object({
   property: z.nativeEnum({ ...Prisma.ContractScalarFieldEnum, all: 'all' } as const),

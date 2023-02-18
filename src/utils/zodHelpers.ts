@@ -1,9 +1,20 @@
 import type { FieldNamesMarkedBoolean, FieldValues } from "react-hook-form";
 import { castToNumbersArray, isRepetition, validateMobile } from "./function/prod";
+import { z } from "zod";
 
 
 export const isValidMobileRefiner = [validateMobile, { message: 'Celular inválido. Terceiro dígito incorreto' }] as const
 export const isRepetitionRefiner = [isRepetition, { message: 'Caracteres repetidos são inválidos' }] as const
+
+export const returnIssueToPath = <T extends z.SafeParseReturnType<unknown, unknown>>(safeParseReturn: T, ctx: z.RefinementCtx, path: string) => {
+  if (!safeParseReturn.success) {
+    const [issue] = safeParseReturn.error.issues
+    issue?.path.push(path)
+    issue && ctx.addIssue({ ...issue, fatal: true })
+    return z.NEVER
+  }
+}
+
 export class CpfValidator { //TODO: refactor
   result = { isCPF: true, message: "CPF válido!" }
   public cpf: number[]
@@ -38,6 +49,7 @@ export class CpfValidator { //TODO: refactor
     return this.result
   }
 }
+
 export class CnpjValidator {
   private readonly cnpj: number[]
   private result = { isCNPJ: true, message: "CNPJ válido!" }

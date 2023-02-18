@@ -17,8 +17,7 @@ const customErrorMap: z.ZodErrorMap = (error, ctx) => {
           : { message: `O mínimo de caracteres é ${error.inclusive ? error.minimum : error.minimum - 1}.`};
       if (error.type === "number")
         return {
-          message: `O mínimo é ${error.inclusive ? error.minimum : error.minimum - 1
-            }.`,
+          message: `O mínimo é ${error.inclusive ? error.minimum : error.minimum + 1}.`,
         };
       break;
     case z.ZodIssueCode.too_big:
