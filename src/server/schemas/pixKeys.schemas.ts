@@ -1,11 +1,11 @@
 import { KeyType } from "@prisma/client";
 import z from "./../../utils/my-zod";
 import { returnIssueToPath } from "../../utils/zodHelpers";
-import { nullifyEmptyStr } from "../../utils/function/prod";
+import { nullifyEmptyStr, undefineEmptyStr } from "../../utils/function/prod";
 import { cnpj, cpf, mobile, requiredEmail } from "./base.schemas";
 
 export const createPixKeysSchema = z.object({
-  id: z.preprocess(nullifyEmptyStr, z.string().cuid().nullish()),
+  id: z.preprocess(undefineEmptyStr, z.string().cuid().optional()),
   keyType: z.nativeEnum(KeyType),
   key: z.string().trim(),
 })

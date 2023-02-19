@@ -110,7 +110,8 @@ export const slugfy = (str: string) => str
 
 
 export const stripOfNonNumeric = <T>(val: T) => typeof val === 'string' ? val.replace(/\D/gi, '') : val
-export const nullifyEmptyStr = (val: unknown) => typeof val === 'string' && val === '' ? null : val
+export const nullifyEmptyStr = <T>(val: T) => typeof val === 'string' && val === '' ? null : val
+export const undefineEmptyStr = <T>(val: T) => typeof val === 'string' && val === '' ? undefined : val
 export const stripOfNonNumericOrNullifyEmptyStr = <T>(val: T) => {
   if (typeof val === 'string')
     return val === '' ? null : val.replace(/\D/gi, '')
