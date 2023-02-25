@@ -1,7 +1,7 @@
 import { KeyType } from "@prisma/client";
 import z from "./../../utils/my-zod";
 import { returnIssueToPath } from "../../utils/zodHelpers";
-import { nullifyEmptyStr, undefineEmptyStr } from "../../utils/function/prod";
+import { undefineEmptyStr } from "../../utils/function/prod";
 import { cnpj, cpf, mobile, requiredEmail } from "./base.schemas";
 
 export const createPixKeysSchema = z.object({

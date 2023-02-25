@@ -1,5 +1,5 @@
 import { createPixKeysSchema } from "./../../schemas/pixKeys.schemas";
-import { createTenantSchema, tenantsSearchOptionsSchema } from "./../../schemas/tenant.schema";
+import { createTenantSchema, tenantSearchablePropertiesEnum, tenantsSearchOptionsSchema } from "./../../schemas/tenant.schema";
 import { router, protectedProcedure } from "./../trpc";
 import { z } from "zod";
 
@@ -82,25 +82,32 @@ export const tenantsRouter = router({
 
   filter: protectedProcedure
     .input(tenantsSearchOptionsSchema)
-    .query(async ({ ctx, input }) => {
-    return await ctx.prisma.tenant.findMany({
-      include: {
-        contracts: {
-          select: {
-            id: true,
-            dueDay: true,
-            house: {
-              select: {
-                id: true,
-                street: true,
-                number: true,
-              },
+    .query(async ({ ctx, input: { caseSensitive, property, query } }) => {
+      const where = property === 'all'
+        ? Object.values(tenantSearchablePropertiesEnum)
+          .reduce((acc, cur) => ({
+            ...acc, [cur]: { contains: query}
+          }), {})
+        : {[property]: { contains: query}}
+      return await ctx.prisma.tenant.findMany({
+        where,
+        include: {
+          contracts: {
+            select: {
+              id: true,
+              dueDay: true,
+              house: {
+                select: {
+                  id: true,
+                  street: true,
+                  number: true,
+                },
+              }
             }
           }
         }
-      }
-    });
-  }),
+      });
+    }),
 
   selectData: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.tenant.findMany({

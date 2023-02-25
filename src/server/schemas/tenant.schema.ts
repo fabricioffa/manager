@@ -19,6 +19,9 @@ export const createTenantSchema = z.object({
   obs: z.preprocess(nullifyEmptyStr, z.string().trim().max(2000).nullish()),
 });
 
+const { id, updatedAt, createdAt, ...rest } = Prisma.TenantScalarFieldEnum
+export const tenantSearchablePropertiesEnum = rest
+
 export const tenantsSearchOptionsSchema = baseSearchOptionsSchema(Prisma.TenantScalarFieldEnum)
 export type CreateTenant = z.TypeOf<typeof createTenantSchema>;
 export type TenantsSearchOptions = z.TypeOf<typeof tenantsSearchOptionsSchema>;
