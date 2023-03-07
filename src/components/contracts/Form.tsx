@@ -64,7 +64,7 @@ const Form = ({ contract, action }: FormProps) => {
 
   const onValid: SubmitHandler<ContractsSchema> = (rawData, e) => {
     if (action === "edit" && contract) {
-      const { witnesses: witnessesData, ...contractData } = getDirtyValues<ContractsSchema>(dirtyFields, rawData)
+      const { witnesses: witnessesData, ...contractData } = getDirtyValues(dirtyFields, rawData)
 
       edit.mutate({ contractData, witnessesData, contractId: contract.id }, {
         onSuccess() {

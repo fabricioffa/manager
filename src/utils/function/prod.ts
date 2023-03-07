@@ -32,17 +32,14 @@ export const dataFilter = <Item extends Record<string, unknown>, Filter extends 
 };
 
 export const injectCharAt = (str: string, char: string, pos: number) => str.slice(0, pos) + char + str.slice(pos)
-export const castToNumbersArray = (str: string) =>
-  Array.from(str, (char) => Number(char));
 
-export const isRepetition = (str: string) =>
-  !str.split('').every(char => char === str.charAt(0))
+export const castStrToNumbersArray = (str: string) => Array.from(str, (char) => Number(char));
 
-export const hasRightLength = (str: string | unknown[], targetLength: number) =>
-  str.length === targetLength
+export const isRepetition = (str: string) => !str.split('').every(char => char === str.charAt(0));
 
-export const daysUntilNextSaturday = () => {
-  const today = new Date();
+// export const hasRightLength = (str: string | unknown[], targetLength: number) => str.length === targetLength;
+
+export const daysUntilNextSaturday = (today: Date = new Date()) => {
   const numberOfDaysUntilSaturday = 7 - today.getDay()
   return Array.from({ length: numberOfDaysUntilSaturday }).map((day, i) => {
     if (i) today.setDate(today.getDate() + 1);
@@ -57,31 +54,22 @@ export const formatDate = (date: Date, options?: Intl.DateTimeFormatOptions) => 
   return new Intl.DateTimeFormat('pt-BR', options).format(date)
 }
 
-export const pastMonthDate = (date: Date = new Date()) => {
-  const newDate = new Date(date);
-  newDate.setMonth(date.getMonth() - 1);
-  return newDate
-}
+export const pastMonthDate = (date: Date = new Date()) =>
+  new Date(date).setMonth(date.getMonth() - 1)
 
 export function getFirstAndLastDayOfCurrentMonth() {
   const today = new Date();
-  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
   return {
-    firstDay: firstDay,
-    lastDay: lastDay
+    firstDay: new Date(today.getFullYear(), today.getMonth(), 1),
+    lastDay: new Date(today.getFullYear(), today.getMonth() + 1, 0)
   }
 }
 
-export const pastMonthLastDay = () => {
-  const today = new Date();
-  return new Date(today.getFullYear(), today.getMonth(), 0)
-}
+export const pastMonthLastDay = (today: Date = new Date()) =>
+  new Date(today.getFullYear(), today.getMonth(), 0)
 
-export const currentDueDate = (dueDay: number) => {
-  const today = new Date()
-  return new Date(today.getFullYear(), today.getMonth(), dueDay)
-}
+export const currentDueDate = (dueDay: number, today: Date = new Date()) =>
+  new Date(today.getFullYear(), today.getMonth(), dueDay)
 
 // export const diffDays = (minuend: Date, subtrahend: Date) => {
 //   const utcMinuend = Date.UTC(minuend.getFullYear(), minuend.getMonth(), minuend.getDate(), minuend.getHours(), minuend.getMinutes(), minuend.getSeconds(), minuend.getMilliseconds());
@@ -89,14 +77,12 @@ export const currentDueDate = (dueDay: number) => {
 //   return minuend
 // }
 
-export const calculateLateDebit = (rent: number, arreas: number, interest: number, dueDate: Date) => {
-  const today = new Date();
+export const calculateLateDebit = (rent: number, arreas: number, interest: number, dueDate: Date, today: Date = new Date()) => {
   if (today < dueDate) return rent
   const lateMonths = today.getMonth() - dueDate.getMonth() + (12 * (today.getFullYear() - dueDate.getFullYear()));
   const arreasAmount = rent * (arreas / 100)
   const interestAmount = rent * (interest * lateMonths / 100);
-  const totalAmountDue = rent + arreasAmount + interestAmount;
-  return totalAmountDue;
+  return rent + arreasAmount + interestAmount;
 }
 
 export const toMonthInputFormat = (date: Date = new Date()) =>
@@ -118,15 +104,15 @@ export const stripOfNonNumericOrNullifyEmptyStr = <T>(val: T) => {
   return val
 }
 
-export const formatCpf = (cpf: string) => {
-  return [9, 6, 3]
+export const formatCpf = (cpf: string) =>
+  [9, 6, 3]
     .reduce(
       (formattedCpf, position) => formattedCpf.charAt(position)
         ? injectCharAt(formattedCpf, position < 9 ? '.' : '-', position)
         : formattedCpf
       , cpf.replace(/\D/gi, ''))
     .slice(0, 14)
-}
+
 
 export const formatPhone = (phone: string) => {
   const cleanPhone = phone.replace(/\D/gi, '')
@@ -151,6 +137,7 @@ export const validateMobile = (phone: string) => phone.length === 11
   : true
 
 type FieldName<TFieldValues extends FieldValues> = FieldPath<TFieldValues>
+
 type formatOnChangeProps<TFieldValues extends FieldValues> = {
   field: FieldPath<TFieldValues>,
   formatFunc: (str: string) => FieldPathValue<TFieldValues, FieldName<TFieldValues>>,
@@ -167,3 +154,6 @@ export const formatOnChange = <TFieldValues extends FieldValues>({ field, format
       : target.value.length
     target.setSelectionRange(nextCursorPos, nextCursorPos)
   }
+
+
+export const myObjKeys = <Obj extends object>(obj: Obj) => Object.keys(obj) as (keyof Obj)[]

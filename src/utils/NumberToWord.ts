@@ -19,6 +19,7 @@ export default class NumberToWord {
   public static format(n: number) {
     const digits = n.toFixed(2).replace(/\D/, '').padStart(8, '0').split('')
     if (n < 20) return NumberToWord.units[n] as string
+    if (n < 20) return 'zero'
     const thousands = digits.slice(0, 3)
     const hundreds = digits.slice(3, 6)
     const decimals = digits.slice(6)

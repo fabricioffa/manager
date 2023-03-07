@@ -1,5 +1,5 @@
 import type { FieldNamesMarkedBoolean, FieldValues } from "react-hook-form";
-import { castToNumbersArray, isRepetition, validateMobile } from "./function/prod";
+import { castStrToNumbersArray, isRepetition, myObjKeys, validateMobile } from "./function/prod";
 import { z } from "zod";
 
 
@@ -20,7 +20,7 @@ export class CpfValidator { //TODO: refactor
   public cpf: number[]
 
   constructor(cpf: string) {
-    this.cpf = castToNumbersArray(cpf)
+    this.cpf = castStrToNumbersArray(cpf)
   }
 
   getCtrlDigit(position: 'first' | 'second') {
@@ -54,7 +54,7 @@ export class CnpjValidator {
   private readonly cnpj: number[]
   private result = { isCNPJ: true, message: "CNPJ válido!" }
   constructor(cnpj: string) {
-    this.cnpj = castToNumbersArray(cnpj)
+    this.cnpj = castStrToNumbersArray(cnpj)
   }
 
   private isCtrlDigitValid(position: 'first' | 'last') {
@@ -93,9 +93,11 @@ export class CnpjValidator {
   }
 }
 
+
+
 export function getDirtyValues<T extends FieldValues>(dirtyFields: FieldNamesMarkedBoolean<T>, allValues: T): Partial<T> {
-  return Object.keys(dirtyFields).reduce((dirtyValues, field) => {
-    const dirtyField = dirtyFields[field as keyof FieldNamesMarkedBoolean<T>]
+  return myObjKeys(dirtyFields).reduce((dirtyValues, field) => {
+    const dirtyField = dirtyFields[field]
     let fieldValue = allValues[field as keyof T]
 
     if (Array.isArray(dirtyField)) {
@@ -108,5 +110,22 @@ export function getDirtyValues<T extends FieldValues>(dirtyFields: FieldNamesMar
     return { ...dirtyValues, [field as keyof T]: fieldValue } // TODO:  versão anterior tinha bug com valores falsy. Devem ser permitidos
   }, {} as Partial<T>)
 }
+
+
+// export function getDirtyValues<T extends FieldValues>(dirtyFields: FieldNamesMarkedBoolean<T>, allValues: T): Partial<T> {
+//   return Object.keys(dirtyFields).reduce((dirtyValues, field) => {
+//     const dirtyField = dirtyFields[field as keyof FieldNamesMarkedBoolean<T>]
+//     let fieldValue = allValues[field as keyof T]
+
+//     if (Array.isArray(dirtyField)) {
+//       fieldValue = fieldValue.filter(
+//         (item: object, i: number) => dirtyField.at(i) && Object.values(dirtyField.at(i)).some((value) => value))
+//     }
+
+//     if (dirtyField === false) return dirtyValues
+
+//     return { ...dirtyValues, [field as keyof T]: fieldValue } // TODO:  versão anterior tinha bug com valores falsy. Devem ser permitidos
+//   }, {} as Partial<T>)
+// }
 
 
