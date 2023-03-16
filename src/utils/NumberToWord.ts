@@ -126,5 +126,5 @@ export default class NumberToWord {
   }
 }
 
-const porExtenso = new NumberToWord
+export const porExtenso = new NumberToWord
 type NumberClasses = keyof typeof porExtenso.numberClasses;

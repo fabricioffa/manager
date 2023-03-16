@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import type { ReceiptSchema } from "../server/schemas/receipt.schema";
 import { formatCpf, formatCurrency, formatDate } from './function/prod'
-import NumberToWord from "./NumberToWord";
+import { porExtenso } from "./NumberToWord";
 
 type Line = {
   texts: string[],
@@ -18,7 +18,7 @@ export default class Receipt {
       bolds: [1, 3]
     },
     {
-      texts: ['o valor de ', formatCurrency(this.receipt.amount), ' (', NumberToWord.format(this.receipt.amount), '),'],
+      texts: ['o valor de ', formatCurrency(this.receipt.amount), ' (', porExtenso.format(this.receipt.amount), '),'],
       bolds: [1, 3]
     },
     {
