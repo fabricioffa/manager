@@ -74,8 +74,10 @@ export const formatDate = (
   return new Intl.DateTimeFormat("pt-BR", options).format(date);
 };
 
-export const pastMonthDate = (date: Date = new Date()) =>
+export const pastMonthDate = (date: Date = new Date()) => {
   new Date(date).setMonth(date.getMonth() - 1);
+  return date
+}
 
 export function getFirstAndLastDayOfCurrentMonth() {
   const today = new Date();
