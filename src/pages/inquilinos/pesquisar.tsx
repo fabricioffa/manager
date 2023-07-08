@@ -15,6 +15,11 @@ const Search = () => {
   const [filter, setFilter] = useState<TenantsSearchOptions>(defaultFilter)
   const [currentPage, setCurrentPage] = useState(0)
   const { data } = trpc.tenants.findAll.useQuery()
+  // const { data: filtered } = trpc.tenants.filter.useQuery({filter, pagination: {currentPage, perPage}}, {
+  //   onSuccess: (data) => {
+  //     console.log('%c data do filtered', 'color: blue', data)
+  //   }
+  // })
 
   const onFilterChange = (newFilterProperty: Partial<TenantsSearchOptions>) => {
     setFilter({ ...filter, ...newFilterProperty })

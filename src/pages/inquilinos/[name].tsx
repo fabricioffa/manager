@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router"
 import { useDelete } from "../../utils/hooks";
 import { trpc } from "../../utils/trpc";
-import { formatCurrency } from "../../utils/function/prod";
+import { formatCpf, formatCurrency } from "../../utils/function/prod";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Loading } from "../../components/Loading";
@@ -35,7 +35,7 @@ const TenantProfile = () => {
               </li>
               <li>
                 <span className="font-bold uppercase">CPF: </span>
-                {tenant.rg}
+                {formatCpf(tenant.cpf)}
               </li>
               <li>
                 <span className="font-bold capitalize">Estado Civil: </span>

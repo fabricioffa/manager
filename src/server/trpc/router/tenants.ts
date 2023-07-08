@@ -1,7 +1,12 @@
 import { createPixKeysSchema } from "./../../schemas/pixKeys.schemas";
-import { createTenantSchema, tenantSearchablePropertiesEnum, tenantsSearchOptionsSchema } from "./../../schemas/tenant.schema";
+import {
+  buildTenantWhereObj,
+  createTenantSchema,
+  tenantsSearchOptionsSchema,
+} from "./../../schemas/tenant.schema";
 import { router, protectedProcedure } from "./../trpc";
 import { z } from "zod";
+import { pagination } from "../../schemas/base.schemas";
 
 export const tenantsRouter = router({
   create: protectedProcedure
@@ -52,10 +57,10 @@ export const tenantsRouter = router({
                   id: true,
                   street: true,
                   number: true,
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         },
       });
     }),
@@ -73,40 +78,52 @@ export const tenantsRouter = router({
                 street: true,
                 number: true,
               },
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     });
   }),
 
   filter: protectedProcedure
-    .input(tenantsSearchOptionsSchema)
-    .query(async ({ ctx, input: { caseSensitive, property, query } }) => {
-      const where = property === 'all'
-        ? Object.values(tenantSearchablePropertiesEnum)
-          .reduce((acc, cur) => ({
-            ...acc, [cur]: { contains: query}
-          }), {})
-        : {[property]: { contains: query}}
-      return await ctx.prisma.tenant.findMany({
-        where,
-        include: {
-          contracts: {
-            select: {
-              id: true,
-              dueDay: true,
-              house: {
-                select: {
-                  id: true,
-                  street: true,
-                  number: true,
-                },
-              }
-            }
-          }
-        }
-      });
+    .input(
+      z.object({
+        filter: tenantsSearchOptionsSchema,
+        pagination,
+      })
+    )
+    .query(async ({ ctx, input: { filter, pagination } }) => {
+      const where = buildTenantWhereObj(filter);
+
+      const [count, tenants] = await Promise.all([
+        ctx.prisma.tenant.count({ where }),
+        ctx.prisma.tenant.findMany({
+         take: pagination.perPage,
+         skip: pagination.currentPage * pagination.perPage,
+         where,
+         select: {
+           id: true,
+           name: true,
+           primaryPhone: true,
+           _count: true,
+           contracts: {
+             select: {
+               id: true,
+               dueDay: true,
+               house: {
+                 select: {
+                   id: true,
+                   street: true,
+                   number: true,
+                 },
+               },
+             },
+           },
+         },
+       }),
+      ])
+
+      return {count, tenants}
     }),
 
   selectData: protectedProcedure.query(async ({ ctx }) => {

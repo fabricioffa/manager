@@ -1,15 +1,12 @@
-import { trpc } from "../../utils/trpc";
-import type { RouterOutputs } from "../../utils/trpc";
-import { contractsSchema } from "../../server/schemas/contracts.schemas";
-import type { ContractsSchema } from "../../server/schemas/contracts.schemas";
-import { useForm, useFormState } from "react-hook-form";
-import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
+import { trpc, type RouterOutputs } from "../../utils/trpc";
+import { contractsSchema, type ContractsSchema } from "../../server/schemas/contracts.schemas";
+import { useForm, useFormState, type SubmitHandler, type SubmitErrorHandler  } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputContainer from "../InputContainer";
 import { getDirtyValues } from "../../utils/zodHelpers";
 import { useRouter } from "next/router";
 import { formatCpf, formatOnChange, formatPhone } from "../../utils/function/prod";
-import { WitnessSchema } from "../../server/schemas/witnesses.schema";
+import type { WitnessSchema } from "../../server/schemas/witnesses.schema";
 
 const inputDefaultStyle =
   "mt-1 neighborhood  w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0 focus:outline-link py-2 px-3";

@@ -26,7 +26,7 @@ const Home: NextPage = () => {
         >
           {
             dueToThisWeek.map((contract) => (
-              <SwiperSlide key={contract.id} tag='ul'>
+              <SwiperSlide key={contract.id} tag='ul' className='p-2'>
                 <Card key={contract.id} contract={contract} />
               </SwiperSlide>
             ))
@@ -47,7 +47,7 @@ const Home: NextPage = () => {
         >
           {
             lateDebits.map((debit) => (
-              <SwiperSlide key={debit.id} tag='li'>
+              <SwiperSlide key={debit.id} tag='li' className='p-2'>
                 <DebitorCard debit={debit} />
               </SwiperSlide>
             ))
