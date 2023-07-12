@@ -1,5 +1,5 @@
 import { MaritalStatus } from "@prisma/client";
-import type { Decimal } from "@prisma/client/runtime/library";
+import type { Decimal, PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import type { ChangeEvent } from "react";
 import type {
   FieldPath,
@@ -76,8 +76,8 @@ export const formatDate = (
 
 export const pastMonthDate = (date: Date = new Date()) => {
   new Date(date).setMonth(date.getMonth() - 1);
-  return date
-}
+  return date;
+};
 
 export function getFirstAndLastDayOfCurrentMonth() {
   const today = new Date();
@@ -131,7 +131,7 @@ export const slugfy = (str: string) =>
     .toLowerCase()
     .replaceAll(" ", "-");
 
-export const stripOfNonNumeric = (str: string) => str.replace(/\D/gi, "")
+export const stripOfNonNumeric = (str: string) => str.replace(/\D/gi, "");
 
 export const ppStripOfNonNumeric = <T>(val: T) =>
   typeof val === "string" ? stripOfNonNumeric(val) : val;
@@ -152,7 +152,7 @@ export const formatCpf = (cpf: string) =>
         formattedCpf.charAt(position)
           ? injectCharAt(formattedCpf, position < 9 ? "." : "-", position)
           : formattedCpf,
-          stripOfNonNumeric(cpf)
+      stripOfNonNumeric(cpf)
     )
     .slice(0, 14);
 
@@ -217,3 +217,6 @@ export const isMaritalStatus = (
   str: string
 ): str is keyof typeof MaritalStatus =>
   Object.keys(MaritalStatus).includes(str);
+
+export const isPrimaError = (e: unknown): e is PrismaClientKnownRequestError =>
+  typeof e === "object" && !!e && "code" in e;

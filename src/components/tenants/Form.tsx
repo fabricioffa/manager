@@ -1,7 +1,7 @@
 import type { CreateTenant } from "../../server/schemas/tenant.schema";
 import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 import type { RouterOutputs } from "../../utils/trpc";
-import type { ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import type { CreatePixKeysSchema } from "../../server/schemas/pixKeys.schemas";
 import { createTenantSchema } from "../../server/schemas/tenant.schema";
 import { trpc } from "../../utils/trpc";
@@ -11,6 +11,8 @@ import InputContainer from "../InputContainer";
 import { getDirtyValues } from "../../utils/zodHelpers";
 import { useRouter } from "next/router";
 import { formatCnpj, formatCpf, formatOnChange, formatPhone } from "../../utils/function/prod";
+import z from "../../utils/my-zod";
+import { cpf } from "../../server/schemas/base.schemas";
 
 const inputDefaultStyle =
   "mt-1 neighborhood w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0 focus:outline-link py-2 px-3";
@@ -21,17 +23,18 @@ interface FormProps {
 
 const formatKey = (pixKey: CreatePixKeysSchema) => {
   switch (pixKey.keyType) {
-    case 'cpf': return {...pixKey, key: formatCpf(pixKey.key)}
-    case 'cnpj': return {...pixKey, key: formatCnpj(pixKey.key)}
-    case 'celular': return {...pixKey, key: formatPhone(pixKey.key)}
+    case 'cpf': return { ...pixKey, key: formatCpf(pixKey.key) }
+    case 'cnpj': return { ...pixKey, key: formatCnpj(pixKey.key) }
+    case 'celular': return { ...pixKey, key: formatPhone(pixKey.key) }
     default: pixKey
   }
 }
 
 const Form = ({ tenant, action }: FormProps) => {
+  const [currentCpf, setCpf] = useState('')
   const create = trpc.tenants.create.useMutation();
   const edit = trpc.tenants.edit.useMutation();
-  const { register, handleSubmit, formState: { errors }, control, setValue, getValues } = useForm<CreateTenant>({
+  const { register, handleSubmit, formState: { errors, isValid }, control, setValue, getValues, setError, getFieldState } = useForm<CreateTenant>({
     resolver: zodResolver(createTenantSchema),
     mode: "onBlur",
     defaultValues: {
@@ -58,7 +61,18 @@ const Form = ({ tenant, action }: FormProps) => {
     console.log('errors', errors);
   }
 
-  const onValid: SubmitHandler<CreateTenant> = (rawData, e) => {
+  const { invalid } = getFieldState('cpf')
+
+  const { refetch } = trpc.tenants.exists.useQuery({ cpf: currentCpf }, {
+    enabled: !!currentCpf,
+    onSuccess: (cpfExists) => {
+      if (cpfExists && action === 'create')
+        setError('cpf', { message: 'CPF já registrado', type: 'custom' }, { shouldFocus: true })
+    },
+    onSettled: () => console.log('%c foi', 'color: blue'),
+  })
+
+  const onValid: SubmitHandler<CreateTenant> = async (rawData, e) => {
     if (action === "edit" && tenant) {
       const { pixKeys: pixKeysData, ...tenantData } = getDirtyValues<CreateTenant>(dirtyFields, rawData)
 
@@ -134,21 +148,25 @@ const Form = ({ tenant, action }: FormProps) => {
             <InputContainer label="CPF" id="cpf" errorMsg={errors?.cpf?.message} >
               <input className={inputDefaultStyle} type="text" autoComplete="on" minLength={14} maxLength={14}
                 placeholder="123.456.789-11" id="cpf" required {...register("cpf", {
-                  onChange: formatOnChange<CreateTenant>({field: 'cpf', formatFunc: formatCpf, setValue: setValue})
+                  onChange: formatOnChange<CreateTenant>({ field: 'cpf', formatFunc: formatCpf, setValue: setValue }),
+                  onBlur: ({ target: { value: cpf } }) => {
+                    setCpf(cpf)
+                    !invalid && refetch()
+                  }
                 })} />
             </InputContainer>
 
             <InputContainer label="Telefone principal" id="primary-phone" errorMsg={errors?.primaryPhone?.message} >
               <input className={inputDefaultStyle} type="tel" inputMode="tel" autoComplete="tel" minLength={14} maxLength={15}
                 placeholder="(85) 99876-5495" id="primary-phone" required {...register("primaryPhone", {
-                  onChange: formatOnChange<CreateTenant>({field: 'primaryPhone', formatFunc: formatPhone, setValue: setValue})
+                  onChange: formatOnChange<CreateTenant>({ field: 'primaryPhone', formatFunc: formatPhone, setValue: setValue })
                 })} />
             </InputContainer>
 
             <InputContainer label="Telefone secundário" id="secondary-phone" errorMsg={errors?.secondaryPhone?.message} >
               <input className={inputDefaultStyle} type="tel" inputMode="tel" autoComplete="tel" minLength={14} maxLength={15}
                 placeholder="(85) 99876-5495" id="secondary-phone" {...register("secondaryPhone", {
-                  onChange: formatOnChange<CreateTenant>({field: 'secondaryPhone', formatFunc: formatPhone, setValue: setValue})
+                  onChange: formatOnChange<CreateTenant>({ field: 'secondaryPhone', formatFunc: formatPhone, setValue: setValue })
                 })} />
             </InputContainer>
 
@@ -167,8 +185,9 @@ const Form = ({ tenant, action }: FormProps) => {
               </InputContainer>
 
               <button className="bg-link disabled:bg-slate-200 rounded-lg text-lg font-semibold text-white mt-auto py-3 px-8"
-                disabled={(edit.isLoading || create.isLoading) || !isDirty}>
+                disabled={(edit.isLoading || create.isLoading) || !isDirty || !isValid}>
                 {action === "create" ? "Cadastrar" : "Editar"}
+                {`${isValid}`}
               </button>
             </div>
 
@@ -203,11 +222,11 @@ const Form = ({ tenant, action }: FormProps) => {
                           placeholder="006599975" id={`key-${index}`} {...register(`pixKeys.${index}.key` as const, {
                             onChange: (e: ChangeEvent<HTMLInputElement>) => {
                               if (getValues(`pixKeys.${index}.keyType`) === 'cpf')
-                                formatOnChange<CreateTenant>({field: `pixKeys.${index}.key`, formatFunc: formatCpf, setValue: setValue})(e)
+                                formatOnChange<CreateTenant>({ field: `pixKeys.${index}.key`, formatFunc: formatCpf, setValue: setValue })(e)
                               if (getValues(`pixKeys.${index}.keyType`) === 'celular')
-                                formatOnChange<CreateTenant>({field: `pixKeys.${index}.key`, formatFunc: formatPhone, setValue: setValue})(e)
+                                formatOnChange<CreateTenant>({ field: `pixKeys.${index}.key`, formatFunc: formatPhone, setValue: setValue })(e)
                               if (getValues(`pixKeys.${index}.keyType`) === 'cnpj')
-                                formatOnChange<CreateTenant>({field: `pixKeys.${index}.key`, formatFunc: formatCnpj, setValue: setValue})(e)
+                                formatOnChange<CreateTenant>({ field: `pixKeys.${index}.key`, formatFunc: formatCnpj, setValue: setValue })(e)
                             }
                           })} />
                       </InputContainer>

@@ -11,8 +11,11 @@ export const authOptions: NextAuthOptions = {
   // Include user.id on session
   callbacks: {
     async signIn({ user }) {
-
-      if (env.ADMIN_EMAILS.split(' ').includes(user.email || 'foo')) user.role = 'ADMIN' //TODO: É... então '-'
+      if (!user.email) return true
+      if (env.ADMIN_EMAILS.split(' ').includes(user.email)) user.role = 'ADMIN' //TODO: É... então '-'
+      console.log('%c user.role', 'color: blue', user.role)
+      console.log('%c user.email', 'color: blue', user.email)
+      console.log('%c env.ADMIN_EMAILS.split(" ")', 'color: blue', env.ADMIN_EMAILS.split(' '))
       return true
     },
     session({ session, user }) {
@@ -20,6 +23,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = user.id;
         session.user.role = user.role;
       }
+      console.log('%c session', 'color: blue', session)
       return session;
     },
   },

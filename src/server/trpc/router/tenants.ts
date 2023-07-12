@@ -7,26 +7,40 @@ import {
 import { router, protectedProcedure } from "./../trpc";
 import { z } from "zod";
 import { pagination } from "../../schemas/base.schemas";
+import { isPrimaError } from "../../../utils/function/prod";
+import { TRPCError } from "@trpc/server";
 
 export const tenantsRouter = router({
   create: protectedProcedure
     .input(createTenantSchema)
     .mutation(async ({ ctx, input }) => {
-      const { pixKeys, ...tenantData } = input;
-      if (pixKeys?.length) {
-        await ctx.prisma.tenant.create({
-          data: {
-            ...tenantData,
-            pixKeys: {
-              createMany: {
-                data: pixKeys,
+      try {
+        const { pixKeys, ...tenantData } = input;
+        if (pixKeys?.length) {
+          await ctx.prisma.tenant.create({
+            data: {
+              ...tenantData,
+              pixKeys: {
+                createMany: {
+                  data: pixKeys,
+                },
               },
             },
-          },
-        });
-        return;
+          });
+          return;
+        }
+        await ctx.prisma.tenant.create({ data: tenantData });
+      } catch (error) {
+        console.log("%c error", "color: blue", error);
+        if (isPrimaError(error) && error.code === 'P2002') {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Unique contraint violation',
+            cause: JSON.stringify(error),
+          });
+        }
+        return JSON.stringify(error);
       }
-      await ctx.prisma.tenant.create({ data: tenantData });
     }),
 
   findOne: protectedProcedure
@@ -98,32 +112,32 @@ export const tenantsRouter = router({
       const [count, tenants] = await Promise.all([
         ctx.prisma.tenant.count({ where }),
         ctx.prisma.tenant.findMany({
-         take: pagination.perPage,
-         skip: pagination.currentPage * pagination.perPage,
-         where,
-         select: {
-           id: true,
-           name: true,
-           primaryPhone: true,
-           _count: true,
-           contracts: {
-             select: {
-               id: true,
-               dueDay: true,
-               house: {
-                 select: {
-                   id: true,
-                   street: true,
-                   number: true,
-                 },
-               },
-             },
-           },
-         },
-       }),
-      ])
+          take: pagination.perPage,
+          skip: pagination.currentPage * pagination.perPage,
+          where,
+          select: {
+            id: true,
+            name: true,
+            primaryPhone: true,
+            _count: true,
+            contracts: {
+              select: {
+                id: true,
+                dueDay: true,
+                house: {
+                  select: {
+                    id: true,
+                    street: true,
+                    number: true,
+                  },
+                },
+              },
+            },
+          },
+        }),
+      ]);
 
-      return {count, tenants}
+      return { count, tenants };
     }),
 
   selectData: protectedProcedure.query(async ({ ctx }) => {
@@ -184,4 +198,17 @@ export const tenantsRouter = router({
         where: { id },
       });
     }),
+
+  exists: protectedProcedure
+    .input(
+      z.object({
+        cpf: z.string().transform((cpf) => cpf.replace(/\D/gi, "")),
+      })
+    )
+    .query(
+      async ({ ctx, input: { cpf } }) =>
+        !!(await ctx.prisma.tenant.findUnique({
+          where: { cpf },
+        }))
+    ),
 });
