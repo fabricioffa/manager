@@ -1,87 +1,127 @@
-import Link from 'next/link'
-import { useRouter } from 'next/router';
-import { useState } from 'react';
-import SubMenu from './SubMenu';
-import { signOut, useSession } from 'next-auth/react';
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import SubMenu from "./SubMenu";
+import { signOut, useSession } from "next-auth/react";
 
 const SideBar = () => {
   const [activeSubMenu, setActiveSubMenu] = useState<number | null>(null);
 
   const { data: session } = useSession();
-  const isActiveSubMenu = (index: number | null) => activeSubMenu === index ? 'bg-highlight text-link' : '';
-  const { pathname } = useRouter()
-  const isActiveLink = (route: string) => pathname === route ? 'bg-highlight text-link font-medium' : ''
+  const isActiveSubMenu = (index: number | null) => activeSubMenu === index;
+  const { pathname } = useRouter();
+  const isActiveLink = (route: string) =>
+    pathname === route ;
 
+  // ''
   return (
-    <aside className="fixed inset-y-0 w-[max(20%,17rem)] hidden lg:flex pr-10">
-      <nav className="flex flex-col grow">
-        <h2 className="text-4xl text-center mt-10">
-          <Link href='/'>Manager</Link>
+    <aside className="fixed inset-y-0 hidden w-[max(20%,17rem)] pr-10 lg:flex  ">
+      <nav className="flex grow flex-col">
+        <h2 className="mt-10 text-center text-4xl">
+          <Link href="/">Manager</Link>
         </h2>
 
         <ul className="my-auto">
           <li>
-            <button className={isActiveSubMenu(0) + ' p-2 border-r-lg pl-8 font-bold text-lg'}
-              onClick={() => setActiveSubMenu(isActiveSubMenu(0) ? null : 0)}>
+            <button
+              data-open={isActiveSubMenu(0)}
+              className="p-2 pl-8 text-lg font-bold data-open:bg-highlight data-open:text-link data-open:dark:text-link-500 data-open:dark:border-link dark:ml-6 dark:border-l dark:border-slate-600 dark:pl-2  data-open:dark:bg-inherit"
+              onClick={() => setActiveSubMenu(isActiveSubMenu(0) ? null : 0)}
+            >
               Inquilinos
             </button>
 
             <SubMenu isShowing={activeSubMenu !== 0}>
-              <li className='text-primary p-2'>
-                <Link href="/inquilinos/pesquisar" className={isActiveLink('/inquilinos/pesquisar') + ' block'}>
+              <li className="p-2 text-primary dark:font-medium dark:text-inherit">
+                <Link
+                  data-active={isActiveLink("/inquilinos/pesquisar")}
+                  href="/inquilinos/pesquisar"
+                  className='block data-active:bg-highlight data-active:text-link data-active:font-medium data-active:dark:bg-inherit data-active:dark:text-link-500'
+                >
                   Pesquisar
                 </Link>
               </li>
-              <li className='text-primary p-2'>
-                <Link href="/inquilinos/cadastrar" className={isActiveLink('/inquilinos/cadastrar') + ' block'}>
+              <li className="p-2 text-primary dark:font-medium dark:text-inherit">
+                <Link
+                  data-active={isActiveLink("/inquilinos/cadastrar")}
+                  href="/inquilinos/cadastrar"
+                  className='block data-active:bg-highlight data-active:text-link data-active:font-medium data-active:dark:bg-inherit data-active:dark:text-link-500'
+                >
                   Cadastrar
                 </Link>
               </li>
             </SubMenu>
           </li>
           <li>
-            <button className={isActiveSubMenu(1) + ' p-2 border-r-lg pl-8 font-bold text-lg'}
-              onClick={() => setActiveSubMenu(isActiveSubMenu(1) ? null : 1)}>
+            <button
+              className={
+                isActiveSubMenu(1) +
+                " p-2 pl-8 text-lg font-bold dark:ml-6 dark:border-l dark:border-slate-600 dark:pl-2"
+              }
+              onClick={() => setActiveSubMenu(isActiveSubMenu(1) ? null : 1)}
+            >
               House
             </button>
 
             <SubMenu isShowing={activeSubMenu !== 1}>
-              <li className='text-primary p-2'>
-                <Link href="/casas/pesquisar" className={isActiveLink('/casas/pesquisar') + ' block'}>
+              <li className="p-2 text-primary dark:font-medium dark:text-inherit">
+                <Link
+                  href="/casas/pesquisar"
+                  className={isActiveLink("/casas/pesquisar") + " block"}
+                >
                   Pesquisar
                 </Link>
               </li>
-              <li className='text-primary p-2'>
-                <Link href="/casas/cadastrar" className={isActiveLink('/casas/cadastrar') + ' block'}>
+              <li className="p-2 text-primary dark:font-medium dark:text-inherit">
+                <Link
+                  href="/casas/cadastrar"
+                  className={isActiveLink("/casas/cadastrar") + " block"}
+                >
                   Cadastrar
                 </Link>
               </li>
             </SubMenu>
           </li>
           <li>
-            <button className={isActiveSubMenu(2) + ' p-2 border-r-lg pl-8 font-bold text-lg'}
-              onClick={() => setActiveSubMenu(isActiveSubMenu(2) ? null : 2)}>
+            <button
+              className={
+                isActiveSubMenu(2) +
+                " p-2 pl-8 text-lg font-bold dark:ml-6 dark:border-l dark:border-slate-600 dark:pl-2"
+              }
+              onClick={() => setActiveSubMenu(isActiveSubMenu(2) ? null : 2)}
+            >
               Contracts
             </button>
 
             <SubMenu isShowing={activeSubMenu !== 2}>
-              <li className='text-primary p-2'>
-                <Link href="/contratos/pesquisar" className={isActiveLink('/contratos/pesquisar') + ' block'}>
+              <li className="p-2 text-primary dark:font-medium dark:text-inherit">
+                <Link
+                  href="/contratos/pesquisar"
+                  className={isActiveLink("/contratos/pesquisar") + " block"}
+                >
                   Pesquisar
                 </Link>
               </li>
-              <li className='text-primary p-2'>
-                <Link href="/contratos/cadastrar" className={isActiveLink('/contratos/cadastrar') + ' block'}>
+              <li className="p-2 text-primary dark:font-medium dark:text-inherit">
+                <Link
+                  href="/contratos/cadastrar"
+                  className={isActiveLink("/contratos/cadastrar") + " block"}
+                >
                   Cadastrar
                 </Link>
               </li>
             </SubMenu>
           </li>
-          { session &&
+          {session && (
             <li>
-              <button className='p-2 border-r-lg pl-8 font-bold text-lg' onClick={() => signOut()}>Log out</button>
+              <button
+                className="p-2 pl-8 text-lg font-bold dark:ml-6 dark:border-l dark:border-slate-600 dark:pl-2"
+                onClick={() => signOut()}
+              >
+                Log out
+              </button>
             </li>
-          }
+          )}
         </ul>
       </nav>
     </aside>

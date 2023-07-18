@@ -7,10 +7,10 @@ import DebitorCard from '../components/DebitorCard';
 
 const Home: NextPage = () => {
   const { data: dueToThisWeek = [] } = trpc.contracts.dueToThisWeek.useQuery()
-  const { data: lateDebits = [] } = trpc.debits.lateDebits.useQuery()
+  const { data: lateDebits = []  } = trpc.debits.lateDebits.useQuery()
 
   return (
-    <div>
+    <div className='max-w-[calc(100%-5rem)] mx-auto'>
       <h1 className='text-4xl text-center font-bold my-10'>Bem vindo</h1>
 
       <div className='max-w-[75vw] mb-20'>
@@ -34,7 +34,7 @@ const Home: NextPage = () => {
         </Swiper>
       </div>
 
-      <div className='max-w-[75vw]'>
+      { !!lateDebits.length && <div className='max-w-[75vw]'>
         <h2 className='text-2xl text-center font-medium mb-10'>Devedores</h2>
         <Swiper
           spaceBetween={20}
@@ -53,7 +53,7 @@ const Home: NextPage = () => {
             ))
           }
         </Swiper>
-      </div>
+      </div>}
     </div>
   )
 }
