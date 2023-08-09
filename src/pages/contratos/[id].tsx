@@ -31,13 +31,13 @@ const ContractProfile = () => {
             <ul className="space-y-1">
               <li>
                 <span className="font-bold capitalize">Locatário: </span>
-                <Link href={`${contract.tenant.name}?id=${contract.tenant.id}`} className="hover:text-link hover:underline capitalize">
+                <Link href={`/inquilinos/${contract.tenant.name}?id=${contract.tenant.id}`} className="hover:text-link hover:underline capitalize">
                   {contract.tenant.name}
                 </Link>
               </li>
               <li>
                 <span className="font-bold capitalize">Casa: </span>
-                <Link href={`${contract.house.street}?id=${contract.house.id}`} className="hover:text-link hover:underline capitalize">
+                <Link href={`/casas/${contract.house.street}?id=${contract.house.id}`} className="hover:text-link hover:underline capitalize">
                   {`${contract.house.street}, ${contract.house.number}`}
                 </Link>
               </li>

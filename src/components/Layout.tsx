@@ -37,9 +37,9 @@ export default function Layout({ children }: { children: JSX.Element }) {
     );
 
   return (
-    <div className="grid min-h-screen w-full grid-cols-[max(20%,17rem)_1fr] bg-white text-secondary antialiased dark:bg-slate-900 dark:text-slate-200">
+    <div className="grid h-screen w-full overflow-auto bg-white text-secondary antialiased dark:bg-slate-900 dark:text-slate-200 lg:grid-cols-[max(20%,17rem)_1fr]">
       <SideBar />
-      <main className="col-start-2 my-2.5 rounded-l-2xl bg-red-100 dark:bg-slate-800">
+      <main className="lg:col-start-2 my-2.5 rounded-l-2xl bg-red-100 px-6 pt-10 dark:bg-slate-800">
         <GoBackBtn />
         {children}
       </main>

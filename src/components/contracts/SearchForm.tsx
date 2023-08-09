@@ -1,14 +1,8 @@
-import { contractsSearchOptionsSchema } from "../../server/schemas/contracts.schemas";
 import type { ContractSearchOptions } from "../../server/schemas/contracts.schemas";
 
 type SearchFormProps = {
-  onFilterChange: (newFilterProperty: Partial<ContractSearchOptions>) => void
-}
-
-const isValidOption = (opt: string): opt is ContractSearchOptions['property'] => {
-  const { success } = contractsSearchOptionsSchema.pick({ property: true }).safeParse(opt)
-  return success
-}
+  onFilterChange: (newFilterProperty: Partial<ContractSearchOptions>) => void;
+};
 
 const SearchForm = ({ onFilterChange }: SearchFormProps) => {
   return (
@@ -18,42 +12,30 @@ const SearchForm = ({ onFilterChange }: SearchFormProps) => {
           <h2>Procurar contrato</h2>
         </legend>
 
-        <div className="flex items-center justify-center gap-4">
+        <div className="mb-6 flex items-center justify-center gap-4">
           <div className="flex items-center gap-2">
-            <label className="text-2xl whitespace-nowrap cursor-pointer" htmlFor="tenant-search">Busca:</label>
-            <input className="border rounded-md text-lg py-1 px-3" type="search" maxLength={255}
-              placeholder="Fulano de tal" name="tenant-search" id="tenant-search"
-              onChange={({ target: { value } }) => onFilterChange({ query: value })} />
-          </div>
-          <div className="flex items-center gap-2">
-            <label htmlFor="search-options">Filtros</label>
-            <select className="border" name="search-options" id="search-options"
-              onChange={({ target: { value } }) => {
-                if (!isValidOption(value)) return
-                onFilterChange({ property: value })
-              }}>
-              <option value="all">Tudo</option>
-              <option value="dueDay">Vencimento</option>
-              <option value="initialDate">Data de início</option>
-              <option value="rent">Aluguel</option>
-              <option value="endingDate">Data do fim</option>
-              <option value="duration">Duração</option>
-              <option value="bail">Caução</option>
-              <option value="interest">Jurus</option>
-              <option value="arrear">Mora</option>
-              <option value="waterId">Número do Cliente</option>
-              <option value="electricityId">Número de Inscrição</option>
-            </select>
-          </div>
-          <div className="flex items-center gap-2">
-            <label htmlFor="case-sensitive">Case Sensitive</label>
-            <input type="checkbox" name="case-sensitive" id="case-sensitive"
-              onChange={({ target: { checked } }) => onFilterChange({ caseSensitive: checked })} />
+            <label
+              className="cursor-pointer whitespace-nowrap text-2xl"
+              htmlFor="tenant-search"
+            >
+              Busca:
+            </label>
+            <input
+              className="rounded-md border px-3 py-1 text-lg focus:outline focus:ring-2 dark:border-slate-600 dark:bg-slate-700 dark:focus:ring-link-500"
+              type="search"
+              maxLength={255}
+              placeholder="Fulano de tal"
+              name="tenant-search"
+              id="tenant-search"
+              onChange={({ target: { value } }) =>
+                onFilterChange({ query: value })
+              }
+            />
           </div>
         </div>
       </fieldset>
     </form>
-  )
-}
+  );
+};
 
 export default SearchForm;

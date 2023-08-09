@@ -29,8 +29,8 @@ const HouseSearch = () => {
     }
 
     return (
-      <div className="max-h-screen">
-        <h1 className="text-5xl font-semibold text-center mb-20">Casas</h1>
+      <div>
+        <h1 className="text-5xl font-semibold text-center mb-14">Casas</h1>
 
         <SearchForm onFilterChange={onFilterChange} />
 

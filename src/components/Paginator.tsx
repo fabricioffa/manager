@@ -9,10 +9,6 @@ type PaginatorProps = {
   onPageChange: (page: number) => void;
 };
 
-const linksClasses =
-  "inline-neighborhood  border border-blue-600 cursor-pointer py-2 px-4";
-const disabledClasses = "pointer-events-none bg-slate-100";
-
 const Paginator: FC<PaginatorProps> = ({
   totalCount,
   perPage,
@@ -21,40 +17,42 @@ const Paginator: FC<PaginatorProps> = ({
   onPageChange,
 }) => {
   const pagesNumber = Math.ceil(totalCount / perPage);
-  const isActive = (i: number) =>
-    currentPage === i ? "bg-blue-300 text-white" : "";
+  const isActive = (i: number) => currentPage === i;
   const shouldDisable = (direction: "left" | "right") => {
-    if (direction === "left") return currentPage === 0 && disabledClasses;
-    return currentPage === pagesNumber - 1 && disabledClasses;
+    if (direction === "left") return currentPage === 0;
+    return currentPage === pagesNumber - 1;
   };
   return (
     <nav className="py-12">
       <ol className="flex justify-center gap-1">
         <li>
-          <a
-            className={`${linksClasses} ${shouldDisable("left")}`}
+          <button
+            disabled={shouldDisable("left")}
+            className="inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700"
             onClick={() => onPageChange(currentPage - 1)}
           >
             <FontAwesomeIcon icon="caret-left" />
-          </a>
+          </button>
         </li>
         {[...Array(pagesNumber)].map((v, i) => (
           <li key={i}>
-            <a
-              className={`${linksClasses} ${isActive(i)}`}
+            <button
+              data-active={isActive(i)}
+              className="inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700"
               onClick={() => onPageChange(i)}
             >
               {i + 1}
-            </a>
+            </button>
           </li>
         ))}
         <li>
-          <a
-            className={`${linksClasses} ${shouldDisable("right")}`}
+          <button
+            disabled={shouldDisable("right")}
+            className="inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700"
             onClick={() => onPageChange(currentPage + 1)}
           >
             <FontAwesomeIcon icon="caret-right" />
-          </a>
+          </button>
         </li>
       </ol>
     </nav>

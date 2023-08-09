@@ -13,9 +13,8 @@ const SideBar = () => {
   const isActiveLink = (route: string) =>
     pathname === route ;
 
-  // ''
   return (
-    <aside className="fixed inset-y-0 hidden w-[max(20%,17rem)] pr-10 lg:flex  ">
+    <aside className="fixed inset-y-0 hidden w-[max(20%,17rem)] pr-10 lg:flex  contain-content">
       <nav className="flex grow flex-col">
         <h2 className="mt-10 text-center text-4xl">
           <Link href="/">Manager</Link>

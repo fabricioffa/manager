@@ -28,8 +28,8 @@ const SearchContract = () => {
     }
 
     return (
-      <div className="max-h-screen">
-        <h1 className="text-5xl font-semibold text-center mb-20">Contratos</h1>
+      <div>
+        <h1 className="text-5xl font-semibold text-center mb-16">Contratos</h1>
 
         <SearchForm onFilterChange={onFilterChange} />
 
