@@ -4,17 +4,20 @@ import { useState } from "react";
 import SubMenu from "./SubMenu";
 import { signOut, useSession } from "next-auth/react";
 
-const SideBar = () => {
+export type SideBarProps = {
+  isVisible: boolean;
+};
+
+const SideBar = ({ isVisible }: SideBarProps) => {
   const [activeSubMenu, setActiveSubMenu] = useState<number | null>(null);
 
   const { data: session } = useSession();
   const isActiveSubMenu = (index: number | null) => activeSubMenu === index;
   const { pathname } = useRouter();
-  const isActiveLink = (route: string) =>
-    pathname === route ;
+  const isActiveLink = (route: string) => pathname === route;
 
   return (
-    <aside className="fixed inset-y-0 hidden w-[max(20%,17rem)] pr-10 lg:flex  contain-content">
+    <aside className={`fixed inset-y-0 px-8 contain-content flex lg:w-[max(20%,17rem)] z-50 max-lg:absolute bottom-0 left-0 dark:bg-slate-900 max-lg:transition-transform duration-1000 ease-in-out ${isVisible ? 'translate-x-0' : 'max-lg:-translate-x-full'}`}>
       <nav className="flex grow flex-col">
         <h2 className="mt-10 text-center text-4xl">
           <Link href="/">Manager</Link>
@@ -24,7 +27,7 @@ const SideBar = () => {
           <li>
             <button
               data-open={isActiveSubMenu(0)}
-              className="p-2 pl-8 text-lg font-bold data-open:bg-highlight data-open:text-link data-open:dark:text-link-500 data-open:dark:border-link dark:ml-6 dark:border-l dark:border-slate-600 dark:pl-2  data-open:dark:bg-inherit"
+              className="p-2 pl-8 text-lg font-bold data-open:bg-highlight data-open:text-link dark:ml-6 dark:border-l dark:border-slate-600 dark:pl-2 data-open:dark:border-link data-open:dark:bg-inherit  data-open:dark:text-link-500"
               onClick={() => setActiveSubMenu(isActiveSubMenu(0) ? null : 0)}
             >
               Inquilinos
@@ -35,7 +38,7 @@ const SideBar = () => {
                 <Link
                   data-active={isActiveLink("/inquilinos/pesquisar")}
                   href="/inquilinos/pesquisar"
-                  className='block data-active:bg-highlight data-active:text-link data-active:font-medium data-active:dark:bg-inherit data-active:dark:text-link-500'
+                  className="block data-active:bg-highlight data-active:font-medium data-active:text-link data-active:dark:bg-inherit data-active:dark:text-link-500"
                 >
                   Pesquisar
                 </Link>
@@ -44,7 +47,7 @@ const SideBar = () => {
                 <Link
                   data-active={isActiveLink("/inquilinos/cadastrar")}
                   href="/inquilinos/cadastrar"
-                  className='block data-active:bg-highlight data-active:text-link data-active:font-medium data-active:dark:bg-inherit data-active:dark:text-link-500'
+                  className="block data-active:bg-highlight data-active:font-medium data-active:text-link data-active:dark:bg-inherit data-active:dark:text-link-500"
                 >
                   Cadastrar
                 </Link>

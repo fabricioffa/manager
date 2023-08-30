@@ -86,6 +86,7 @@ export const tenantsRouter = router({
           select: {
             id: true,
             dueDay: true,
+            initialDate: true,
             house: {
               select: {
                 id: true,

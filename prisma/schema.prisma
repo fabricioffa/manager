@@ -3,7 +3,6 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["fieldReference"]
 }
 
 datasource db {
@@ -60,7 +59,7 @@ model PixKey {
   id       String  @id @default(cuid())
   keyType  KeyType @map("key_type")
   key      String  @unique @db.VarChar(50)
-  client   Tenant  @relation(fields: [clientId], references: [id])
+  client   Tenant  @relation(fields: [clientId], references: [id], onDelete: Cascade)
   clientId String  @map("client_id")
 
   @@index([clientId])
@@ -92,7 +91,7 @@ model Witness {
   primaryPhone   String   @map("primary_phone") @db.VarChar(25)
   secondaryPhone String?  @map("secondary_phone") @db.VarChar(25)
   email          String?
-  contract       Contract @relation(fields: [contractId], references: [id])
+  contract       Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
   contractId     String   @map("contract_id")
 
   @@unique([rg, rgEmitter])

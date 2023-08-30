@@ -23,7 +23,7 @@ const ContractProfile = () => {
     return (
       <div className="relative mx-auto px-6">
 
-        <h1 className="text-4xl text-center capitalize">{contract.id}</h1>
+        <h1 className="text-4xl text-center capitalize">{ contract.tenant.name} / {[contract.house.street, contract.house.number].join(' - ')}</h1>
 
         <div className="flex flex-wrap justify-around gap-20 child:flex-1 child:min-w-[22.5rem] mt-20">
           <div className="rounded-md border shadow-card p-4">

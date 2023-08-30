@@ -220,3 +220,5 @@ export const isMaritalStatus = (
 
 export const isPrimaError = (e: unknown): e is PrismaClientKnownRequestError =>
   typeof e === "object" && !!e && "code" in e;
+
+export const buildPhoneUrl = (phone: string) => `tel:+55${phone.replace(/\D/gi, '')}`

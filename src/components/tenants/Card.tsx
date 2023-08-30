@@ -3,6 +3,7 @@ import { useDelete } from "../../utils/hooks";
 import type { RouterOutputs } from "../../utils/trpc";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import BaseCard from "../BaseCard";
+import { buildPhoneUrl, formatDate } from "../../utils/function/prod";
 
 export type CardProps = {
   tenant: NonNullable<RouterOutputs["tenants"]["findAll"][number]>;
@@ -10,7 +11,6 @@ export type CardProps = {
 
 const Card = ({ tenant }: CardProps) => {
   const deleteTenant = useDelete(tenant.id, "tenants");
-
   return (
     <BaseCard
       withActions={true}
@@ -41,15 +41,7 @@ const Card = ({ tenant }: CardProps) => {
         </>
       )}
       <FontAwesomeIcon icon="phone" size="xl" className="justify-self-center" />
-      <address>
-        <a href="tel:5585988044019">{tenant.primaryPhone}</a>
-      </address>
-      {/* { tenant.debit &&
-          <>
-            <FontAwesomeIcon icon="exclamation" size="xl" className="justify-self-center" />
-            <p className="text-red-500">{'Débito: ' + formatCurrency(tenant.debit)}</p>
-          </>
-        } */}
+      <a href={buildPhoneUrl(tenant.primaryPhone)}>{tenant.primaryPhone}</a>
       {!!tenant.contracts.length && (
         <>
           <FontAwesomeIcon
@@ -57,26 +49,20 @@ const Card = ({ tenant }: CardProps) => {
             size="xl"
             className="justify-self-center"
           />
-          <div className="flex gap-2">
-            {" "}
-            Contratos atuais:
-            {tenant.contracts.map((contract, i) => (
-              <Link
-                className="hover:text-link hover:underline"
-                href={`/contratos/${contract.id}`}
-                key={contract.id}
-              >
-                <div className="relative">
-                  <span className="absolute left-6  text-xs">#{i + 1}</span>
-                  <FontAwesomeIcon
-                    icon="magnifying-glass"
-                    size="lg"
-                    className="ml-1"
-                  />
-                </div>
-              </Link>
-            ))}
-          </div>
+          <Link
+            className="grid grid-cols-[17ch_min-content] gap-1.5 hover:text-link hover:underline"
+            href={`/contratos/${tenant.contracts.at(0)?.id}`}
+            key={tenant.contracts.at(0)?.id}
+          >
+            <span className="line-clamp-1">
+              {formatDate(tenant.contracts.at(0)!.initialDate)}
+            </span>
+            {tenant.contracts.length > 1 && (
+              <span>
+                {`+${tenant.contracts.length - 1}`}
+              </span>
+            )}
+          </Link>
         </>
       )}
       {!!tenant.contracts.length && (
@@ -86,25 +72,21 @@ const Card = ({ tenant }: CardProps) => {
             size="xl"
             className="justify-self-center"
           />
-          <div className="flex gap-2">
-            <p>Casas atuais:</p>
-            {tenant.contracts.map(({ house }, i) => (
-              <Link
-                className="hover:text-link hover:underline"
-                href={`/casas/${house.street}?id=${house.id}`}
-                key={house.id}
-              >
-                <div className="relative">
-                  <span className="absolute left-6  text-xs">#{i + 1}</span>
-                  <FontAwesomeIcon
-                    icon="magnifying-glass"
-                    size="lg"
-                    className="ml-1"
-                  />
-                </div>
-              </Link>
-            ))}
-          </div>
+          <Link
+            className=" grid grid-cols-[17ch_min-content] gap-1.5 hover:text-link hover:underline"
+            href={`/casas/${tenant.contracts.at(0)?.house.street}?id=${
+              tenant.contracts.at(0)?.house.id
+            }`}
+            key={tenant.contracts.at(0)?.house.id}
+          >
+            <span className="line-clamp-1">
+              {tenant.contracts.at(0)?.house.number},{" "}
+              {tenant.contracts.at(0)?.house.street}
+            </span>
+            {tenant.contracts.length > 1 && (
+              <span>{`+${tenant.contracts.length - 1}`}</span>
+            )}
+          </Link>
         </>
       )}
     </BaseCard>

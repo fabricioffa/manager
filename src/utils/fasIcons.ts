@@ -2,7 +2,7 @@ import { library, dom } from '@fortawesome/fontawesome-svg-core';
 import {
   faFileContract, faPhone, faExclamation, faHouseChimneyWindow, faUser, faCirclePlus, faCircleMinus,
   faLeftLong, faCalendarDay, faDroplet, faBolt, faLocationDot, faCircleDollarToSlot, faMagnifyingGlass,
-  faCaretRight, faCaretLeft, faEye, faPenToSquare, faTrash
+  faCaretRight, faCaretLeft, faEye, faPenToSquare, faTrash, faForward, faBars, faTrashCan, faClose
 } from '@fortawesome/free-solid-svg-icons';
 
 // import {
@@ -16,7 +16,7 @@ import {
 library.add(
   faPhone, faFileContract, faExclamation, faHouseChimneyWindow, faUser, faCirclePlus, faCircleMinus,
   faLeftLong, faCalendarDay, faDroplet, faBolt, faLocationDot, faCircleDollarToSlot, faMagnifyingGlass,
-  faCaretRight, faCaretLeft, faEye, faPenToSquare, faTrash
+  faCaretRight, faCaretLeft, faEye, faPenToSquare, faTrash, faForward, faBars, faTrashCan, faClose
   );
 
 dom.watch()
