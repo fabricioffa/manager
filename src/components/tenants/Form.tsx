@@ -1,36 +1,36 @@
-import type { CreateTenant } from "../../server/schemas/tenant.schema";
-import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
-import type { RouterOutputs } from "../../utils/trpc";
-import { useState, type ChangeEvent } from "react";
-import type { CreatePixKeysSchema } from "../../server/schemas/pixKeys.schemas";
-import { createTenantSchema } from "../../server/schemas/tenant.schema";
-import { trpc } from "../../utils/trpc";
-import { useForm, useFieldArray, useFormState } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import InputContainer from "../InputContainer";
-import { getDirtyValues } from "../../utils/zodHelpers";
-import { useRouter } from "next/router";
+import type { CreateTenant } from '../../server/schemas/tenant.schema';
+import type { SubmitHandler, SubmitErrorHandler } from 'react-hook-form';
+import type { RouterOutputs } from '../../utils/trpc';
+import { type ChangeEvent } from 'react';
+import type { CreatePixKeysSchema } from '../../server/schemas/pixKeys.schemas';
+import { createTenantSchema } from '../../server/schemas/tenant.schema';
+import { trpc } from '../../utils/trpc';
+import { useForm, useFieldArray, useFormState } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import InputContainer from '../InputContainer';
+import { getDirtyValues } from '../../utils/zodHelpers';
+import { useRouter } from 'next/router';
 import {
   formatCnpj,
   formatCpf,
   formatOnChange,
   formatPhone,
-} from "../../utils/function/prod";
+} from '../../utils/function/prod';
 
 const inputDefaultStyle =
-  "mt-1 neighborhood w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white dark:focus:bg-slate-700 focus:ring-0 focus:outline-link py-2 px-3 dark:bg-slate-700 dark:border-slate-600 focus:outline focus:ring-2 dark:focus:ring-link-500";
+  'mt-1 neighborhood w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white dark:focus:bg-slate-700 focus:ring-0 focus:outline-link py-2 px-3 dark:bg-slate-700 dark:border-slate-600 focus:outline focus:ring-2 dark:focus:ring-link-500';
 interface FormProps {
-  tenant?: RouterOutputs["tenants"]["findOne"];
-  action: "create" | "edit";
+  tenant?: RouterOutputs['tenants']['findOne'];
+  action: 'create' | 'edit';
 }
 
 const formatKey = (pixKey: CreatePixKeysSchema) => {
   switch (pixKey.keyType) {
-    case "cpf":
+    case 'cpf':
       return { ...pixKey, key: formatCpf(pixKey.key) };
-    case "cnpj":
+    case 'cnpj':
       return { ...pixKey, key: formatCnpj(pixKey.key) };
-    case "celular":
+    case 'celular':
       return { ...pixKey, key: formatPhone(pixKey.key) };
     default:
       pixKey;
@@ -38,7 +38,6 @@ const formatKey = (pixKey: CreatePixKeysSchema) => {
 };
 
 const Form = ({ tenant, action }: FormProps) => {
-  const [currentCpf, setCpf] = useState("");
   const create = trpc.tenants.create.useMutation();
   const edit = trpc.tenants.edit.useMutation();
   const {
@@ -48,41 +47,40 @@ const Form = ({ tenant, action }: FormProps) => {
     control,
     setValue,
     getValues,
-    setError,
-    getFieldState,
   } = useForm<CreateTenant>({
     resolver: zodResolver(createTenantSchema),
-    mode: "onBlur",
+    mode: 'onBlur',
     defaultValues: {
       name: tenant?.name,
       email: tenant?.email,
       maritalStatus: tenant?.maritalStatus,
       profession: tenant?.profession,
-      cpf: formatCpf(tenant?.cpf || ""),
+      cpf: formatCpf(tenant?.cpf || ''),
       rg: tenant?.rg,
-      rgEmitter: tenant?.rgEmitter || "SSP/CE",
-      primaryPhone: formatPhone(tenant?.primaryPhone || ""),
-      secondaryPhone: formatPhone(tenant?.secondaryPhone || ""),
+      rgEmitter: tenant?.rgEmitter || 'SSP/CE',
+      primaryPhone: formatPhone(tenant?.primaryPhone || ''),
+      hasWpp: tenant?.hasWpp,
+      secondaryPhone: formatPhone(tenant?.secondaryPhone || ''),
       obs: tenant?.obs,
       pixKeys: tenant?.pixKeys.map((pixKey) => formatKey(pixKey)),
     },
   });
 
   const { fields, append, remove } = useFieldArray({
-    name: "pixKeys",
+    name: 'pixKeys',
     control,
   });
-  const { tenants } = trpc.useContext();
+  const { tenants } = trpc.useUtils();
   const { dirtyFields, isDirty, isValid } = useFormState({ control });
   const { push } = useRouter();
 
   const onInvalid: SubmitErrorHandler<CreateTenant> = (errors) => {
     // TODO: DELENDUS
-    console.log("errors", errors);
+    console.log('errors', errors);
   };
 
   const onValid: SubmitHandler<CreateTenant> = async (rawData, e) => {
-    if (action === "edit" && tenant) {
+    if (action === 'edit' && tenant) {
       const { pixKeys: pixKeysData, ...tenantData } =
         getDirtyValues<CreateTenant>(dirtyFields, rawData);
 
@@ -102,7 +100,7 @@ const Form = ({ tenant, action }: FormProps) => {
       onSuccess() {
         e?.target.reset();
         tenants.findAll.invalidate();
-        push("/inquilinos/pesquisar");
+        push('/inquilinos/pesquisar');
       },
     });
   };
@@ -110,142 +108,142 @@ const Form = ({ tenant, action }: FormProps) => {
   return (
     <form onSubmit={handleSubmit(onValid, onInvalid)}>
       <fieldset>
-        <legend className="mx-auto">
-          <h2 className="mb-12 text-center text-4xl font-semibold">
-            {action === "create" ? "Cadastrar" : "Editar"} Inquilino
+        <legend className='mx-auto'>
+          <h2 className='mb-12 text-center text-4xl font-semibold'>
+            {action === 'create' ? 'Cadastrar' : 'Editar'} Inquilino
           </h2>
         </legend>
 
         {(edit.isSuccess || create.isSuccess) && (
-          <p className="mb-12 text-center text-3xl font-semibold text-link">
-            Inquilino {action === "create" ? "cadastrado" : "editado"} com
+          <p className='mb-12 text-center text-3xl font-semibold text-link'>
+            Inquilino {action === 'create' ? 'cadastrado' : 'editado'} com
             sucesso!
           </p>
         )}
 
-        <div className="space-y-2">
-          <div className="grid gap-x-6 gap-y-2 md:grid-cols-2 lg:grid-cols-3">
+        <div className='space-y-2'>
+          <div className='grid gap-x-6 gap-y-2 md:grid-cols-2 lg:grid-cols-3'>
             <InputContainer
-              label="Nome"
-              id="name"
+              label='Nome'
+              id='name'
               errorMsg={errors?.name?.message}
             >
               <input
                 className={inputDefaultStyle}
-                type="text"
-                autoComplete="name"
+                type='text'
+                autoComplete='name'
                 maxLength={191}
-                placeholder="Fulano da Silva"
-                id="name"
+                placeholder='Fulano da Silva'
+                id='name'
                 required
-                {...register("name")}
+                {...register('name')}
               />
             </InputContainer>
 
             <InputContainer
-              label="Profissão"
-              id="profession"
+              label='Profissão'
+              id='profession'
               errorMsg={errors?.profession?.message}
             >
               <input
                 className={inputDefaultStyle}
-                type="text"
-                autoComplete="on"
+                type='text'
+                autoComplete='on'
                 maxLength={100}
-                placeholder="Sapateiro"
-                id="profession"
+                placeholder='Sapateiro'
+                id='profession'
                 required
-                {...register("profession")}
+                {...register('profession')}
               />
             </InputContainer>
 
             <InputContainer
-              label="Estado Civil"
-              id="marital-status"
+              label='Estado Civil'
+              id='marital-status'
               errorMsg={errors?.maritalStatus?.message}
             >
               <select
                 className={inputDefaultStyle}
-                id="marital-status"
+                id='marital-status'
                 required
-                {...register("maritalStatus")}
+                {...register('maritalStatus')}
               >
                 <option
-                  className="dark:bg-slate-700 dark:text-inherit"
-                  value="solteiro"
+                  className='dark:bg-slate-700 dark:text-inherit'
+                  value='solteiro'
                 >
                   Solteiro
                 </option>
                 <option
-                  className="dark:bg-slate-700 dark:text-inherit"
-                  value="casado"
+                  className='dark:bg-slate-700 dark:text-inherit'
+                  value='casado'
                 >
                   Casado
                 </option>
                 <option
-                  className="dark:bg-slate-700 dark:text-inherit"
-                  value="divorciado"
+                  className='dark:bg-slate-700 dark:text-inherit'
+                  value='divorciado'
                 >
                   Divorciado
                 </option>
                 <option
-                  className="dark:bg-slate-700 dark:text-inherit"
-                  value="viuvo"
+                  className='dark:bg-slate-700 dark:text-inherit'
+                  value='viuvo'
                 >
                   Viúvo
                 </option>
               </select>
             </InputContainer>
 
-            <InputContainer label="RG" id="rg" errorMsg={errors?.rg?.message}>
+            <InputContainer label='RG' id='rg' errorMsg={errors?.rg?.message}>
               <input
                 className={inputDefaultStyle}
-                type="text"
-                autoComplete="on"
+                type='text'
+                autoComplete='on'
                 minLength={5}
                 maxLength={15}
-                placeholder="220436629"
-                id="rg"
+                placeholder='220436629'
+                id='rg'
                 required
-                {...register("rg")}
+                {...register('rg')}
               />
             </InputContainer>
 
             <InputContainer
-              label="Orgão emissor"
-              id="rgEmitter"
+              label='Orgão emissor'
+              id='rgEmitter'
               errorMsg={errors?.rgEmitter?.message}
             >
               <input
                 className={inputDefaultStyle}
-                type="text"
-                autoComplete="on"
+                type='text'
+                autoComplete='on'
                 minLength={2}
                 maxLength={10}
-                placeholder="220436629"
-                id="rgEmitter"
+                placeholder='220436629'
+                id='rgEmitter'
                 required
-                {...register("rgEmitter")}
+                {...register('rgEmitter')}
               />
             </InputContainer>
 
             <InputContainer
-              label="CPF"
-              id="cpf"
+              label='CPF'
+              id='cpf'
               errorMsg={errors?.cpf?.message}
             >
               <input
                 className={inputDefaultStyle}
-                type="text"
-                autoComplete="on"
+                type='text'
+                autoComplete='on'
                 minLength={14}
                 maxLength={14}
-                placeholder="123.456.789-11"
-                id="cpf"
+                placeholder='123.456.789-11'
+                id='cpf'
                 required
-                {...register("cpf", {
+                {...register('cpf', {
                   onChange: formatOnChange<CreateTenant>({
-                    field: "cpf",
+                    field: 'cpf',
                     formatFunc: formatCpf,
                     setValue: setValue,
                   }),
@@ -253,48 +251,65 @@ const Form = ({ tenant, action }: FormProps) => {
               />
             </InputContainer>
 
-            <InputContainer
-              label="Telefone principal"
-              id="primary-phone"
-              errorMsg={errors?.primaryPhone?.message}
-            >
-              <input
-                className={inputDefaultStyle}
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel"
-                minLength={14}
-                maxLength={15}
-                placeholder="(85) 99876-5495"
-                id="primary-phone"
-                required
-                {...register("primaryPhone", {
-                  onChange: formatOnChange<CreateTenant>({
-                    field: "primaryPhone",
-                    formatFunc: formatPhone,
-                    setValue: setValue,
-                  }),
-                })}
-              />
-            </InputContainer>
+            <div className='grid grid-cols-[auto_min-content] gap-6'>
+              <InputContainer
+                label='Telefone principal'
+                id='primary-phone'
+                errorMsg={errors?.primaryPhone?.message}
+              >
+                <input
+                  className={inputDefaultStyle}
+                  type='tel'
+                  inputMode='tel'
+                  autoComplete='tel'
+                  minLength={14}
+                  maxLength={15}
+                  placeholder='(85) 99876-5495'
+                  id='primary-phone'
+                  required
+                  {...register('primaryPhone', {
+                    onChange: formatOnChange<CreateTenant>({
+                      field: 'primaryPhone',
+                      formatFunc: formatPhone,
+                      setValue: setValue,
+                    }),
+                  })}
+                />
+              </InputContainer>
+
+              <InputContainer
+                parentClasses='grid'
+                label='Whatsapp'
+                id='has-wpp'
+                errorMsg={errors?.primaryPhone?.message}
+              >
+                <input
+                  className='h-6 w-6 self-center justify-self-center accent-link'
+                  type='checkbox'
+                  id='has-wpp'
+                  required
+                  {...register('hasWpp')}
+                />
+              </InputContainer>
+            </div>
 
             <InputContainer
-              label="Telefone secundário"
-              id="secondary-phone"
+              label='Telefone secundário'
+              id='secondary-phone'
               errorMsg={errors?.secondaryPhone?.message}
             >
               <input
                 className={inputDefaultStyle}
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel"
+                type='tel'
+                inputMode='tel'
+                autoComplete='tel'
                 minLength={14}
                 maxLength={15}
-                placeholder="(85) 99876-5495"
-                id="secondary-phone"
-                {...register("secondaryPhone", {
+                placeholder='(85) 99876-5495'
+                id='secondary-phone'
+                {...register('secondaryPhone', {
                   onChange: formatOnChange<CreateTenant>({
-                    field: "secondaryPhone",
+                    field: 'secondaryPhone',
                     formatFunc: formatPhone,
                     setValue: setValue,
                   }),
@@ -303,78 +318,78 @@ const Form = ({ tenant, action }: FormProps) => {
             </InputContainer>
 
             <InputContainer
-              parentClasses="md:col-span-full lg:col-span-1"
-              label="Email"
-              id="email"
+              parentClasses='md:col-span-full lg:col-span-1'
+              label='Email'
+              id='email'
               errorMsg={errors?.email?.message}
             >
               <input
                 className={inputDefaultStyle}
-                type="email"
-                inputMode="email"
-                autoComplete="email"
+                type='email'
+                inputMode='email'
+                autoComplete='email'
                 maxLength={191}
-                placeholder="fulano@email.com"
-                id="email"
-                {...register("email")}
+                placeholder='fulano@email.com'
+                id='email'
+                {...register('email')}
               />
             </InputContainer>
           </div>
 
-          <div className="flex gap-7 child:flex-1">
-            <div className="flex flex-col gap-6 ">
+          <div className='flex gap-7 child:flex-1'>
+            <div className='flex flex-col gap-6 '>
               <InputContainer
-                label="Observações"
-                id="obs"
+                label='Observações'
+                id='obs'
                 errorMsg={errors?.obs?.message}
               >
                 <textarea
-                  className={inputDefaultStyle + " resize-none"}
-                  placeholder="Paga atrasado, faz bagunça..."
+                  className={inputDefaultStyle + ' resize-none'}
+                  placeholder='Paga atrasado, faz bagunça...'
                   spellCheck
-                  id="obs"
+                  id='obs'
                   cols={30}
                   rows={8}
                   maxLength={2000}
-                  {...register("obs")}
+                  {...register('obs')}
                 />
               </InputContainer>
 
               <button
-                className="mt-auto rounded-lg dark:bg-link-700 dark:disabled:bg-link-900 dark:disabled:text-white/50 bg-link px-8 py-3 text-lg font-semibold text-white disabled:bg-slate-200"
+                className='mt-auto rounded-lg bg-link px-8 py-3 text-lg font-semibold text-white disabled:bg-slate-200 dark:bg-link-700 dark:disabled:bg-link-900 dark:disabled:text-white/50'
                 disabled={
                   edit.isLoading || create.isLoading || !isDirty || !isValid
                 }
               >
-                {action === "create" ? "Cadastrar" : "Editar"}
+                {action === 'create' ? 'Cadastrar' : 'Editar'}
               </button>
             </div>
 
             <section>
-              <div className="flex items-center justify-center gap-3">
-                <h3 className="text-center text-lg font-medium ">
+              <div className='flex items-center justify-center gap-3'>
+                <h3 className='text-center text-lg font-medium '>
                   Chaves de Pix
                 </h3>
                 <button
-                  className="text-3xl text-green-600"
-                  type="button"
-                  aria-label="Acrescentar chave"
-                  onClick={() => append({ key: "", keyType: "email", id: "" })}
+                  className='text-3xl text-green-600'
+                  type='button'
+                  aria-label='Acrescentar chave'
+                  onClick={() => append({ key: '', keyType: 'email', id: '' })}
                 >
-                  <i className="fa-solid fa-circle-plus"></i>
+                  <i className='fa-solid fa-circle-plus'></i>
                 </button>
               </div>
 
-              <div className="space-y-2">
+              <div className='space-y-2'>
                 {fields.map((field, index) => {
                   return (
                     <fieldset
-                      className="flex items-center justify-center gap-x-6 gap-y-2"
+                      className='flex items-center justify-center gap-x-6 gap-y-2'
                       key={field.id}
                     >
                       <InputContainer
-                        parentClasses="self-start w-full"
-                        label="Tipo de chave"
+                        parentClasses='self-start w-full'
+                        label='Tipo de chave'
                         id={`type-${index}`}
                         errorMsg={errors?.pixKeys?.[index]?.keyType?.message}
                       >
@@ -385,31 +400,31 @@ const Form = ({ tenant, action }: FormProps) => {
                             deps: [`pixKeys.${index}.key`],
                           })}
                         >
-                          <option value="email">email</option>
-                          <option value="cpf">cpf</option>
-                          <option value="cnpj">cnpj</option>
-                          <option value="celular">celular</option>
-                          <option value="aleatoria">aleatoria</option>
+                          <option value='email'>email</option>
+                          <option value='cpf'>cpf</option>
+                          <option value='cnpj'>cnpj</option>
+                          <option value='celular'>celular</option>
+                          <option value='aleatoria'>aleatoria</option>
                         </select>
                       </InputContainer>
 
                       <InputContainer
-                        parentClasses="self-start w-full"
-                        label="Chave"
+                        parentClasses='self-start w-full'
+                        label='Chave'
                         id={`key-${index}`}
                         errorMsg={errors.pixKeys?.[index]?.key?.message}
                       >
                         <input
                           className={inputDefaultStyle}
-                          type="text"
-                          autoComplete="on"
+                          type='text'
+                          autoComplete='on'
                           maxLength={35}
-                          placeholder="006599975"
+                          placeholder='006599975'
                           id={`key-${index}`}
                           {...register(`pixKeys.${index}.key` as const, {
                             onChange: (e: ChangeEvent<HTMLInputElement>) => {
                               if (
-                                getValues(`pixKeys.${index}.keyType`) === "cpf"
+                                getValues(`pixKeys.${index}.keyType`) === 'cpf'
                               )
                                 formatOnChange<CreateTenant>({
                                   field: `pixKeys.${index}.key`,
@@ -418,7 +433,7 @@ const Form = ({ tenant, action }: FormProps) => {
                                 })(e);
                               if (
                                 getValues(`pixKeys.${index}.keyType`) ===
-                                "celular"
+                                'celular'
                               )
                                 formatOnChange<CreateTenant>({
                                   field: `pixKeys.${index}.key`,
@@ -426,7 +441,7 @@ const Form = ({ tenant, action }: FormProps) => {
                                   setValue: setValue,
                                 })(e);
                               if (
-                                getValues(`pixKeys.${index}.keyType`) === "cnpj"
+                                getValues(`pixKeys.${index}.keyType`) === 'cnpj'
                               )
                                 formatOnChange<CreateTenant>({
                                   field: `pixKeys.${index}.key`,
@@ -439,20 +454,20 @@ const Form = ({ tenant, action }: FormProps) => {
                       </InputContainer>
 
                       <input
-                        className="hidden"
-                        type="text"
-                        id="pixkey-id"
+                        className='hidden'
+                        type='text'
+                        id='pixkey-id'
                         readOnly
                         {...register(`pixKeys.${index}.id` as const)}
                       />
 
                       <button
-                        className="self-center text-3xl text-red-500"
-                        type="button"
-                        aria-label="Remover esta chave"
+                        className='self-center text-3xl text-red-500'
+                        type='button'
+                        aria-label='Remover esta chave'
                         onClick={() => remove(index)}
                       >
-                        <i className="fa-solid fa-circle-minus"></i>
+                        <i className='fa-solid fa-circle-minus'></i>
                       </button>
                     </fieldset>
                   );

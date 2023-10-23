@@ -1,45 +1,45 @@
-import { trpc, type RouterOutputs } from "../../utils/trpc";
+import { trpc, type RouterOutputs } from '../../utils/trpc';
 import {
   contractsSchema,
   type ContractsSchema,
-} from "../../server/schemas/contracts.schemas";
+} from '../../server/schemas/contracts.schemas';
 import {
   useForm,
   useFormState,
   type SubmitHandler,
   type SubmitErrorHandler,
-} from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import InputContainer from "../InputContainer";
-import { getDirtyValues } from "../../utils/zodHelpers";
-import { useRouter } from "next/router";
+} from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import InputContainer from '../InputContainer';
+import { getDirtyValues } from '../../utils/zodHelpers';
+import { useRouter } from 'next/router';
 import {
   formatCpf,
   formatOnChange,
   formatPhone,
-} from "../../utils/function/prod";
-import type { WitnessSchema } from "../../server/schemas/witnesses.schema";
+} from '../../utils/function/prod';
+import type { WitnessSchema } from '../../server/schemas/witnesses.schema';
 
 const inputDefaultStyle =
-  "mt-1 neighborhood w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white dark:focus:bg-slate-700 focus:ring-0 focus:outline-link py-2 px-3 dark:bg-slate-700 dark:border-slate-600 focus:outline focus:ring-2 dark:focus:ring-link-500";
+  'mt-1 neighborhood w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white dark:focus:bg-slate-700 focus:ring-0 focus:outline-link py-2 px-3 dark:bg-slate-700 dark:border-slate-600 focus:outline focus:ring-2 dark:focus:ring-link-500';
 interface FormProps {
-  contract?: NonNullable<RouterOutputs["contracts"]["findOne"]>;
-  action: "create" | "edit";
+  contract?: NonNullable<RouterOutputs['contracts']['findOne']>;
+  action: 'create' | 'edit';
 }
 
 const fiveYearsBack = `${new Date().getFullYear() - 5}-01-01`;
 const fiveYearsAfter = `${new Date().getFullYear() + 5}-01-01`;
-const today = new Intl.DateTimeFormat("fr-CA", {
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
+const today = new Intl.DateTimeFormat('fr-CA', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
 }).format(Date.now());
 
 const formatWitness = (witness: WitnessSchema) => ({
   ...witness,
   cpf: formatCpf(witness.cpf),
   primaryPhone: formatPhone(witness.primaryPhone),
-  secondaryPhone: formatPhone(witness.secondaryPhone || ""),
+  secondaryPhone: formatPhone(witness.secondaryPhone || ''),
 });
 
 const Form = ({ contract, action }: FormProps) => {
@@ -59,7 +59,7 @@ const Form = ({ contract, action }: FormProps) => {
     setValue,
   } = useForm<ContractsSchema>({
     resolver: zodResolver(contractsSchema),
-    mode: "onBlur",
+    mode: 'onBlur',
     defaultValues: {
       dueDay: contract?.dueDay || undefined,
       duration: contract?.duration || 12,
@@ -75,17 +75,17 @@ const Form = ({ contract, action }: FormProps) => {
     },
   });
 
-  const { contracts } = trpc.useContext();
+  const { contracts } = trpc.useUtils();
   const { dirtyFields, isDirty } = useFormState({ control });
   const { push } = useRouter();
 
   const onInvalid: SubmitErrorHandler<ContractsSchema> = (errors) => {
     // TODO: DELENDUS
-    console.log("errors", errors);
+    console.log('errors', errors);
   };
 
   const onValid: SubmitHandler<ContractsSchema> = (rawData, e) => {
-    if (action === "edit" && contract) {
+    if (action === 'edit' && contract) {
       const { witnesses: witnessesData, ...contractData } = getDirtyValues(
         dirtyFields,
         rawData
@@ -107,166 +107,166 @@ const Form = ({ contract, action }: FormProps) => {
       onSuccess() {
         e?.target.reset();
         contracts.findAll.invalidate();
-        push("/contratos/pesquisar");
+        push('/contratos/pesquisar');
       },
     });
   };
 
   return (
     <form onSubmit={handleSubmit(onValid, onInvalid)}>
-      <fieldset className="mb-4">
-        <legend className="mx-auto">
-          <h2 className="mb-12 text-center text-4xl font-semibold">
-            {action === "create" ? "Cadastrar" : "Editar"} Contrato
+      <fieldset className='mb-4'>
+        <legend className='mx-auto'>
+          <h2 className='mb-12 text-center text-4xl font-semibold'>
+            {action === 'create' ? 'Cadastrar' : 'Editar'} Contrato
           </h2>
         </legend>
 
         {(edit.isSuccess || create.isSuccess) && (
-          <p className="mb-12 text-center text-3xl font-semibold text-link">
-            Contrato {action === "create" ? "cadastrado" : "editado"} com
+          <p className='mb-12 text-center text-3xl font-semibold text-link'>
+            Contrato {action === 'create' ? 'cadastrado' : 'editado'} com
             sucesso!
           </p>
         )}
 
-        <div className="grid gap-x-6 gap-y-2 md:grid-cols-2 lg:grid-cols-3">
+        <div className='grid gap-x-6 gap-y-2 md:grid-cols-2 lg:grid-cols-3'>
           <InputContainer
-            label="Dia de pagamento"
-            id="due-day"
+            label='Dia de pagamento'
+            id='due-day'
             errorMsg={errors?.dueDay?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="number"
-              autoComplete="on"
+              type='number'
+              autoComplete='on'
               min={1}
               max={31}
-              placeholder="05"
-              id="due-day"
+              placeholder='05'
+              id='due-day'
               required
-              {...register("dueDay")}
+              {...register('dueDay')}
             />
           </InputContainer>
 
           <InputContainer
-            label="Aluguel"
-            id="rent"
+            label='Aluguel'
+            id='rent'
             errorMsg={errors?.rent?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="number"
-              inputMode="decimal"
-              autoComplete="on"
+              type='number'
+              inputMode='decimal'
+              autoComplete='on'
               step={0.01}
               max={99_999}
-              id="rent"
+              id='rent'
               required
-              {...register("rent")}
+              {...register('rent')}
             />
           </InputContainer>
 
           <InputContainer
-            label="Caução"
-            id="bail"
+            label='Caução'
+            id='bail'
             errorMsg={errors?.bail?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="number"
-              inputMode="decimal"
-              autoComplete="on"
+              type='number'
+              inputMode='decimal'
+              autoComplete='on'
               step={0.01}
               max={99_999}
-              id="bail"
+              id='bail'
               required
-              {...register("bail")}
+              {...register('bail')}
             />
           </InputContainer>
 
           <InputContainer
-            label="Duração"
-            id="duration"
+            label='Duração'
+            id='duration'
             errorMsg={errors?.duration?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="number"
-              autoComplete="on"
+              type='number'
+              autoComplete='on'
               step={1}
               min={1}
               max={100}
-              id="duration"
+              id='duration'
               required
-              {...register("duration")}
+              {...register('duration')}
             />
           </InputContainer>
 
           <InputContainer
-            label="Juros"
-            id="interest"
+            label='Juros'
+            id='interest'
             errorMsg={errors?.interest?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="number"
-              inputMode="decimal"
-              autoComplete="on"
+              type='number'
+              inputMode='decimal'
+              autoComplete='on'
               step={0.01}
               max={100}
-              id="interest"
+              id='interest'
               required
-              {...register("interest")}
+              {...register('interest')}
             />
           </InputContainer>
 
           <InputContainer
-            label="Mora"
-            id="arrears"
+            label='Mora'
+            id='arrears'
             errorMsg={errors?.arrears?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="number"
-              inputMode="decimal"
-              autoComplete="on"
+              type='number'
+              inputMode='decimal'
+              autoComplete='on'
               step={0.01}
               max={100}
-              id="arrears"
+              id='arrears'
               required
-              {...register("arrears")}
+              {...register('arrears')}
             />
           </InputContainer>
 
           <InputContainer
-            label="Data inicial"
-            id="initial-date"
+            label='Data inicial'
+            id='initial-date'
             errorMsg={errors?.initialDate?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="date"
+              type='date'
               min={fiveYearsBack}
               max={fiveYearsAfter}
               defaultValue={
-                contract?.initialDate.toLocaleDateString("en-CA") || today
+                contract?.initialDate.toLocaleDateString('en-CA') || today
               }
-              id="initial-date"
+              id='initial-date'
               required
-              {...register("initialDate", { valueAsDate: true })}
+              {...register('initialDate', { valueAsDate: true })}
             />
           </InputContainer>
 
           {loadedTenants && (
             <InputContainer
-              label="Locatário"
-              id="tenant-id"
+              label='Locatário'
+              id='tenant-id'
               errorMsg={errors?.tenantId?.message}
             >
               <select
                 className={inputDefaultStyle}
-                id="tenant-id"
+                id='tenant-id'
                 required
-                {...register("tenantId")}
+                {...register('tenantId')}
               >
                 {tenants.map((tenant) => (
                   <option value={tenant.id} key={tenant.id}>
@@ -279,15 +279,15 @@ const Form = ({ contract, action }: FormProps) => {
 
           {loadedHouses && (
             <InputContainer
-              label="Casa"
-              id="house-id"
+              label='Casa'
+              id='house-id'
               errorMsg={errors?.houseId?.message}
             >
               <select
                 className={inputDefaultStyle}
-                id="house-id"
+                id='house-id'
                 required
-                {...register("houseId")}
+                {...register('houseId')}
               >
                 {houses.map((house) => (
                   <option
@@ -300,63 +300,63 @@ const Form = ({ contract, action }: FormProps) => {
           )}
 
           <InputContainer
-            label="Número do Cliente"
-            id="electricity-id"
+            label='Número do Cliente'
+            id='electricity-id'
             errorMsg={errors?.electricityId?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="text"
-              autoComplete="on"
+              type='text'
+              autoComplete='on'
               maxLength={255}
-              placeholder="006599975"
-              id="electricity-id"
+              placeholder='006599975'
+              id='electricity-id'
               required
-              {...register("electricityId")}
+              {...register('electricityId')}
             />
           </InputContainer>
 
           <InputContainer
-            label="Número de Inscrição"
-            id="water-id"
+            label='Número de Inscrição'
+            id='water-id'
             errorMsg={errors?.waterId?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="text"
-              autoComplete="on"
+              type='text'
+              autoComplete='on'
               maxLength={255}
-              placeholder="006599975"
-              id="water-id"
+              placeholder='006599975'
+              id='water-id'
               required
-              {...register("waterId")}
+              {...register('waterId')}
             />
           </InputContainer>
         </div>
       </fieldset>
 
-      <div className="flex flex-col gap-6 md:flex-row">
+      <div className='flex flex-col gap-6 md:flex-row'>
         {[0, 1].map((index) => (
           <fieldset key={index}>
-            <legend className="mx-auto">
-              <h3 className="mb-5 text-center text-2xl font-semibold">
+            <legend className='mx-auto'>
+              <h3 className='mb-5 text-center text-2xl font-semibold'>
                 Testemunha 0{index + 1}
               </h3>
             </legend>
 
-            <div className="grid gap-x-6 gap-y-2 md:grid-cols-2">
+            <div className='grid gap-x-6 gap-y-2 md:grid-cols-2'>
               <InputContainer
-                parentClasses="col-span-full"
-                label="Nome"
+                parentClasses='col-span-full'
+                label='Nome'
                 id={`name-${index}`}
                 errorMsg={errors?.witnesses?.[index]?.name?.message}
               >
                 <input
                   className={inputDefaultStyle}
-                  type="text"
-                  autoComplete="name"
+                  type='text'
+                  autoComplete='name'
                   maxLength={191}
-                  placeholder="Fulano da Silva"
+                  placeholder='Fulano da Silva'
                   id={`name-${index}`}
                   required
                   {...register(`witnesses.${index}.name` as const)}
@@ -364,17 +364,17 @@ const Form = ({ contract, action }: FormProps) => {
               </InputContainer>
 
               <InputContainer
-                label="RG"
+                label='RG'
                 id={`rg-${index}`}
                 errorMsg={errors?.witnesses?.[index]?.rg?.message}
               >
                 <input
                   className={inputDefaultStyle}
-                  type="text"
-                  autoComplete="on"
+                  type='text'
+                  autoComplete='on'
                   minLength={5}
                   maxLength={15}
-                  placeholder="220436629"
+                  placeholder='220436629'
                   id={`rg-${index}`}
                   required
                   {...register(`witnesses.${index}.rg` as const)}
@@ -382,18 +382,18 @@ const Form = ({ contract, action }: FormProps) => {
               </InputContainer>
 
               <InputContainer
-                label="Orgão emissor"
+                label='Orgão emissor'
                 id={`rgEmitter-${index}`}
                 errorMsg={errors?.witnesses?.[index]?.rgEmitter?.message}
               >
                 <input
-                  className={inputDefaultStyle + " uppercase"}
-                  type="text"
-                  autoComplete="on"
+                  className={inputDefaultStyle + ' uppercase'}
+                  type='text'
+                  autoComplete='on'
                   minLength={2}
                   maxLength={10}
-                  defaultValue="SSP/CE"
-                  placeholder="SSP/CE"
+                  defaultValue='SSP/CE'
+                  placeholder='SSP/CE'
                   id={`rgEmitter-${index}`}
                   required
                   {...register(`witnesses.${index}.rgEmitter` as const)}
@@ -401,17 +401,17 @@ const Form = ({ contract, action }: FormProps) => {
               </InputContainer>
 
               <InputContainer
-                label="CPF"
+                label='CPF'
                 id={`cpf-${index}`}
                 errorMsg={errors?.witnesses?.[index]?.cpf?.message}
               >
                 <input
                   className={inputDefaultStyle}
-                  type="text"
-                  autoComplete="on"
+                  type='text'
+                  autoComplete='on'
                   minLength={14}
                   maxLength={14}
-                  placeholder="123.456.789-11"
+                  placeholder='123.456.789-11'
                   id={`cpf-${index}`}
                   required
                   {...register(`witnesses.${index}.cpf` as const, {
@@ -425,18 +425,18 @@ const Form = ({ contract, action }: FormProps) => {
               </InputContainer>
 
               <InputContainer
-                label="Telefone principal"
+                label='Telefone principal'
                 id={`primary-phone-${index}`}
                 errorMsg={errors?.witnesses?.[index]?.primaryPhone?.message}
               >
                 <input
                   className={inputDefaultStyle}
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
+                  type='tel'
+                  inputMode='tel'
+                  autoComplete='tel'
                   minLength={14}
                   maxLength={15}
-                  placeholder="(85) 99876-5495"
+                  placeholder='(85) 99876-5495'
                   id={`primary-phone-${index}`}
                   required
                   {...register(`witnesses.${index}.primaryPhone` as const, {
@@ -450,18 +450,18 @@ const Form = ({ contract, action }: FormProps) => {
               </InputContainer>
 
               <InputContainer
-                label="Telefone secundário"
+                label='Telefone secundário'
                 id={`secondary-phone-${index}`}
                 errorMsg={errors?.witnesses?.[index]?.secondaryPhone?.message}
               >
                 <input
                   className={inputDefaultStyle}
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
+                  type='tel'
+                  inputMode='tel'
+                  autoComplete='tel'
                   minLength={14}
                   maxLength={15}
-                  placeholder="(85) 99876-5495"
+                  placeholder='(85) 99876-5495'
                   id={`secondary-phone-${index}`}
                   {...register(`witnesses.${index}.secondaryPhone` as const, {
                     onChange: formatOnChange<ContractsSchema>({
@@ -474,18 +474,18 @@ const Form = ({ contract, action }: FormProps) => {
               </InputContainer>
 
               <InputContainer
-                parentClasses="md:col-span-full lg:col-span-1"
-                label="Email"
+                parentClasses='md:col-span-full lg:col-span-1'
+                label='Email'
                 id={`email-${index}`}
                 errorMsg={errors?.witnesses?.[index]?.email?.message}
               >
                 <input
                   className={inputDefaultStyle}
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
+                  type='email'
+                  inputMode='email'
+                  autoComplete='email'
                   maxLength={191}
-                  placeholder="fulano@email.com"
+                  placeholder='fulano@email.com'
                   id={`email-${index}`}
                   {...register(`witnesses.${index}.email` as const)}
                 />
@@ -493,9 +493,9 @@ const Form = ({ contract, action }: FormProps) => {
 
               {contract?.witnesses[index]?.id && (
                 <input
-                  className="hidden"
-                  type="text"
-                  id="witness-id"
+                  className='hidden'
+                  type='text'
+                  id='witness-id'
                   readOnly
                   {...register(`witnesses.${index}.id` as const)}
                 />
@@ -505,10 +505,10 @@ const Form = ({ contract, action }: FormProps) => {
         ))}
       </div>
       <button
-        className="mx-auto mt-8 block  w-1/4 min-w-min rounded-lg bg-link  px-8 py-3 text-lg font-semibold text-white disabled:bg-slate-200 dark:bg-link-700 dark:disabled:bg-link-900 dark:disabled:text-white/50"
+        className='mx-auto mt-8 block  w-1/4 min-w-min rounded-lg bg-link  px-8 py-3 text-lg font-semibold text-white disabled:bg-slate-200 dark:bg-link-700 dark:disabled:bg-link-900 dark:disabled:text-white/50'
         disabled={edit.isLoading || create.isLoading || !isDirty}
       >
-        {action === "create" ? "Cadastrar" : "Editar"}
+        {action === 'create' ? 'Cadastrar' : 'Editar'}
       </button>
     </form>
   );

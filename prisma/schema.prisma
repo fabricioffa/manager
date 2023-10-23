@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -35,6 +35,12 @@ enum HouseType {
   comercial
 }
 
+enum DebitType {
+  rent
+  water
+  electricity
+}
+
 model Tenant {
   id             String        @id @default(cuid())
   name           String
@@ -44,6 +50,7 @@ model Tenant {
   maritalStatus  MaritalStatus @default(solteiro) @map("marital_status")
   profession     String        @db.VarChar(100)
   primaryPhone   String        @map("primary_phone") @db.VarChar(25)
+  hasWpp         Boolean       @default(false) @map("has_wpp")
   secondaryPhone String?       @map("secondary_phone") @db.VarChar(25)
   email          String?
   pixKeys        PixKey[]
@@ -128,6 +135,7 @@ model Debit {
   id         String    @id @default(cuid())
   contract   Contract  @relation(fields: [contractId], references: [id])
   contractId String    @map("contract_id")
+  type       DebitType @default(rent)
   amount     Decimal   @db.Decimal(7, 2)
   dueDate    DateTime
   paidAt     DateTime?

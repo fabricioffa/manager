@@ -1,7 +1,6 @@
-import { Prisma } from "@prisma/client";
-import z from "./../../utils/my-zod";
-import { formWitnessSchema, witnessSchema } from "./witnesses.schema";
-import { baseSearchOptionsSchema, electricityId, waterId } from "./base.schemas";
+import z from './../../utils/my-zod';
+import { formWitnessSchema, witnessSchema } from './witnesses.schema';
+import { electricityId, waterId } from './base.schemas';
 
 const limits = {
   fiftyYearsBefore: new Date(new Date().getFullYear() - 5, 0, 1),
@@ -10,7 +9,10 @@ const limits = {
 
 export const contractsSchema = z.object({
   dueDay: z.number({ coerce: true }).positive().max(31),
-  initialDate: z.date().min(limits.fiftyYearsBefore).max(limits.fiftyYearsAfter),
+  initialDate: z
+    .date()
+    .min(limits.fiftyYearsBefore)
+    .max(limits.fiftyYearsAfter),
   rent: z.number({ coerce: true }).positive().max(99_999),
   bail: z.number({ coerce: true }).positive().max(99_999),
   duration: z.number({ coerce: true }).positive().max(100).default(12),
@@ -25,11 +27,7 @@ export const contractsSchema = z.object({
 
 export const createContractsSchema = contractsSchema
   .omit({ witnesses: true })
-  .extend({ witnesses: z.array(witnessSchema) })
+  .extend({ witnesses: z.array(witnessSchema) });
 
-export const contractsSearchOptionsSchema = baseSearchOptionsSchema(Prisma.ContractScalarFieldEnum)
-
-export type ContractSearchOptions = z.TypeOf<typeof contractsSearchOptionsSchema>;
 export type CreateContractsSchema = z.TypeOf<typeof createContractsSchema>;
 export type ContractsSchema = z.TypeOf<typeof contractsSchema>;
-

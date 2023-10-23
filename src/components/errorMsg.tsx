@@ -1,13 +1,11 @@
-import type { FC } from "react"
+import type { FC } from 'react';
 
 type ErrorMsgProps = {
-  msg?: string
-}
+  msg?: string;
+};
 
-const ErrorMsg: FC<ErrorMsgProps> = ({msg}) => {
-  return (
-    <p className="text-sm text-red-500 pt-1 first-letter:pl-3">{ msg }</p>
-  )
-}
+const ErrorMsg: FC<ErrorMsgProps> = ({ msg }) => {
+  return <p className='pt-1 text-sm text-red-500 first-letter:pl-3'>{msg}</p>;
+};
 
-export default ErrorMsg
+export default ErrorMsg;

@@ -1,8 +1,28 @@
 import { library, dom } from '@fortawesome/fontawesome-svg-core';
 import {
-  faFileContract, faPhone, faExclamation, faHouseChimneyWindow, faUser, faCirclePlus, faCircleMinus,
-  faLeftLong, faCalendarDay, faDroplet, faBolt, faLocationDot, faCircleDollarToSlot, faMagnifyingGlass,
-  faCaretRight, faCaretLeft, faEye, faPenToSquare, faTrash, faForward, faBars, faTrashCan, faClose
+  faFileContract,
+  faPhone,
+  faExclamation,
+  faHouseChimneyWindow,
+  faUser,
+  faCirclePlus,
+  faCircleMinus,
+  faLeftLong,
+  faCalendarDay,
+  faDroplet,
+  faBolt,
+  faLocationDot,
+  faCircleDollarToSlot,
+  faMagnifyingGlass,
+  faCaretRight,
+  faCaretLeft,
+  faEye,
+  faPenToSquare,
+  faTrash,
+  faForward,
+  faBars,
+  faTrashCan,
+  faClose,
 } from '@fortawesome/free-solid-svg-icons';
 
 // import {
@@ -14,9 +34,29 @@ import {
 // } from '@fortawesome/free-brands-svg-icons';
 
 library.add(
-  faPhone, faFileContract, faExclamation, faHouseChimneyWindow, faUser, faCirclePlus, faCircleMinus,
-  faLeftLong, faCalendarDay, faDroplet, faBolt, faLocationDot, faCircleDollarToSlot, faMagnifyingGlass,
-  faCaretRight, faCaretLeft, faEye, faPenToSquare, faTrash, faForward, faBars, faTrashCan, faClose
-  );
+  faPhone,
+  faFileContract,
+  faExclamation,
+  faHouseChimneyWindow,
+  faUser,
+  faCirclePlus,
+  faCircleMinus,
+  faLeftLong,
+  faCalendarDay,
+  faDroplet,
+  faBolt,
+  faLocationDot,
+  faCircleDollarToSlot,
+  faMagnifyingGlass,
+  faCaretRight,
+  faCaretLeft,
+  faEye,
+  faPenToSquare,
+  faTrash,
+  faForward,
+  faBars,
+  faTrashCan,
+  faClose
+);
 
-dom.watch()
+dom.watch();

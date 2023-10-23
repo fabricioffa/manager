@@ -1,12 +1,12 @@
-import { type AppType } from "next/app";
-import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
+import { type AppType } from 'next/app';
+import { type Session } from 'next-auth';
+import { SessionProvider } from 'next-auth/react';
 
-import { trpc } from "../utils/trpc";
-import '../utils/fasIcons'
+import { trpc } from '../utils/trpc';
+import '../utils/fasIcons';
 
-import "../styles/globals.scss";
-import Layout from "../components/Layout";
+import '../styles/globals.scss';
+import Layout from '../components/Layout';
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,

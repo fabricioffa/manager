@@ -1,8 +1,12 @@
-import { formWitnessSchema } from "./../../schemas/witnesses.schema";
-import { createContractsSchema } from "./../../schemas/contracts.schemas";
-import { router, protectedProcedure } from "../trpc";
-import { z } from "zod";
-import { currentDueDate, daysUntilNextSaturday, pastMonthLastDay } from "../../../utils/function/prod";
+import { formWitnessSchema } from './../../schemas/witnesses.schema';
+import { createContractsSchema } from './../../schemas/contracts.schemas';
+import { router, protectedProcedure } from '../trpc';
+import { z } from 'zod';
+import {
+  currentDueDate,
+  daysUntilNextSaturday,
+  pastMonthLastDay,
+} from '../../../utils/function/prod';
 
 export const contractsRouter = router({
   create: protectedProcedure
@@ -49,74 +53,72 @@ export const contractsRouter = router({
               rgEmitter: true,
               primaryPhone: true,
               secondaryPhone: true,
-              email: true
-            }
+              email: true,
+            },
           },
         },
       });
     }),
 
-  findAll: protectedProcedure
-    .query(async ({ ctx }) => {
-      return await ctx.prisma.contract.findMany({
-        include: {
-          tenant: {
-            select: {
-              id: true,
-              name: true,
-            },
+  findAll: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.contract.findMany({
+      include: {
+        tenant: {
+          select: {
+            id: true,
+            name: true,
           },
-          house: {
-            select: {
-              id: true,
-              street: true,
-              number: true,
-            },
-          },
-          witnesses: {
-            select: {
-              id: true,
-              name: true,
-            }
-          }
         },
-      });
-    }),
+        house: {
+          select: {
+            id: true,
+            street: true,
+            number: true,
+          },
+        },
+        witnesses: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+  }),
 
-  dueToThisWeek: protectedProcedure
-    .query(async ({ ctx }) => {
-      return await ctx.prisma.contract.findMany({
-        where: {
-          dueDay: {
-            in: daysUntilNextSaturday()
-          }
+  dueToThisWeek: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.contract.findMany({
+      where: {
+        dueDay: {
+          in: daysUntilNextSaturday(),
         },
-        orderBy: {
-          dueDay: 'asc'
-        },
-        include: {
-          tenant: {
-            select: {
-              id: true,
-              name: true,
-            },
+      },
+      orderBy: {
+        dueDay: 'asc',
+      },
+      include: {
+        tenant: {
+          select: {
+            id: true,
+            name: true,
           },
-          house: {
-            select: {
-              id: true,
-              street: true,
-              number: true,
-            },
-          },
-          witnesses: {
-            select: {
-              id: true,
-              name: true,
-            }
-          }
         },
-      });
-    }),
+        house: {
+          select: {
+            id: true,
+            street: true,
+            number: true,
+          },
+        },
+        witnesses: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+  }),
 
   edit: protectedProcedure
     .input(
@@ -160,38 +162,38 @@ export const contractsRouter = router({
       });
     }),
 
-  createDebits: protectedProcedure
-    .mutation(async ({ ctx }) => {
-      const contractsMissingDebits = await ctx.prisma.contract.findMany({
-        select: {
-          rent: true,
-          dueDay: true,
-          id: true,
+  createDebits: protectedProcedure.mutation(async ({ ctx }) => {
+    const contractsMissingDebits = await ctx.prisma.contract.findMany({
+      select: {
+        rent: true,
+        dueDay: true,
+        id: true,
+      },
+      where: {
+        debits: {
+          none: {
+            dueDate: {
+              gt: pastMonthLastDay(),
+            },
+          },
         },
-        where: {
-          debits: {
-            none: {
-              dueDate: {
-                gt: pastMonthLastDay()
-              }
-            }
-          }
-        }
-      })
+      },
+    });
 
-      // if (!contractsMissingDebits.length) return
-      if (!contractsMissingDebits.length) return 'No contracts missing debits'
+    // if (!contractsMissingDebits.length) return
+    if (!contractsMissingDebits.length) return 'No contracts missing debits';
 
-      const debitsData = contractsMissingDebits.map(contract => ({
-        amount: Number(contract.rent),
-        dueDate: currentDueDate(contract.dueDay),
-        contractId: contract.id
-      }))
+    const debitsData = contractsMissingDebits.map((contract) => ({
+      amount: Number(contract.rent),
+      dueDate: currentDueDate(contract.dueDay),
+      contractId: contract.id,
+    }));
 
-      const debits = await ctx.prisma.debit.createMany({
-        data: debitsData, skipDuplicates: true
-      })
+    const debits = await ctx.prisma.debit.createMany({
+      data: debitsData,
+      skipDuplicates: true,
+    });
 
-      return { debits }
-    }),
+    return { debits };
+  }),
 });

@@ -1,33 +1,21 @@
-import { useState } from "react";
-import Card from "../../components/houses/Card";
-import SearchForm from "../../components/houses/SearchForm";
-import { ItemsList } from "../../components/ItemsList";
-import Paginator from "../../components/Paginator";
-import { dataFilter } from "../../utils/function/prod";
-import { trpc } from "../../utils/trpc";
-import type { HousesSearchOptions } from "../../server/schemas/house.schema";
+import { useState } from 'react';
+import Card from '../../components/houses/Card';
+import SearchForm from '../../components/houses/SearchForm';
+import { ItemsList } from '../../components/ItemsList';
+import Paginator from '../../components/Paginator';
+import { dataFilter } from '../../utils/function/prod';
+import { trpc } from '../../utils/trpc';
 
 const perPage = 10;
 
 const HouseSearch = () => {
   const { data, isSuccess } = trpc.houses.findAll.useQuery();
-  const [filter, setFilter] = useState<HousesSearchOptions>({
-    property: "all",
-    caseSensitive: false,
-    query: "",
-  });
+  const [query, setQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
 
-  const onFilterChange = (newFilter: Partial<HousesSearchOptions>) => {
-    setFilter({ ...filter, ...newFilter });
-  };
-
+  const onFilterChange = (newQuery: typeof query) => setQuery(newQuery);
   if (isSuccess) {
-    const houses = dataFilter<
-      NonNullable<typeof data>[number],
-      HousesSearchOptions
-    >(data, filter);
-
+    const houses = dataFilter(data, query);
     const paginatedHouses = houses.slice(currentPage, currentPage + perPage);
 
     const onPageChange = (index: number) => {
@@ -37,7 +25,7 @@ const HouseSearch = () => {
 
     return (
       <div>
-        <h1 className="mb-14 text-center text-5xl font-semibold">Casas</h1>
+        <h1 className='mb-14 text-center text-5xl font-semibold'>Casas</h1>
 
         <SearchForm onFilterChange={onFilterChange} />
 

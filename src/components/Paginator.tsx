@@ -1,5 +1,5 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { type FC } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { type FC } from 'react';
 
 type PaginatorProps = {
   totalCount: number;
@@ -16,7 +16,6 @@ const Paginator: FC<PaginatorProps> = ({
   currentPage,
   onPageChange,
 }) => {
-  
   const pagesNumber = Math.ceil(totalCount / perPage);
   const pages = [...Array(pagesNumber).keys()];
   const lastPage = pages.length - 1;
@@ -34,44 +33,44 @@ const Paginator: FC<PaginatorProps> = ({
   };
 
   return (
-    <nav className="py-12">
-      <ol className="flex justify-center gap-1">
+    <nav className='py-12'>
+      <ol className='flex justify-center gap-1'>
         <li>
           <button
             disabled={currentPage === 0}
-            className="inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700"
+            className='inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700'
             onClick={() => onPageChange(0)}
           >
-            <FontAwesomeIcon icon="forward" className="-rotate-180" />
+            <FontAwesomeIcon icon='forward' className='-rotate-180' />
           </button>
         </li>
         <li>
           <button
             disabled={currentPage === 0}
-            className="inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700"
+            className='inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700'
             onClick={() => onPageChange(currentPage - 1)}
           >
-            <FontAwesomeIcon icon="caret-left" />
+            <FontAwesomeIcon icon='caret-left' />
           </button>
         </li>
         {showDots.start && (
-          <li className="inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700 max-sm:hidden">
+          <li className='inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700 max-sm:hidden'>
             ...
           </li>
         )}
-        <li className="sm:hidden">
+        <li className='sm:hidden'>
           <button
-            data-active="true"
-            className="inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700  dark:disabled:bg-slate-700 dark:data-active:bg-blue-700"
+            data-active='true'
+            className='inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700  dark:disabled:bg-slate-700 dark:data-active:bg-blue-700'
           >
             {currentPage + 1}
           </button>
         </li>
         {visiblePages.map((page) => (
-          <li key={page} className="max-sm:hidden">
+          <li key={page} className='max-sm:hidden'>
             <button
               data-active={currentPage === page}
-              className="inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700"
+              className='inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700'
               onClick={() => onPageChange(page)}
             >
               {page + 1}
@@ -79,26 +78,26 @@ const Paginator: FC<PaginatorProps> = ({
           </li>
         ))}
         {showDots.end && (
-          <li className="inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700 max-sm:hidden">
+          <li className='inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700 max-sm:hidden'>
             ...
           </li>
         )}
         <li>
           <button
             disabled={currentPage === lastPage}
-            className="inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700"
+            className='inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700'
             onClick={() => onPageChange(currentPage + 1)}
           >
-            <FontAwesomeIcon icon="caret-right" />
+            <FontAwesomeIcon icon='caret-right' />
           </button>
         </li>
         <li>
           <button
             disabled={currentPage === lastPage}
-            className="inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700"
+            className='inline-block cursor-pointer border border-blue-600 px-4 py-2 disabled:pointer-events-none disabled:bg-slate-100 data-active:bg-blue-300 data-active:text-white dark:border-blue-700 dark:disabled:bg-slate-700  dark:data-active:bg-blue-700'
             onClick={() => onPageChange(lastPage)}
           >
-            <FontAwesomeIcon icon="forward" />
+            <FontAwesomeIcon icon='forward' />
           </button>
         </li>
       </ol>

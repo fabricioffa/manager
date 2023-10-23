@@ -1,14 +1,13 @@
-import { createPixKeysSchema } from "./../../schemas/pixKeys.schemas";
+import { createPixKeysSchema } from './../../schemas/pixKeys.schemas';
 import {
   buildTenantWhereObj,
   createTenantSchema,
-  tenantsSearchOptionsSchema,
-} from "./../../schemas/tenant.schema";
-import { router, protectedProcedure } from "./../trpc";
-import { z } from "zod";
-import { pagination } from "../../schemas/base.schemas";
-import { isPrimaError } from "../../../utils/function/prod";
-import { TRPCError } from "@trpc/server";
+} from './../../schemas/tenant.schema';
+import { router, protectedProcedure } from './../trpc';
+import { z } from 'zod';
+import { baseFilter, pagination } from '../../schemas/base.schemas';
+import { isPrimaError } from '../../../utils/function/prod';
+import { TRPCError } from '@trpc/server';
 
 export const tenantsRouter = router({
   create: protectedProcedure
@@ -31,7 +30,7 @@ export const tenantsRouter = router({
         }
         await ctx.prisma.tenant.create({ data: tenantData });
       } catch (error) {
-        console.log("%c error", "color: blue", error);
+        console.log('%c error', 'color: blue', error);
         if (isPrimaError(error) && error.code === 'P2002') {
           throw new TRPCError({
             code: 'BAD_REQUEST',
@@ -80,6 +79,7 @@ export const tenantsRouter = router({
     }),
 
   findAll: protectedProcedure.query(async ({ ctx }) => {
+    console.log('%c ctx', 'color: green', ctx)
     return await ctx.prisma.tenant.findMany({
       include: {
         contracts: {
@@ -103,18 +103,18 @@ export const tenantsRouter = router({
   filter: protectedProcedure
     .input(
       z.object({
-        filter: tenantsSearchOptionsSchema,
+        filter: baseFilter,
         pagination,
       })
     )
-    .query(async ({ ctx, input: { filter, pagination } }) => {
+    .query(async ({ ctx, input: { filter } }) => {
       const where = buildTenantWhereObj(filter);
 
       const [count, tenants] = await Promise.all([
         ctx.prisma.tenant.count({ where }),
         ctx.prisma.tenant.findMany({
-          take: pagination.perPage,
-          skip: pagination.currentPage * pagination.perPage,
+          // take: pagination.perPage,
+          // skip: pagination.currentPage * pagination.perPage,
           where,
           select: {
             id: true,
@@ -203,7 +203,7 @@ export const tenantsRouter = router({
   exists: protectedProcedure
     .input(
       z.object({
-        cpf: z.string().transform((cpf) => cpf.replace(/\D/gi, "")),
+        cpf: z.string().transform((cpf) => cpf.replace(/\D/gi, '')),
       })
     )
     .query(

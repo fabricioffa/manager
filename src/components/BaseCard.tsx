@@ -1,36 +1,37 @@
-import type { FC, ReactNode } from "react";
-import CardActionBtns, { type CardActionBtnsProps } from "./CardActionBtns";
-import { useSetAtom } from 'jotai'
-import { dialogAtom } from "../global-state/atoms";
+import type { FC, ReactNode } from 'react';
+import CardActionBtns, { type CardActionBtnsProps } from './CardActionBtns';
+import { useSetAtom } from 'jotai';
+import { dialogAtom } from '../global-state/atoms';
 type BaseCardProps =
   | ({
-      children: ReactNode
+      children: ReactNode;
       withActions: true;
     } & CardActionBtnsProps)
-    | {
-      children: ReactNode
+  | {
+      children: ReactNode;
       withActions: false;
     };
 
 const BaseCard: FC<BaseCardProps> = (props) => {
-  const setDialog = useSetAtom(dialogAtom)
+  const setDialog = useSetAtom(dialogAtom);
   const openDeleteDialog = () =>
-    setDialog({isOpen: true, onConfirmation: props.withActions ? props.deleteFunc : undefined})
+    setDialog({
+      isOpen: true,
+      onConfirmation: props.withActions ? props.deleteFunc : undefined,
+    });
 
   return (
-    <li className="grid rounded-md bg-white/10 p-4 text-lg shadow-card ring">
-      <div className="grid grid-cols-[1.9rem_1fr] grid-rows-[3rem_auto] items-center gap-2">
-        { props.children }
+    <li className='grid min-h-[20rem] rounded-md bg-white/10 p-4 text-lg shadow-card ring'>
+      <div className='grid grid-cols-[1.9rem_1fr] grid-rows-[3rem_auto] items-center gap-2'>
+        {props.children}
       </div>
-      {
-        props.withActions &&
+      {props.withActions && (
         <CardActionBtns
           profileLink={props.profileLink}
           editLink={props.editLink}
           deleteFunc={openDeleteDialog}
         />
-
-      }
+      )}
     </li>
   );
 };

@@ -1,46 +1,28 @@
-import { MaritalStatus } from "@prisma/client";
-import type { Decimal, PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import type { ChangeEvent } from "react";
+import type {
+  Decimal,
+  PrismaClientKnownRequestError,
+} from '@prisma/client/runtime/library';
+import type { ChangeEvent } from 'react';
 import type {
   FieldPath,
   FieldValues,
   UseFormReturn,
   FieldPathValue,
-} from "react-hook-form";
+} from 'react-hook-form';
+import { MaritalStatus } from '@prisma/client';
 
-type BaseFilter = {
-  property: string;
-  caseSensitive: boolean;
-  query: string;
-};
-
-export const dataFilter = <
-  Item extends Record<string, unknown>,
-  Filter extends BaseFilter
->(
+export const dataFilter = <Item extends Record<string, unknown>>(
   entities: Item[],
-  filter: Filter
+  query: string
 ) => {
-  return filter.query === ""
+  return query === ''
     ? entities
-    : entities?.filter((entity) => {
-        const property = filter.property;
-        const query = filter.caseSensitive
-          ? filter.query
-          : filter.query.toLowerCase();
-
-        if (property === "all") {
-          return Object.values(entity).some((property) =>
-            filter.caseSensitive
-              ? property?.toString().includes(query)
-              : property?.toString().toLowerCase().includes(query)
-          );
-        }
-
-        return filter.caseSensitive
-          ? entity[property]?.toString().includes(query)
-          : entity[property]?.toString().toLocaleLowerCase().includes(query);
-      });
+    : entities?.filter((entity) =>
+        Object.values(entity).some(
+          (property) =>
+            property?.toString().toLowerCase().includes(query.toLowerCase())
+        )
+      );
 };
 
 export const injectCharAt = (str: string, char: string, pos: number) =>
@@ -50,7 +32,7 @@ export const castStrToNumbersArray = (str: string) =>
   Array.from(str, (char) => Number(char));
 
 export const isRepetition = (str: string) =>
-  !str.split("").every((char) => char === str.charAt(0));
+  !str.split('').every((char) => char === str.charAt(0));
 
 // export const hasRightLength = (str: string | unknown[], targetLength: number) => str.length === targetLength;
 
@@ -63,7 +45,7 @@ export const daysUntilNextSaturday = (today: Date = new Date()) => {
 };
 
 export const formatCurrency = (val: string | number | Decimal) =>
-  Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(
+  Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
     Number(val)
   );
 
@@ -71,7 +53,7 @@ export const formatDate = (
   date: Date,
   options?: Intl.DateTimeFormatOptions
 ) => {
-  return new Intl.DateTimeFormat("pt-BR", options).format(date);
+  return new Intl.DateTimeFormat('pt-BR', options).format(date);
 };
 
 export const pastMonthDate = (date: Date = new Date()) => {
@@ -117,31 +99,31 @@ export const calculateLateDebit = (
 };
 
 export const toMonthInputFormat = (date: Date = new Date()) =>
-  new Intl.DateTimeFormat("pt-BR")
+  new Intl.DateTimeFormat('pt-BR')
     .format(date)
     .slice(3)
-    .split("/")
+    .split('/')
     .reverse()
-    .join("-");
+    .join('-');
 
 export const slugfy = (str: string) =>
   str
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
     .toLowerCase()
-    .replaceAll(" ", "-");
+    .replaceAll(' ', '-');
 
-export const stripOfNonNumeric = (str: string) => str.replace(/\D/gi, "");
+export const stripOfNonNumeric = (str: string) => str.replace(/\D/gi, '');
 
 export const ppStripOfNonNumeric = <T>(val: T) =>
-  typeof val === "string" ? stripOfNonNumeric(val) : val;
+  typeof val === 'string' ? stripOfNonNumeric(val) : val;
 export const ppNullifyEmptyStr = <T>(val: T) =>
-  typeof val === "string" && val === "" ? null : val;
+  typeof val === 'string' && val === '' ? null : val;
 export const ppUndefineEmptyStr = <T>(val: T) =>
-  typeof val === "string" && val === "" ? undefined : val;
+  typeof val === 'string' && val === '' ? undefined : val;
 export const ppStripOfNonNumericOrNullifyEmptyStr = <T>(val: T) => {
-  if (typeof val === "string")
-    return val === "" ? null : stripOfNonNumeric(val);
+  if (typeof val === 'string')
+    return val === '' ? null : stripOfNonNumeric(val);
   return val;
 };
 
@@ -150,7 +132,7 @@ export const formatCpf = (cpf: string) =>
     .reduce(
       (formattedCpf, position) =>
         formattedCpf.charAt(position)
-          ? injectCharAt(formattedCpf, position < 9 ? "." : "-", position)
+          ? injectCharAt(formattedCpf, position < 9 ? '.' : '-', position)
           : formattedCpf,
       stripOfNonNumeric(cpf)
     )
@@ -160,9 +142,9 @@ export const formatPhone = (phone: string) => {
   const cleanPhone = stripOfNonNumeric(phone);
   let formattedPhone = cleanPhone;
   if (cleanPhone.charAt(7))
-    formattedPhone = injectCharAt(formattedPhone, "-", 7);
+    formattedPhone = injectCharAt(formattedPhone, '-', 7);
   if (cleanPhone.charAt(2))
-    formattedPhone = "(" + injectCharAt(formattedPhone, ") ", 2);
+    formattedPhone = '(' + injectCharAt(formattedPhone, ') ', 2);
   return formattedPhone.slice(0, 15);
 };
 
@@ -170,15 +152,15 @@ export const formatCnpj = (cnpj: string) => {
   const cleanCnpj = stripOfNonNumeric(cnpj);
   let formattedCnpj = cleanCnpj;
   if (cleanCnpj.charAt(12))
-    formattedCnpj = injectCharAt(formattedCnpj, "-", 12);
-  if (cleanCnpj.charAt(8)) formattedCnpj = injectCharAt(formattedCnpj, "/", 8);
-  if (cleanCnpj.charAt(5)) formattedCnpj = injectCharAt(formattedCnpj, ".", 5);
-  if (cleanCnpj.charAt(2)) formattedCnpj = injectCharAt(formattedCnpj, ".", 2);
+    formattedCnpj = injectCharAt(formattedCnpj, '-', 12);
+  if (cleanCnpj.charAt(8)) formattedCnpj = injectCharAt(formattedCnpj, '/', 8);
+  if (cleanCnpj.charAt(5)) formattedCnpj = injectCharAt(formattedCnpj, '.', 5);
+  if (cleanCnpj.charAt(2)) formattedCnpj = injectCharAt(formattedCnpj, '.', 2);
   return formattedCnpj.slice(0, 18);
 };
 
 export const validateMobile = (phone: string) =>
-  phone.length === 11 ? phone.charAt(2) === "9" : true;
+  phone.length === 11 ? phone.charAt(2) === '9' : true;
 
 type FieldName<TFieldValues extends FieldValues> = FieldPath<TFieldValues>;
 
@@ -187,7 +169,7 @@ type formatOnChangeProps<TFieldValues extends FieldValues> = {
   formatFunc: (
     str: string
   ) => FieldPathValue<TFieldValues, FieldName<TFieldValues>>;
-  setValue: Pick<UseFormReturn<TFieldValues>, "setValue">["setValue"];
+  setValue: Pick<UseFormReturn<TFieldValues>, 'setValue'>['setValue'];
 };
 
 export const formatOnChange =
@@ -219,6 +201,9 @@ export const isMaritalStatus = (
   Object.keys(MaritalStatus).includes(str);
 
 export const isPrimaError = (e: unknown): e is PrismaClientKnownRequestError =>
-  typeof e === "object" && !!e && "code" in e;
+  typeof e === 'object' && !!e && 'code' in e;
 
-export const buildPhoneUrl = (phone: string) => `tel:+55${phone.replace(/\D/gi, '')}`
+export const buildPhoneUrl = (phone: string) =>
+  `tel:+55${stripOfNonNumeric(phone)}`;
+export const buildWhatsappUrl = (phone?: string) =>
+  phone && `https://wa.me/55${stripOfNonNumeric(phone)}`;

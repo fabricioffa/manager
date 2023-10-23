@@ -1,11 +1,11 @@
 type ItemsListProps = {
-  children: JSX.Element[],
-}
+  children: JSX.Element[];
+};
 
-export const ItemsList = ({children}: ItemsListProps) => {
+export const ItemsList = ({ children }: ItemsListProps) => {
   return (
-    <ul className="grid grid-cols-[repeat(auto-fill,minmax(min(15rem,100%),1fr))] gap-10 contain-content p-2.5">
-        {children}
+    <ul className='grid grid-cols-[repeat(auto-fill,minmax(min(15rem,100%),1fr))] gap-10 p-2.5 contain-content'>
+      {children}
     </ul>
-  )
-}
+  );
+};

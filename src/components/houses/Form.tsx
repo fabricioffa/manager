@@ -1,19 +1,19 @@
-import { createHouseSchema } from "../../server/schemas/house.schema";
-import type { CreateHouseSchema } from "../../server/schemas/house.schema";
-import { trpc } from "../../utils/trpc";
-import { useForm, useFormState } from "react-hook-form";
-import type { SubmitHandler, SubmitErrorHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import InputContainer from "../InputContainer";
-import type { House } from "@prisma/client";
-import { getDirtyValues } from "../../utils/zodHelpers";
-import { useRouter } from "next/router";
+import { createHouseSchema } from '../../server/schemas/house.schema';
+import type { CreateHouseSchema } from '../../server/schemas/house.schema';
+import { trpc } from '../../utils/trpc';
+import { useForm, useFormState } from 'react-hook-form';
+import type { SubmitHandler, SubmitErrorHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import InputContainer from '../InputContainer';
+import type { House } from '@prisma/client';
+import { getDirtyValues } from '../../utils/zodHelpers';
+import { useRouter } from 'next/router';
 
 const inputDefaultStyle =
-  "mt-1 neighborhood w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white dark:focus:bg-slate-700 focus:ring-0 focus:outline-link py-2 px-3 dark:bg-slate-700 dark:border-slate-600 focus:outline focus:ring-2 dark:focus:ring-link-500";
+  'mt-1 neighborhood w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white dark:focus:bg-slate-700 focus:ring-0 focus:outline-link py-2 px-3 dark:bg-slate-700 dark:border-slate-600 focus:outline focus:ring-2 dark:focus:ring-link-500';
 interface FormProps {
   house?: House;
-  action: "create" | "edit";
+  action: 'create' | 'edit';
 }
 
 const Form = ({ house, action }: FormProps) => {
@@ -27,7 +27,7 @@ const Form = ({ house, action }: FormProps) => {
     control,
   } = useForm<CreateHouseSchema>({
     resolver: zodResolver(createHouseSchema),
-    mode: "onBlur",
+    mode: 'onBlur',
     defaultValues: house
       ? {
           street: house.street,
@@ -44,19 +44,19 @@ const Form = ({ house, action }: FormProps) => {
       : undefined,
   });
 
-  const { houses } = trpc.useContext();
+  const { houses } = trpc.useUtils();
 
   const { dirtyFields, isDirty } = useFormState({ control });
 
   const onInvalid: SubmitErrorHandler<CreateHouseSchema> = (errors) => {
     // TODO: DELENDUS
-    console.log("%cerrors", "color: red", errors);
+    console.log('%cerrors', 'color: red', errors);
   };
 
   const { push } = useRouter();
 
   const onValid: SubmitHandler<CreateHouseSchema> = (data, e) => {
-    if (action === "edit" && house) {
+    if (action === 'edit' && house) {
       const houseData = getDirtyValues<CreateHouseSchema>(dirtyFields, data);
 
       edit.mutate(
@@ -75,7 +75,7 @@ const Form = ({ house, action }: FormProps) => {
       onSuccess() {
         e?.target.reset();
         houses.findAll.invalidate();
-        push("/casas/pesquisar");
+        push('/casas/pesquisar');
       },
     });
   };
@@ -83,186 +83,186 @@ const Form = ({ house, action }: FormProps) => {
   return (
     <form onSubmit={handleSubmit(onValid, onInvalid)}>
       <fieldset>
-        <legend className="mx-auto">
-          <h2 className="mb-12 text-center text-4xl font-semibold">
-            {action === "create" ? "Cadastrar" : "Editar"} Casa
+        <legend className='mx-auto'>
+          <h2 className='mb-12 text-center text-4xl font-semibold'>
+            {action === 'create' ? 'Cadastrar' : 'Editar'} Casa
           </h2>
         </legend>
 
         {(edit.isSuccess || create.isSuccess) && (
-          <p className="mb-12 text-center text-3xl font-semibold text-link">
-            Casa {action === "create" ? "cadastrado" : "editado"} com sucesso!
+          <p className='mb-12 text-center text-3xl font-semibold text-link'>
+            Casa {action === 'create' ? 'cadastrado' : 'editado'} com sucesso!
           </p>
         )}
 
-        <div className="grid gap-x-6 gap-y-2 md:grid-cols-2 lg:grid-cols-3">
+        <div className='grid gap-x-6 gap-y-2 md:grid-cols-2 lg:grid-cols-3'>
           <InputContainer
-            label="Rua"
-            id="street"
+            label='Rua'
+            id='street'
             errorMsg={errors?.street?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="text"
-              autoComplete="address-level3"
+              type='text'
+              autoComplete='address-level3'
               maxLength={191}
-              placeholder="R. das Laranjeiras"
-              id="street"
-              {...register("street")}
+              placeholder='R. das Laranjeiras'
+              id='street'
+              {...register('street')}
             />
           </InputContainer>
 
           <InputContainer
-            label="Número"
-            id="number"
+            label='Número'
+            id='number'
             errorMsg={errors?.number?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="text"
-              autoComplete="on"
+              type='text'
+              autoComplete='on'
               maxLength={20}
-              placeholder="775"
-              id="number"
-              {...register("number")}
+              placeholder='775'
+              id='number'
+              {...register('number')}
             />
           </InputContainer>
 
           <InputContainer
-            label="Complemento"
-            id="complement"
+            label='Complemento'
+            id='complement'
             errorMsg={errors?.complement?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="text"
-              autoComplete="on"
+              type='text'
+              autoComplete='on'
               maxLength={191}
-              placeholder="Inrriba do morro"
-              id="complement"
-              {...register("complement")}
+              placeholder='Inrriba do morro'
+              id='complement'
+              {...register('complement')}
             />
           </InputContainer>
 
           <InputContainer
-            label="Bairro"
-            id="neighborhood"
+            label='Bairro'
+            id='neighborhood'
             errorMsg={errors?.neighborhood?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="text"
-              autoComplete="on"
+              type='text'
+              autoComplete='on'
               maxLength={100}
-              placeholder="Zé Valter"
-              id="neighborhood"
-              {...register("neighborhood")}
+              placeholder='Zé Valter'
+              id='neighborhood'
+              {...register('neighborhood')}
             />
           </InputContainer>
 
           <InputContainer
-            label="Cidade"
-            id="city "
+            label='Cidade'
+            id='city '
             errorMsg={errors?.city?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="text"
-              autoComplete="on"
+              type='text'
+              autoComplete='on'
               maxLength={100}
-              placeholder="Fortaleza"
-              id="city "
-              {...register("city")}
+              placeholder='Fortaleza'
+              id='city '
+              {...register('city')}
             />
           </InputContainer>
 
           <InputContainer
-            label="IPTU"
-            id="iptu"
+            label='IPTU'
+            id='iptu'
             errorMsg={errors?.iptu?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="text"
-              autoComplete="on"
+              type='text'
+              autoComplete='on'
               minLength={5}
               maxLength={20}
-              placeholder="Fortaleza"
-              id="iptu"
-              {...register("iptu")}
+              placeholder='Fortaleza'
+              id='iptu'
+              {...register('iptu')}
             />
           </InputContainer>
 
           <InputContainer
-            label="Tipo"
-            id="type"
+            label='Tipo'
+            id='type'
             errorMsg={errors?.type?.message}
           >
             <select
               className={inputDefaultStyle}
-              id="type"
-              {...register("type")}
+              id='type'
+              {...register('type')}
             >
-              <option value="residencial">Residencial</option>
-              <option value="comercial">Comercial</option>
+              <option value='residencial'>Residencial</option>
+              <option value='comercial'>Comercial</option>
             </select>
           </InputContainer>
 
           <InputContainer
-            label="Número da Instalação"
-            id="electricity-id"
+            label='Número da Instalação'
+            id='electricity-id'
             errorMsg={errors?.electricityId?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="text"
-              autoComplete="on"
+              type='text'
+              autoComplete='on'
               maxLength={50}
-              placeholder="006599asdf975"
-              id="electricity-id"
-              {...register("electricityId")}
+              placeholder='006599asdf975'
+              id='electricity-id'
+              {...register('electricityId')}
             />
           </InputContainer>
 
           <InputContainer
-            label="Hidrômetro"
-            id="water-id"
+            label='Hidrômetro'
+            id='water-id'
             errorMsg={errors?.waterId?.message}
           >
             <input
               className={inputDefaultStyle}
-              type="text"
-              autoComplete="on"
+              type='text'
+              autoComplete='on'
               maxLength={50}
-              placeholder="00659asda9975"
-              id="water-id"
-              {...register("waterId")}
+              placeholder='00659asda9975'
+              id='water-id'
+              {...register('waterId')}
             />
           </InputContainer>
 
           <InputContainer
-            parentClasses="md:col-span-2"
-            label="Descrição"
-            id="description"
+            parentClasses='md:col-span-2'
+            label='Descrição'
+            id='description'
             errorMsg={errors?.description?.message}
           >
             <textarea
-              className={inputDefaultStyle + " resize-none"}
-              placeholder="Era uma casa muito engraçada..."
+              className={inputDefaultStyle + ' resize-none'}
+              placeholder='Era uma casa muito engraçada...'
               maxLength={4000}
               spellCheck
-              id="description"
+              id='description'
               cols={30}
               rows={8}
-              {...register("description")}
+              {...register('description')}
             />
           </InputContainer>
 
           <button
             disabled={create.isLoading || edit.isLoading || !isDirty}
-            className="mb-2 mt-auto rounded-lg bg-link px-8 py-3 text-lg font-semibold text-white disabled:bg-slate-200 dark:bg-link-700 dark:disabled:bg-link-900 dark:disabled:text-white/50 md:mt-7"
+            className='mb-2 mt-auto rounded-lg bg-link px-8 py-3 text-lg font-semibold text-white disabled:bg-slate-200 dark:bg-link-700 dark:disabled:bg-link-900 dark:disabled:text-white/50 md:mt-7'
           >
-            {action === "create" ? "Cadastrar" : "Editar"}
+            {action === 'create' ? 'Cadastrar' : 'Editar'}
           </button>
         </div>
       </fieldset>

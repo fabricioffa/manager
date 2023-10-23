@@ -1,123 +1,58 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import SubMenu from "./SubMenu";
-import { signOut, useSession } from "next-auth/react";
+import Link from 'next/link';
+import SubMenu from './SubMenu';
+import { signOut, useSession } from 'next-auth/react';
 
 export type SideBarProps = {
   isVisible: boolean;
 };
 
 const SideBar = ({ isVisible }: SideBarProps) => {
-  const [activeSubMenu, setActiveSubMenu] = useState<number | null>(null);
-
   const { data: session } = useSession();
-  const isActiveSubMenu = (index: number | null) => activeSubMenu === index;
-  const { pathname } = useRouter();
-  const isActiveLink = (route: string) => pathname === route;
-
   return (
-    <aside className={`fixed inset-y-0 px-8 contain-content flex lg:w-[max(20%,17rem)] z-50 max-lg:absolute bottom-0 left-0 dark:bg-slate-900 max-lg:transition-transform duration-1000 ease-in-out ${isVisible ? 'translate-x-0' : 'max-lg:-translate-x-full'}`}>
-      <nav className="flex grow flex-col">
-        <h2 className="mt-10 text-center text-4xl">
-          <Link href="/">Manager</Link>
+    <aside
+      className={`fixed inset-y-0 bottom-0 left-0 z-50 flex px-8 duration-1000 ease-in-out contain-content dark:bg-slate-900 max-lg:absolute max-lg:transition-transform lg:w-[max(20%,17rem)] ${
+        isVisible ? 'translate-x-0' : 'max-lg:-translate-x-full'
+      }`}
+    >
+      <nav className='flex grow flex-col'>
+        <h2 className='mt-10 text-center text-4xl'>
+          <Link href='/'>Manager</Link>
         </h2>
 
-        <ul className="my-auto">
-          <li>
-            <button
-              data-open={isActiveSubMenu(0)}
-              className="p-2 pl-8 text-lg font-bold data-open:bg-highlight data-open:text-link dark:ml-6 dark:border-l dark:border-slate-600 dark:pl-2 data-open:dark:border-link data-open:dark:bg-inherit  data-open:dark:text-link-500"
-              onClick={() => setActiveSubMenu(isActiveSubMenu(0) ? null : 0)}
-            >
-              Inquilinos
-            </button>
+        <ul className='my-auto'>
+          <SubMenu
+            btnText='Inquilinos'
+            links={[
+              ['Pesquisar', '/inquilinos/pesquisar'],
+              ['Cadastrar', '/inquilinos/cadastrar'],
+            ]}
+          />
+          <SubMenu
+            btnText='Casas'
+            links={[
+              ['Pesquisar', '/casas/pesquisar'],
+              ['Cadastrar', '/casas/cadastrar'],
+            ]}
+          />
+          <SubMenu
+            btnText='Contratos'
+            links={[
+              ['Pesquisar', '/contratos/pesquisar'],
+              ['Cadastrar', '/contratos/cadastrar'],
+            ]}
+          />
+          <SubMenu
+            btnText='Débitos'
+            links={[
+              ['Pesquisar', '/debitos/pesquisar'],
+              ['Cadastrar', '/debitos/cadastrar'],
+            ]}
+          />
 
-            <SubMenu isShowing={activeSubMenu !== 0}>
-              <li className="p-2 text-primary dark:font-medium dark:text-inherit">
-                <Link
-                  data-active={isActiveLink("/inquilinos/pesquisar")}
-                  href="/inquilinos/pesquisar"
-                  className="block data-active:bg-highlight data-active:font-medium data-active:text-link data-active:dark:bg-inherit data-active:dark:text-link-500"
-                >
-                  Pesquisar
-                </Link>
-              </li>
-              <li className="p-2 text-primary dark:font-medium dark:text-inherit">
-                <Link
-                  data-active={isActiveLink("/inquilinos/cadastrar")}
-                  href="/inquilinos/cadastrar"
-                  className="block data-active:bg-highlight data-active:font-medium data-active:text-link data-active:dark:bg-inherit data-active:dark:text-link-500"
-                >
-                  Cadastrar
-                </Link>
-              </li>
-            </SubMenu>
-          </li>
-          <li>
-            <button
-              className={
-                isActiveSubMenu(1) +
-                " p-2 pl-8 text-lg font-bold dark:ml-6 dark:border-l dark:border-slate-600 dark:pl-2"
-              }
-              onClick={() => setActiveSubMenu(isActiveSubMenu(1) ? null : 1)}
-            >
-              House
-            </button>
-
-            <SubMenu isShowing={activeSubMenu !== 1}>
-              <li className="p-2 text-primary dark:font-medium dark:text-inherit">
-                <Link
-                  href="/casas/pesquisar"
-                  className={isActiveLink("/casas/pesquisar") + " block"}
-                >
-                  Pesquisar
-                </Link>
-              </li>
-              <li className="p-2 text-primary dark:font-medium dark:text-inherit">
-                <Link
-                  href="/casas/cadastrar"
-                  className={isActiveLink("/casas/cadastrar") + " block"}
-                >
-                  Cadastrar
-                </Link>
-              </li>
-            </SubMenu>
-          </li>
-          <li>
-            <button
-              className={
-                isActiveSubMenu(2) +
-                " p-2 pl-8 text-lg font-bold dark:ml-6 dark:border-l dark:border-slate-600 dark:pl-2"
-              }
-              onClick={() => setActiveSubMenu(isActiveSubMenu(2) ? null : 2)}
-            >
-              Contracts
-            </button>
-
-            <SubMenu isShowing={activeSubMenu !== 2}>
-              <li className="p-2 text-primary dark:font-medium dark:text-inherit">
-                <Link
-                  href="/contratos/pesquisar"
-                  className={isActiveLink("/contratos/pesquisar") + " block"}
-                >
-                  Pesquisar
-                </Link>
-              </li>
-              <li className="p-2 text-primary dark:font-medium dark:text-inherit">
-                <Link
-                  href="/contratos/cadastrar"
-                  className={isActiveLink("/contratos/cadastrar") + " block"}
-                >
-                  Cadastrar
-                </Link>
-              </li>
-            </SubMenu>
-          </li>
           {session && (
-            <li>
+            <li className='px-2'>
               <button
-                className="p-2 pl-8 text-lg font-bold dark:ml-6 dark:border-l dark:border-slate-600 dark:pl-2"
+                className='p-2 text-lg font-bold hover:text-link dark:border-l dark:border-slate-600'
                 onClick={() => signOut()}
               >
                 Log out

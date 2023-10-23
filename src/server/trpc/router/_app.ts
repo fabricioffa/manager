@@ -1,5 +1,5 @@
-import { router } from "../trpc";
-import { contractsRouter } from "./contracts";
+import { router } from '../trpc';
+import { contractsRouter } from './contracts';
 import { housesRouter } from './houses';
 import { tenantsRouter } from './tenants';
 import { debitsRouter } from './debits';

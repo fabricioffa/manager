@@ -1,8 +1,8 @@
-import { KeyType } from "@prisma/client";
-import z from "./../../utils/my-zod";
-import { returnIssueToPath } from "../../utils/zodHelpers";
-import { ppUndefineEmptyStr } from "../../utils/function/prod";
-import { cnpj, cpf, mobile, requiredEmail } from "./base.schemas";
+import { KeyType } from '@prisma/client';
+import z from './../../utils/my-zod';
+import { returnIssueToPath } from '../../utils/zodHelpers';
+import { ppUndefineEmptyStr } from '../../utils/function/prod';
+import { cnpj, cpf, mobile, requiredEmail } from './base.schemas';
 
 export const createPixKeysSchema = z
   .object({
@@ -11,21 +11,21 @@ export const createPixKeysSchema = z
     key: z.string().trim(),
   })
   .superRefine(({ key, keyType }, ctx) => {
-    if (keyType === "email")
-      returnIssueToPath(requiredEmail.safeParse(key), ctx, "key");
+    if (keyType === 'email')
+      returnIssueToPath(requiredEmail.safeParse(key), ctx, 'key');
 
-    if (keyType === "celular")
-      returnIssueToPath(mobile.safeParse(key), ctx, "key");
+    if (keyType === 'celular')
+      returnIssueToPath(mobile.safeParse(key), ctx, 'key');
 
-    if (keyType === "cpf") returnIssueToPath(cpf.safeParse(key), ctx, "key");
+    if (keyType === 'cpf') returnIssueToPath(cpf.safeParse(key), ctx, 'key');
 
-    if (keyType === "cnpj") returnIssueToPath(cnpj.safeParse(key), ctx, "key");
+    if (keyType === 'cnpj') returnIssueToPath(cnpj.safeParse(key), ctx, 'key');
 
-    if (keyType === "aleatoria")
+    if (keyType === 'aleatoria')
       returnIssueToPath(
         z.string().trim().length(32).safeParse(key),
         ctx,
-        "key"
+        'key'
       );
   });
 
