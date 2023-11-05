@@ -10,7 +10,7 @@ import { getDirtyValues } from '../../utils/zodHelpers';
 import { useRouter } from 'next/router';
 
 const inputDefaultStyle =
-  'mt-1 neighborhood w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white dark:focus:bg-slate-700 focus:ring-0 focus:outline-link py-2 px-3 dark:bg-slate-700 dark:border-slate-600 focus:outline focus:ring-2 dark:focus:ring-link-500';
+  'mt-1 w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white dark:focus:bg-slate-700 focus:ring-0 focus:outline-link py-2 px-3 dark:bg-slate-700 dark:border-slate-600 focus:outline focus:ring-2 dark:focus:ring-link-500';
 interface FormProps {
   house?: House;
   action: 'create' | 'edit';

@@ -1,7 +1,7 @@
 import type { RouterOutputs } from '../utils/trpc';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { formatCurrency, formatDate } from '../utils/function/prod';
+import { buildPhoneUrl, buildWhatsappUrl, formatCurrency, formatDate } from '../utils/function/prod';
 
 export type CardProps = {
   debit: NonNullable<RouterOutputs['debits']['lateDebits'][number]>;
@@ -9,7 +9,7 @@ export type CardProps = {
 
 const DebitorCard = ({ debit }: CardProps) => {
   return (
-    <div className='grid rounded-md p-4 text-lg shadow-card'>
+    <div className='grid min-h-[20rem] rounded-md bg-white/10 p-4 text-lg shadow-card ring'>
       <div className='grid grid-cols-[1.9rem_1fr] grid-rows-[3rem_auto] items-center gap-2'>
         <FontAwesomeIcon
           icon='user'
@@ -41,7 +41,17 @@ const DebitorCard = ({ debit }: CardProps) => {
           className='justify-self-center'
         />
         <address>
-          <a href='tel:5585988044019'>{debit.contract.tenant.primaryPhone}</a>
+          <a
+            href={
+              debit.contract.tenant.hasWpp
+                ? buildWhatsappUrl(debit.contract.tenant.primaryPhone)
+                : buildPhoneUrl(debit.contract.tenant.primaryPhone)
+            }
+            target={debit.contract.tenant.hasWpp ? '_blank' : '_self'}
+            rel={debit.contract.tenant.hasWpp ? 'noreferrer' : undefined}
+          >
+            {debit.contract.tenant.primaryPhone}
+          </a>
         </address>
 
         <FontAwesomeIcon
@@ -87,15 +97,13 @@ const DebitorCard = ({ debit }: CardProps) => {
       <div className='mt-auto flex gap-2 pt-4'>
         <Link
           href={`/gerar-recibo?id=${debit.id}`}
-          className='grow rounded-lg border
-        border-blue-700 bg-blue-400 text-center font-semibold text-white'
+          className='grow rounded-lg border border-blue-700 bg-blue-400 text-center font-semibold text-white dark:bg-link-700'
         >
           Gerar Boleto
         </Link>
         <Link
           href={`/`}
-          className='grow rounded-lg border
-        border-blue-700 bg-blue-400 text-center font-semibold text-white'
+          className='grow rounded-lg border border-blue-700 bg-blue-400 text-center font-semibold text-white dark:bg-link-700'
         >
           Editar
         </Link>

@@ -104,13 +104,7 @@ const TenantProfile = () => {
                   <span className='font-bold'>Contratos: </span>
                   {tenant.contracts.map((contract) => (
                     <ul
-                      className={`relative flex w-fit gap-3 pl-3 after:absolute after:-right-1.5 after:top-1/2 after:h-4
-                          after:w-4 after:-translate-y-1/2 after:translate-x-full after:rounded-full last:child:!border-r-0
-                          even:child:border-x even:child:border-black even:child:px-3 ${
-                            contract.endingDate
-                              ? 'after:bg-red-500'
-                              : 'after:bg-green-500'
-                          }`}
+                      className='relative flex w-fit items-center gap-3 pl-3 last:child:!border-r-0 even:child:border-x even:child:border-black even:child:px-3'
                       key={contract.id}
                     >
                       <li>
@@ -121,23 +115,28 @@ const TenantProfile = () => {
                           />
                         </Link>
                       </li>
-                      <li>
+                      <li className='flex items-center gap-1.5'>
                         <span className='font-bold'>Vencimento: </span>{' '}
                         {contract.dueDay}
                       </li>
-                      <li>
+                      <li className='flex items-center gap-1.5'>
                         <span className='font-bold'>Mensalidade: </span>{' '}
                         {formatCurrency(contract.rent)}
                       </li>
-                      <li>
+                      <li className='flex items-center gap-1.5'>
                         <Link
                           href={`/casas/${contract.house.street}?id=${contract.house.id}`}
-                          className='hover:text-link hover:underline'
+                          className='whitespace-nowrap hover:text-link hover:underline'
                         >
                           <span className='font-bold'>Casa: </span>{' '}
                           {`${contract.house.street}, ${contract.house.number}`}
                         </Link>
                       </li>
+                      <li
+                        className={`h-4 w-4 rounded-full ${
+                          contract.endingDate ? 'bg-red-500' : 'bg-green-500'
+                        }`}
+                      ></li>
                     </ul>
                   ))}
                 </li>

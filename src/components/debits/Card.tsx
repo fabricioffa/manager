@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useDelete } from '../../utils/hooks';
 import type { RouterOutputs } from '../../utils/trpc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { formatCurrency, formatDate } from '../../utils/function/prod';
+import { buildPhoneUrl, buildWhatsappUrl, formatCurrency, formatDate } from '../../utils/function/prod';
 import BaseCard from '../BaseCard';
 
 export type CardProps = {
@@ -10,14 +10,14 @@ export type CardProps = {
 };
 
 const Card = ({ debit }: CardProps) => {
-  const deleteContract = useDelete(debit.id, 'debits');
+  const deleteDebit = useDelete(debit.id, 'debits');
 
   return (
     <BaseCard
       withActions={true}
-      profileLink={`/debitos/${debit.id}?id=${debit.id}`}
+      profileLink={`/gerar-recibo?id=${debit.id}`}
       editLink={`/debitos/editar?id=${debit.id}`}
-      deleteFunc={deleteContract}
+      deleteFunc={deleteDebit}
     >
       <FontAwesomeIcon icon='user' size='xl' className='justify-self-center' />
       <h3 className='col-start-2 line-clamp-1 text-xl font-semibold capitalize'>
@@ -41,7 +41,17 @@ const Card = ({ debit }: CardProps) => {
 
       <FontAwesomeIcon icon='phone' size='xl' className='justify-self-center' />
       <address>
-        <a href='tel:5585988044019'>{debit.contract.tenant.primaryPhone}</a>
+      <a
+        href={
+          debit.contract.tenant.hasWpp
+            ? buildWhatsappUrl(debit.contract.tenant.primaryPhone)
+            : buildPhoneUrl(debit.contract.tenant.primaryPhone)
+        }
+        target={debit.contract.tenant.hasWpp ? '_blank' : '_self'}
+        rel={debit.contract.tenant.hasWpp ? 'noreferrer' : undefined}
+      >
+        {debit.contract.tenant.primaryPhone}
+      </a>
       </address>
 
       <FontAwesomeIcon
@@ -79,22 +89,6 @@ const Card = ({ debit }: CardProps) => {
       >
         {debit.contract.house.street + ', ' + debit.contract.house.number}
       </Link>
-      <div className='mt-auto flex gap-2 pt-4'>
-        <Link
-          href={`/gerar-recibo?id=${debit.id}`}
-          className='grow rounded-lg border
-        border-blue-700 bg-blue-400 text-center font-semibold text-white'
-        >
-          Gerar Boleto
-        </Link>
-        <Link
-          href={`/`}
-          className='grow rounded-lg border
-        border-blue-700 bg-blue-400 text-center font-semibold text-white'
-        >
-          Editar
-        </Link>
-      </div>
     </BaseCard>
   );
 };

@@ -30,6 +30,7 @@ export const debitsRouter = router({
                 name: true,
                 cpf: true,
                 primaryPhone: true,
+                hasWpp: true
               },
             },
           },
@@ -46,6 +47,7 @@ export const debitsRouter = router({
           id: true,
           amount: true,
           dueDate: true,
+          paidAt: true,
           contract: {
             select: {
               id: true,
@@ -96,7 +98,6 @@ export const debitsRouter = router({
       },
     });
 
-    // if (!lateDebits.length) return
     if (!lateDebits.length) return 'No late debits';
 
     const updates = await Promise.all(
@@ -151,6 +152,7 @@ export const debitsRouter = router({
                 id: true,
                 name: true,
                 primaryPhone: true,
+                hasWpp: true
               },
             },
             house: {

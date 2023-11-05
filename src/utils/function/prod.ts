@@ -57,8 +57,9 @@ export const formatDate = (
 };
 
 export const pastMonthDate = (date: Date = new Date()) => {
-  new Date(date).setMonth(date.getMonth() - 1);
-  return date;
+  const newDate = new Date(date)
+  newDate.setMonth(date.getMonth() - 1);
+  return newDate;
 };
 
 export function getFirstAndLastDayOfCurrentMonth() {
@@ -89,10 +90,7 @@ export const calculateLateDebit = (
   today: Date = new Date()
 ) => {
   if (today < dueDate) return rent;
-  const lateMonths =
-    today.getMonth() -
-    dueDate.getMonth() +
-    12 * (today.getFullYear() - dueDate.getFullYear());
+  const lateMonths = today.getMonth() - dueDate.getMonth() + 12 * (today.getFullYear() - dueDate.getFullYear());
   const arreasAmount = rent * (arreas / 100);
   const interestAmount = rent * ((interest * lateMonths) / 100);
   return rent + arreasAmount + interestAmount;

@@ -79,7 +79,6 @@ export const tenantsRouter = router({
     }),
 
   findAll: protectedProcedure.query(async ({ ctx }) => {
-    console.log('%c ctx', 'color: green', ctx)
     return await ctx.prisma.tenant.findMany({
       include: {
         contracts: {

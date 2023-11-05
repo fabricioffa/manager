@@ -49,7 +49,7 @@ const Form = ({ contract, action }: FormProps) => {
   const { data: tenants, isSuccess: loadedTenants } =
     trpc.tenants.selectData.useQuery();
   const { data: houses, isSuccess: loadedHouses } =
-    trpc.houses.selectData.useQuery();
+    trpc.houses.avaiableHouses.useQuery();
 
   const {
     register,
@@ -289,6 +289,11 @@ const Form = ({ contract, action }: FormProps) => {
                 required
                 {...register('houseId')}
               >
+                {contract && (
+                  <option
+                    value={contract.houseId}
+                  >{`${contract.house.street}, ${contract.house.number}`}</option>
+                )}
                 {houses.map((house) => (
                   <option
                     value={house.id}

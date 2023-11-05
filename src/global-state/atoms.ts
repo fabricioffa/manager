@@ -4,6 +4,7 @@ export type DialogAtom = {
   isOpen: boolean;
   onConfirmation?: () => void;
   onClose?: () => void;
+  
 };
 
 export const dialogAtom = atom<DialogAtom>({

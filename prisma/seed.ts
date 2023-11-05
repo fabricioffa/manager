@@ -86,7 +86,7 @@ const generateFakeContractsData = (tenants: Tenant[], houses: House[]) =>
     return {
       dueDay: faker.datatype.number({ min: 1, max: 31 }),
       initialDate: faker.date.between(
-        faker.date.recent(15),
+        faker.date.recent(350),
         faker.date.soon(15)
       ),
       rent: faker.datatype.number({ min: 400, max: 1200, precision: 2 }),
@@ -105,11 +105,13 @@ const generateFakeContractsData = (tenants: Tenant[], houses: House[]) =>
     };
   });
 
+const maybe = (ratio = 0.5) => Math.random() < ratio;
+
 async function main() {
-  prisma.account.deleteMany();
-  prisma.session.deleteMany();
-  prisma.user.deleteMany();
-  prisma.verificationToken.deleteMany();
+  await prisma.account.deleteMany();
+  await prisma.session.deleteMany();
+  await prisma.user.deleteMany();
+  await prisma.verificationToken.deleteMany();
   await prisma.debit.deleteMany();
   console.log('Debits deleted');
   await prisma.contract.deleteMany();
@@ -153,20 +155,64 @@ async function main() {
 
   const contracts = await prisma.contract.findMany();
 
-  contracts.forEach(async ({ id }) => {
-    await prisma.witness.create({
+  const today = new Date();
+
+  const formatDate = (
+    date: Date,
+    options?: Intl.DateTimeFormatOptions
+  ) => {
+    return new Intl.DateTimeFormat('pt-BR', options).format(date);
+  };
+
+  contracts.forEach(async ({ id, initialDate, rent, dueDay }) => {
+    prisma.witness.create({
       data: {
         ...generateFakeWitnessData(),
         contractId: id,
       },
     });
-    await prisma.witness.create({
+    prisma.witness.create({
       data: {
         ...generateFakeWitnessData(),
         contractId: id,
       },
     });
+    console.log('%c id do contrato: ', 'color: green', id);
+    const wholeMonthsPast = Math.max(
+      0,
+      today.getMonth() -
+      initialDate.getMonth() + // subtract months
+      12 * (today.getFullYear() - initialDate.getFullYear()) - // add years difference
+      (today.getDate() < initialDate.getDate() ? 1 : 0) // remove current month based on dueDate
+    )
+
+    const dueDate = new Date(
+      initialDate.getFullYear(),
+      initialDate.getMonth() + 1,
+      dueDay
+    );
+    console.log('%c wholeMonthsPast: ', 'color: green', wholeMonthsPast);
+
+    for (let i = 0; i < wholeMonthsPast; i++) {
+      dueDate.setMonth(dueDate.getMonth() + 1, dueDay); // make sure the day of the month is dueDay for all
+      console.log('%c dueDate: ', 'color: green', formatDate(dueDate));
+      const paidDate = faker.date.between(
+        faker.date.recent(Math.max(10, dueDay)),
+        faker.date.soon(45)
+      );
+
+      await prisma.debit.create({
+        data: {
+          amount: rent,
+          dueDate,
+          contractId: id,
+          type: 'rent',
+          paidAt: maybe() ? paidDate : null,
+        },
+      });
+    }
   });
+
   console.log('Created witnesses');
   console.log("That's it");
 }

@@ -1,7 +1,5 @@
-import type { TenantsSearchOptions } from '../../server/schemas/tenant.schema';
-
 type SearchFormProps = {
-  onFilterChange: (newFilterProperty: Partial<TenantsSearchOptions>) => void;
+  onFilterChange: (newFilterProperty: string) => void;
 };
 
 const SearchForm = ({ onFilterChange }: SearchFormProps) => {
@@ -25,7 +23,7 @@ const SearchForm = ({ onFilterChange }: SearchFormProps) => {
             name='tenant-search'
             id='tenant-search'
             onChange={({ target: { value } }) =>
-              onFilterChange({ query: value })
+              onFilterChange(value)
             }
           />
         </div>

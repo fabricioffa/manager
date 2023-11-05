@@ -1,4 +1,4 @@
-import { trpc } from '../../utils/trpc';
+import { RouterOutputs, trpc } from '../../utils/trpc';
 import { debitSchema, type DebitSchema } from '~/server/schemas/debit.schemas';
 import {
   useForm,
@@ -9,10 +9,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import InputContainer from '../InputContainer';
 import { useRouter } from 'next/router';
 
+interface FormProps {
+  debit?: NonNullable<RouterOutputs['debits']['findOne']>;
+  action: 'create' | 'edit';
+}
+
 const inputDefaultStyle =
   'mt-1 neighborhood w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white dark:focus:bg-slate-700 focus:ring-0 focus:outline-link py-2 px-3 dark:bg-slate-700 dark:border-slate-600 focus:outline focus:ring-2 dark:focus:ring-link-500';
 
-const Form = () => {
+const Form = ({ debit, action }: FormProps) => {
   const create = trpc.debits.create.useMutation();
   const { data: contracts, isSuccess: contractsIsSuccess } =
     trpc.contracts.findAll.useQuery();
@@ -23,9 +28,14 @@ const Form = () => {
   } = useForm<DebitSchema>({
     resolver: zodResolver(debitSchema),
     mode: 'onBlur',
-    defaultValues: {
-      type: 'rent',
-    },
+    defaultValues: debit
+      ? {
+          type: 'rent',
+          amount: Number(debit.amount),
+        }
+      : {
+          type: 'rent',
+        },
   });
 
   const { debits } = trpc.useUtils();
@@ -51,13 +61,13 @@ const Form = () => {
       <fieldset className='mb-4'>
         <legend className='mx-auto'>
           <h2 className='mb-12 text-center text-4xl font-semibold'>
-            Cadastrar Débito
+            {action === 'create' ? 'Cadastrar' : 'Editar'} Débito
           </h2>
         </legend>
 
         {create.isSuccess && (
           <p className='mb-12 text-center text-3xl font-semibold text-link'>
-            Débito cadastrado com sucesso!
+            Débito {action === 'create' ? 'cadastrado' : 'editado'} com sucesso!
           </p>
         )}
 
@@ -72,6 +82,7 @@ const Form = () => {
               type='date'
               id='due-date'
               required
+              defaultValue={debit?.dueDate.toLocaleDateString('en-CA')}
               {...register('dueDate')}
             />
           </InputContainer>
@@ -103,6 +114,7 @@ const Form = () => {
               className={inputDefaultStyle}
               type='datetime-local'
               id='paid-at'
+              defaultValue={debit?.paidAt?.toLocaleDateString('en-CA')}
               {...register('paidAt')}
             />
           </InputContainer>
@@ -135,7 +147,7 @@ const Form = () => {
         className='mx-auto mt-8 block  w-1/4 min-w-min rounded-lg bg-link  px-8 py-3 text-lg font-semibold text-white disabled:bg-slate-200 dark:bg-link-700 dark:disabled:bg-link-900 dark:disabled:text-white/50'
         disabled={create.isLoading}
       >
-        Cadastrar
+        {action === 'create' ? 'Cadastrar' : 'Editar'}
       </button>
     </form>
   );

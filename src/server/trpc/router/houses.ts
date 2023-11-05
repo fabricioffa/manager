@@ -64,6 +64,32 @@ export const housesRouter = router({
     });
   }),
 
+  avaiableHouses: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.house.findMany({
+      where: {
+        NOT: {
+          contracts: {
+            some: {
+              endingDate: {
+                equals: null,
+              },
+            },
+          },
+        }
+      },
+      select: {
+        id: true,
+        street: true,
+        number: true,
+        contracts: {
+          select: {
+            endingDate: true
+          }
+        }
+      },
+    });
+  }),
+
   edit: protectedProcedure
     .input(
       z.object({
