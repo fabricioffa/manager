@@ -1,4 +1,4 @@
-import { RouterOutputs, trpc } from '../../utils/trpc';
+import { type RouterOutputs, trpc } from '../../utils/trpc';
 import { debitSchema, type DebitSchema } from '~/server/schemas/debit.schemas';
 import {
   useForm,
@@ -133,7 +133,7 @@ const Form = ({ debit, action }: FormProps) => {
               >
                 {contracts.map((contract) => (
                   <option value={contract.id} key={contract.id}>
-                    {contract.tenant.name.split(' ').shift()}{' '}
+                    {contract.tenant.name.split(' ').shift()} &harr;{' '}
                     {[contract.house.number, contract.house.street].join(', ')}
                   </option>
                 ))}

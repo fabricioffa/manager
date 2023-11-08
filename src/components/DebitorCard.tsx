@@ -31,8 +31,7 @@ const DebitorCard = ({ debit }: CardProps) => {
           className='justify-self-center'
         />
         <p>
-          Vencimento:
-          <span className='font-medium'>{formatDate(debit.dueDate)}</span>
+          Venci.: <span className='font-medium'>{formatDate(debit.dueDate)}</span>
         </p>
 
         <FontAwesomeIcon
@@ -101,12 +100,12 @@ const DebitorCard = ({ debit }: CardProps) => {
         >
           Gerar Boleto
         </Link>
-        <Link
+        {/* <Link
           href={`/`}
           className='grow rounded-lg border border-blue-700 bg-blue-400 text-center font-semibold text-white dark:bg-link-700'
         >
           Editar
-        </Link>
+        </Link> */}
       </div>
     </div>
   );

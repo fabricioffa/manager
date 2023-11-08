@@ -8,7 +8,13 @@ import DebitorCard from '../components/DebitorCard';
 const Home: NextPage = () => {
   const { data: dueToThisWeek = [] } = trpc.contracts.dueToThisWeek.useQuery();
   const { data: lateDebits = [] } = trpc.debits.lateDebits.useQuery();
-  const { mutate, isLoading } = trpc.debits.update.useMutation();
+  const { debits } = trpc.useUtils();
+  const { mutate, isLoading } = trpc.debits.update.useMutation({
+    onSuccess: data => {
+    if (data !== 'No late debits' && data.updates.some(debit => typeof debit !== 'string')) {
+      debits.lateDebits.invalidate()
+    }
+  }});
 
   return (
     <div className='relative'>

@@ -30,7 +30,7 @@ export const debitsRouter = router({
                 name: true,
                 cpf: true,
                 primaryPhone: true,
-                hasWpp: true
+                hasWpp: true,
               },
             },
           },
@@ -100,29 +100,28 @@ export const debitsRouter = router({
 
     if (!lateDebits.length) return 'No late debits';
 
-    const updates = await Promise.all(
-      lateDebits.map((debit) => {
-        const newAmout = calculateLateDebit(
-          Number(debit.contract.rent),
-          Number(debit.contract.arrears),
-          Number(debit.contract.interest),
-          debit.dueDate
-        );
-        if (Number(debit.amount) === newAmout)
-          return `No need to update. Current amount: ${Number(
-            debit.amount
-          )}. Calculated amount: ${newAmout}`;
-        return ctx.prisma.debit.update({
-          where: {
-            id: debit.id,
-          },
-          data: {
-            amount: newAmout,
-          },
-        });
-      })
-    );
+    const updates = await lateDebits.map((debit) => {
+      const newAmout = calculateLateDebit(
+        Number(debit.contract.rent),
+        Number(debit.contract.arrears),
+        Number(debit.contract.interest),
+        debit.dueDate
+      );
+      if (Number(debit.amount) === newAmout)
+        return `No need to update. Current amount: ${Number(
+          debit.amount
+        )}. Calculated amount: ${newAmout}`;
+      return ctx.prisma.debit.update({
+        where: {
+          id: debit.id,
+        },
+        data: {
+          amount: newAmout,
+        },
+      });
+    });
 
+    
     return { updates };
   }),
 
@@ -152,7 +151,7 @@ export const debitsRouter = router({
                 id: true,
                 name: true,
                 primaryPhone: true,
-                hasWpp: true
+                hasWpp: true,
               },
             },
             house: {

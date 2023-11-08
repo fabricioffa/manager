@@ -75,7 +75,7 @@ export const housesRouter = router({
               },
             },
           },
-        }
+        },
       },
       select: {
         id: true,
@@ -83,9 +83,9 @@ export const housesRouter = router({
         number: true,
         contracts: {
           select: {
-            endingDate: true
-          }
-        }
+            endingDate: true,
+          },
+        },
       },
     });
   }),

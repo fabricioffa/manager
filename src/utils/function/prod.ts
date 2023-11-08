@@ -18,9 +18,8 @@ export const dataFilter = <Item extends Record<string, unknown>>(
   return query === ''
     ? entities
     : entities?.filter((entity) =>
-        Object.values(entity).some(
-          (property) =>
-            property?.toString().toLowerCase().includes(query.toLowerCase())
+        Object.values(entity).some((property) =>
+          property?.toString().toLowerCase().includes(query.toLowerCase())
         )
       );
 };
@@ -57,7 +56,7 @@ export const formatDate = (
 };
 
 export const pastMonthDate = (date: Date = new Date()) => {
-  const newDate = new Date(date)
+  const newDate = new Date(date);
   newDate.setMonth(date.getMonth() - 1);
   return newDate;
 };
@@ -82,19 +81,7 @@ export const currentDueDate = (dueDay: number, today: Date = new Date()) =>
 //   return minuend
 // }
 
-export const calculateLateDebit = (
-  rent: number,
-  arreas: number,
-  interest: number,
-  dueDate: Date,
-  today: Date = new Date()
-) => {
-  if (today < dueDate) return rent;
-  const lateMonths = today.getMonth() - dueDate.getMonth() + 12 * (today.getFullYear() - dueDate.getFullYear());
-  const arreasAmount = rent * (arreas / 100);
-  const interestAmount = rent * ((interest * lateMonths) / 100);
-  return rent + arreasAmount + interestAmount;
-};
+
 
 export const toMonthInputFormat = (date: Date = new Date()) =>
   new Intl.DateTimeFormat('pt-BR')
@@ -205,3 +192,31 @@ export const buildPhoneUrl = (phone: string) =>
   `tel:+55${stripOfNonNumeric(phone)}`;
 export const buildWhatsappUrl = (phone?: string) =>
   phone && `https://wa.me/55${stripOfNonNumeric(phone)}`;
+
+export const monthsBetween = (start: Date, end: Date, whole = true) =>
+   Math.max(
+    0,
+    end.getMonth() -
+    start.getMonth() + // subtract months
+    12 * (end.getFullYear() - start.getFullYear()) - // add years difference
+    ((end.getDate() < start.getDate()) && whole ? 1 : 0) // remove current month based on dueDate
+  )
+;
+
+export const calculateLateDebit = (
+  rent: number,
+  arreas: number,
+  interest: number,
+  dueDate: Date,
+  today = new Date()
+) => {
+  if (today < dueDate) return rent;
+  const lateMonths = monthsBetween(dueDate, new Date());
+  // const lateMonths =
+    // today.getMonth() -
+    // dueDate.getMonth() +
+    // 12 * (today.getFullYear() - dueDate.getFullYear());
+  const arreasAmount = rent * (arreas / 100);
+  const interestAmount = rent * ((interest * lateMonths) / 100);
+  return rent + arreasAmount + interestAmount;
+};

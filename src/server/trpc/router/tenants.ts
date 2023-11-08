@@ -1,11 +1,8 @@
 import { createPixKeysSchema } from './../../schemas/pixKeys.schemas';
-import {
-  buildTenantWhereObj,
-  createTenantSchema,
-} from './../../schemas/tenant.schema';
+import { createTenantSchema } from './../../schemas/tenant.schema';
 import { router, protectedProcedure } from './../trpc';
 import { z } from 'zod';
-import { baseFilter, pagination } from '../../schemas/base.schemas';
+import { pagination } from '../../schemas/base.schemas';
 import { isPrimaError } from '../../../utils/function/prod';
 import { TRPCError } from '@trpc/server';
 
@@ -96,25 +93,21 @@ export const tenantsRouter = router({
           },
         },
       },
+      orderBy: {
+        name: 'asc',
+      },
     });
   }),
 
   filter: protectedProcedure
     .input(
       z.object({
-        filter: baseFilter,
         pagination,
       })
     )
-    .query(async ({ ctx, input: { filter } }) => {
-      const where = buildTenantWhereObj(filter);
-
-      const [count, tenants] = await Promise.all([
-        ctx.prisma.tenant.count({ where }),
+    .query(async ({ ctx}) => {
+      const [count] = await Promise.all([
         ctx.prisma.tenant.findMany({
-          // take: pagination.perPage,
-          // skip: pagination.currentPage * pagination.perPage,
-          where,
           select: {
             id: true,
             name: true,
@@ -137,7 +130,7 @@ export const tenantsRouter = router({
         }),
       ]);
 
-      return { count, tenants };
+      return { count };
     }),
 
   selectData: protectedProcedure.query(async ({ ctx }) => {
