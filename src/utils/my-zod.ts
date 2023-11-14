@@ -16,13 +16,13 @@ const customErrorMap: z.ZodErrorMap = (error, ctx) => {
           ? { message: 'Campo obrigatório' }
           : {
               message: `O mínimo de caracteres é ${
-                error.inclusive ? error.minimum : error.minimum - 1
+                error.inclusive ? error.minimum : Number(error.minimum) - 1
               }.`,
             };
       if (error.type === 'number')
         return {
           message: `O mínimo é ${
-            error.inclusive ? error.minimum : error.minimum + 1
+            error.inclusive ? error.minimum : Number(error.minimum) + 1
           }.`,
         };
       break;
@@ -30,13 +30,13 @@ const customErrorMap: z.ZodErrorMap = (error, ctx) => {
       if (error.type === 'string')
         return {
           message: `O máximo de caracteres é ${
-            error.inclusive ? error.maximum : error.maximum - 1
+            error.inclusive ? error.maximum : Number(error.maximum) - 1
           }.`,
         };
       if (error.type === 'number')
         return {
           message: `O máximo é ${
-            error.inclusive ? error.maximum : error.maximum - 1
+            error.inclusive ? error.maximum : Number(error.maximum) - 1
           }.`,
         };
       break;

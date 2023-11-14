@@ -1,6 +1,13 @@
 import { useRouter } from 'next/router';
 import { trpc } from './trpc';
 
+const routesMap = {
+  houses: 'casas',
+  contracts: 'contratos',
+  tenants: 'inquilinos',
+  debits: 'debitos',
+}
+
 export const useDelete = (
   id: string,
   entityName: 'houses' | 'contracts' | 'tenants' | 'debits'
@@ -16,7 +23,8 @@ export const useDelete = (
         onSuccess: () => {
           entity.findOne.invalidate({ id });
           entity.findAll.invalidate();
-          router.push(`/${entityName}/pesquisar`);
+          // console.log('%c `/${entityName}/pesquisar`', 'color: green', `/${entityName}/pesquisar`)
+          router.push(`/${routesMap[entityName]}/pesquisar`);
         },
       }
     );

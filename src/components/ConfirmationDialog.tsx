@@ -44,7 +44,10 @@ const ConfirmationDialog = () => {
           <li>
             <button
               className='rounded-lg bg-transparent px-3 py-2 text-sm font-medium ring-1 dark:ring-gray-200 dark:hover:bg-gray-200 dark:hover:text-slate-700'
-              onClick={() => dialog.onConfirmation && dialog.onConfirmation()}
+              onClick={() => {
+                dialog.onConfirmation && dialog.onConfirmation()
+                closeDialog()
+              }}
             >
               Sim
             </button>
