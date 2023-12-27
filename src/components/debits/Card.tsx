@@ -1,8 +1,13 @@
 import Link from 'next/link';
-import { useDelete } from '../../utils/hooks';
+import { useDelete, useRestore } from '../../utils/hooks';
 import type { RouterOutputs } from '../../utils/trpc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { buildPhoneUrl, buildWhatsappUrl, formatCurrency, formatDate } from '../../utils/function/prod';
+import {
+  buildPhoneUrl,
+  buildWhatsappUrl,
+  formatCurrency,
+  formatDate,
+} from '../../utils/function/prod';
 import BaseCard from '../BaseCard';
 
 export type CardProps = {
@@ -11,13 +16,14 @@ export type CardProps = {
 
 const Card = ({ debit }: CardProps) => {
   const deleteDebit = useDelete(debit.id, 'debits');
-
+  const restoreDebit = useRestore(debit.id, 'debits');
   return (
     <BaseCard
       withActions={true}
       profileLink={`/gerar-recibo?id=${debit.id}`}
       editLink={`/debitos/editar?id=${debit.id}`}
-      deleteFunc={deleteDebit}
+      deleteFunc={debit.deleted ? undefined : deleteDebit}
+      restoreFunc={debit.deleted ? restoreDebit : undefined}
     >
       <FontAwesomeIcon icon='user' size='xl' className='justify-self-center' />
       <h3 className='col-start-2 line-clamp-1 text-xl font-semibold capitalize'>
@@ -41,17 +47,17 @@ const Card = ({ debit }: CardProps) => {
 
       <FontAwesomeIcon icon='phone' size='xl' className='justify-self-center' />
       <address>
-      <a
-        href={
-          debit.contract.tenant.hasWpp
-            ? buildWhatsappUrl(debit.contract.tenant.primaryPhone)
-            : buildPhoneUrl(debit.contract.tenant.primaryPhone)
-        }
-        target={debit.contract.tenant.hasWpp ? '_blank' : '_self'}
-        rel={debit.contract.tenant.hasWpp ? 'noreferrer' : undefined}
-      >
-        {debit.contract.tenant.primaryPhone}
-      </a>
+        <a
+          href={
+            debit.contract.tenant.hasWpp
+              ? buildWhatsappUrl(debit.contract.tenant.primaryPhone)
+              : buildPhoneUrl(debit.contract.tenant.primaryPhone)
+          }
+          target={debit.contract.tenant.hasWpp ? '_blank' : '_self'}
+          rel={debit.contract.tenant.hasWpp ? 'noreferrer' : undefined}
+        >
+          {debit.contract.tenant.primaryPhone}
+        </a>
       </address>
 
       <FontAwesomeIcon

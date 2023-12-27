@@ -29,7 +29,8 @@ const BaseCard: FC<BaseCardProps> = (props) => {
         <CardActionBtns
           profileLink={props.profileLink}
           editLink={props.editLink}
-          deleteFunc={openDeleteDialog}
+          deleteFunc={props.deleteFunc ? openDeleteDialog : undefined}
+          restoreFunc={props.restoreFunc}
         />
       )}
     </li>

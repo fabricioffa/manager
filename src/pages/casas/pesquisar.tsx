@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Card from '../../components/houses/Card';
-import SearchForm from '../../components/houses/SearchForm';
+import SearchForm from '~/components/SearchForm';
 import { ItemsList } from '../../components/ItemsList';
 import Paginator from '../../components/Paginator';
 import { dataFilter } from '../../utils/function/prod';
@@ -9,7 +9,9 @@ import { trpc } from '../../utils/trpc';
 const perPage = 10;
 
 const HouseSearch = () => {
-  const { data, isSuccess } = trpc.houses.findAll.useQuery();
+  const [showDeleted, setShowDeleted] = useState(false);
+  const { data, isSuccess } = trpc.houses.findAll.useQuery({showDeleted});
+
   const [query, setQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -26,8 +28,25 @@ const HouseSearch = () => {
     return (
       <div>
         <h1 className='mb-14 text-center text-5xl font-semibold'>Casas</h1>
-
-        <SearchForm onFilterChange={onFilterChange} />
+        <div className='flex items-start justify-center gap-8'>
+          <SearchForm
+            onFilterChange={onFilterChange}
+            placeholder='835, Babilônia'
+            id='houses'
+          />
+          <div className='flex items-center gap-4 text-center'>
+            <label htmlFor='show-deleted'>
+              Mostrar <br /> excluídos
+            </label>
+            <input
+              onChange={(e) => setShowDeleted(e.currentTarget.checked)}
+              checked={showDeleted}
+              type='checkbox'
+              name='show-deleted'
+              id='show-deleted'
+            />
+          </div>
+        </div>
 
         <ItemsList>
           {paginatedHouses.map((house) => (

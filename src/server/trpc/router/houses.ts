@@ -33,26 +33,35 @@ export const housesRouter = router({
       });
     }),
 
-  findAll: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.house.findMany({
-      include: {
-        contracts: {
-          where: {
-            endingDate: null,
-          },
-          select: {
-            id: true,
-            tenant: {
-              select: {
-                id: true,
-                name: true,
+  findAll: protectedProcedure
+    .input(
+      z.object({
+        showDeleted: z.boolean().default(false),
+      })
+    )
+    .query(async ({ ctx, input: { showDeleted } }) => {
+      return await ctx.prisma.house.findMany({
+        include: {
+          contracts: {
+            where: {
+              endingDate: null,
+            },
+            select: {
+              id: true,
+              tenant: {
+                select: {
+                  id: true,
+                  name: true,
+                },
               },
             },
           },
         },
-      },
-    });
-  }),
+        where: {
+          deleted: showDeleted,
+        },
+      });
+    }),
 
   selectData: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.house.findMany({
@@ -111,7 +120,35 @@ export const housesRouter = router({
       })
     )
     .mutation(async ({ ctx, input: { id } }) => {
-      await ctx.prisma.house.delete({
+      await ctx.prisma.house.update({
+        data: {
+          deleted: true,
+          contracts: {
+            updateMany: {
+              data: {
+                deleted: true,
+              },
+              where: {
+                houseId: id,
+              },
+            },
+          },
+        },
+        where: { id },
+      });
+    }),
+
+  restore: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input: { id } }) => {
+      await ctx.prisma.house.update({
+        data: {
+          deleted: false,
+        },
         where: { id },
       });
     }),

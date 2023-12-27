@@ -95,7 +95,7 @@ model House {
 model Witness {
   id             String   @id @default(cuid())
   name           String
-  rg             String   @unique @db.VarChar(15)
+  rg             String   @db.VarChar(15)
   rgEmitter      String   @default("SSP/CE") @map("rg_emitter") @db.VarChar(10)
   cpf            String   @unique @db.Char(11)
   primaryPhone   String   @map("primary_phone") @db.VarChar(25)

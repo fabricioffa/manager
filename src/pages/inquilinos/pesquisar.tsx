@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { ItemsList } from '../../components/ItemsList';
-import Paginator from '../../components/Paginator';
-import Card from '../../components/tenants/Card';
-import SearchForm from '../../components/tenants/SearchForm';
+import { ItemsList } from '~/components/ItemsList';
+import Paginator from '~/components/Paginator';
+import Card from '~/components/tenants/Card';
+import SearchForm from '~/components/SearchForm';
 import { dataFilter } from '../../utils/function/prod';
 import { trpc } from '../../utils/trpc';
 
@@ -10,8 +10,9 @@ const perPage = 10;
 
 const Search = () => {
   const [query, setQuery] = useState('');
+  const [showDeleted, setShowDeleted] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const { data } = trpc.tenants.findAll.useQuery();
+  const { data } = trpc.tenants.findAll.useQuery({ showDeleted });
 
   const onFilterChange = (newQuery: typeof query) => setQuery(newQuery);
 
@@ -28,7 +29,25 @@ const Search = () => {
       <div>
         <h1 className='mb-14 text-center text-5xl font-semibold'>Inquilinos</h1>
 
-        <SearchForm onFilterChange={onFilterChange} />
+        <div className='flex items-start justify-center gap-8'>
+          <SearchForm
+            onFilterChange={onFilterChange}
+            placeholder='Fulano da Silva'
+            id='tenant '
+          />
+          <div className='flex items-center gap-4 text-center'>
+            <label htmlFor='show-deleted'>
+              Mostrar <br /> excluídos
+            </label>
+            <input
+              onChange={(e) => setShowDeleted(e.currentTarget.checked)}
+              checked={showDeleted}
+              type='checkbox'
+              name='show-deleted'
+              id='show-deleted'
+            />
+          </div>
+        </div>
 
         <ItemsList>
           {paginatedTenants.map((tenant) => (

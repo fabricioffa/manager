@@ -75,29 +75,39 @@ export const tenantsRouter = router({
       });
     }),
 
-  findAll: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.tenant.findMany({
-      include: {
-        contracts: {
-          select: {
-            id: true,
-            dueDay: true,
-            initialDate: true,
-            house: {
-              select: {
-                id: true,
-                street: true,
-                number: true,
+  findAll: protectedProcedure
+    .input(
+      z.object({
+        showDeleted: z.boolean().default(false),
+      })
+    )
+    .query(async ({ ctx, input: { showDeleted } }) => {
+      return await ctx.prisma.tenant.findMany({
+        include: {
+          contracts: {
+            select: {
+              id: true,
+              dueDay: true,
+              initialDate: true,
+              house: {
+                select: {
+                  id: true,
+                  street: true,
+                  number: true,
+                },
               },
             },
           },
         },
-      },
-      orderBy: {
-        name: 'asc',
-      },
-    });
-  }),
+        orderBy: {
+          name: 'asc',
+        },
+
+        where: {
+          deleted: showDeleted,
+        },
+      });
+    }),
 
   filter: protectedProcedure
     .input(
@@ -105,7 +115,7 @@ export const tenantsRouter = router({
         pagination,
       })
     )
-    .query(async ({ ctx}) => {
+    .query(async ({ ctx }) => {
       const [count] = await Promise.all([
         ctx.prisma.tenant.findMany({
           select: {
@@ -138,6 +148,9 @@ export const tenantsRouter = router({
       select: {
         id: true,
         name: true,
+      },
+      where: {
+        deleted: false,
       },
     });
   }),
@@ -186,11 +199,41 @@ export const tenantsRouter = router({
         id: z.string(),
       })
     )
-    .mutation(async ({ ctx, input: { id } }) => {
-      await ctx.prisma.tenant.delete({
-        where: { id },
-      });
-    }),
+    .mutation(
+      async ({ ctx, input: { id } }) =>
+        await ctx.prisma.tenant.update({
+          where: { id },
+          data: {
+            deleted: true,
+            contracts: {
+              updateMany: {
+                where: {
+                  deleted: false,
+                },
+                data: {
+                  deleted: true,
+                },
+              },
+            },
+          },
+        })
+    ),
+
+  restore: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(
+      async ({ ctx, input: { id } }) =>
+        await ctx.prisma.tenant.update({
+          where: { id },
+          data: {
+            deleted: false,
+          },
+        })
+    ),
 
   exists: protectedProcedure
     .input(

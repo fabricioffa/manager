@@ -5,13 +5,15 @@ import type { FC } from 'react';
 export type CardActionBtnsProps = {
   profileLink: string;
   editLink: string;
-  deleteFunc: () => void;
+  deleteFunc?: () => void;
+  restoreFunc?: () => void;
 };
 
 const CardActionBtns: FC<CardActionBtnsProps> = ({
   deleteFunc,
   editLink,
   profileLink,
+  restoreFunc
 }) => {
   return (
     <div className='mt-auto flex gap-2 pt-4'>
@@ -39,17 +41,32 @@ const CardActionBtns: FC<CardActionBtnsProps> = ({
           className='justify-self-center lg:hidden'
         />
       </Link>
-      <button
-        onClick={() => deleteFunc()}
-        className='grow rounded-lg border border-red-700 bg-red-400 font-semibold text-white dark:border-none dark:bg-red-800'
-      >
-        <span className='max-lg:hidden'>Excluir</span>
-        <FontAwesomeIcon
-          icon='trash'
-          size='lg'
-          className='justify-self-center lg:hidden'
-        />
-      </button>
+      {deleteFunc && (
+        <button
+          onClick={() => deleteFunc()}
+          className='grow rounded-lg border border-red-700 bg-red-400 font-semibold text-white dark:border-none dark:bg-red-800'
+        >
+          <span className='max-lg:hidden'>Excluir</span>
+          <FontAwesomeIcon
+            icon='trash'
+            size='lg'
+            className='justify-self-center lg:hidden'
+          />
+        </button>
+      )}
+      {restoreFunc && (
+        <button
+          onClick={() => restoreFunc()}
+          className='grow rounded-lg border border-green-700 bg-green-400 font-semibold text-white dark:border-none dark:bg-green-800'
+        >
+          <span className='max-lg:hidden'>Restaurar</span>
+          <FontAwesomeIcon
+            icon='trash'
+            size='lg'
+            className='justify-self-center lg:hidden'
+          />
+        </button>
+      )}
     </div>
   );
 };

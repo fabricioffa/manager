@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useDelete } from '../../utils/hooks';
+import { useDelete, useRestore } from '../../utils/hooks';
 import type { RouterOutputs } from '../../utils/trpc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import BaseCard from '../BaseCard';
@@ -15,13 +15,15 @@ export type CardProps = {
 
 const Card = ({ tenant }: CardProps) => {
   const deleteTenant = useDelete(tenant.id, 'tenants');
+  const restoreTenant = useRestore(tenant.id, 'tenants');
   const firstContract = tenant.contracts.at(0);
   return (
     <BaseCard
       withActions={true}
       profileLink={`/inquilinos/${tenant.name}?id=${tenant.id}`}
       editLink={`/inquilinos/editar?id=${tenant.id}`}
-      deleteFunc={deleteTenant}
+      deleteFunc={tenant.deleted ? undefined : deleteTenant }
+      restoreFunc={tenant.deleted ? restoreTenant : undefined }
     >
       <FontAwesomeIcon icon='user' size='xl' className='justify-self-center' />
       <h3 className='col-start-2 line-clamp-1 text-xl font-semibold capitalize'>
@@ -84,7 +86,7 @@ const Card = ({ tenant }: CardProps) => {
             className='justify-self-center'
           />
           <Link
-            className=' grid grid-cols-[17ch_min-content] gap-1.5 hover:text-link hover:underline'
+            className={`${tenant.contracts.length > 1 ? 'grid grid-cols-[17ch_min-content] gap-1.5' : ''} hover:text-link hover:underline`}
             href={`/casas/${firstContract.house.street}?id=${firstContract.house.id}`}
             key={firstContract.house.id}
           >

@@ -2,14 +2,18 @@ import { useState } from 'react';
 import { ItemsList } from '../../components/ItemsList';
 import Paginator from '../../components/Paginator';
 import Card from '../../components/debits/Card';
-import SearchForm from '../../components/debits/SearchForm';
+import SearchForm from '~/components/SearchForm';
 import { dataFilter } from '../../utils/function/prod';
 import { trpc } from '../../utils/trpc';
 
 const perPage = 10;
 
 const SearchDebit = () => {
-  const { data: debits, isSuccess } = trpc.debits.findAll.useQuery();
+  const [showDeleted, setShowDeleted] = useState(false);
+  const { data: debits, isSuccess } = trpc.debits.findAll.useQuery({
+    showDeleted,
+  });
+
   const [query, setQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -29,8 +33,25 @@ const SearchDebit = () => {
     return (
       <div>
         <h1 className='mb-16 text-center text-5xl font-semibold'>Débitos</h1>
-
-        <SearchForm onFilterChange={onFilterChange} />
+        <div className='flex items-start justify-center gap-8'>
+          <SearchForm
+            onFilterChange={onFilterChange}
+            placeholder='Fulano da Silva'
+            id='debit'
+          />
+          <div className='flex items-center gap-4 text-center'>
+            <label htmlFor='show-deleted'>
+              Mostrar <br /> excluídos
+            </label>
+            <input
+              onChange={(e) => setShowDeleted(e.currentTarget.checked)}
+              checked={showDeleted}
+              type='checkbox'
+              name='show-deleted'
+              id='show-deleted'
+            />
+          </div>
+        </div>
 
         <ItemsList>
           {paginatedDebits.map((debit) => (
@@ -38,12 +59,14 @@ const SearchDebit = () => {
           ))}
         </ItemsList>
 
-        {!!filteredDebits?.length && <Paginator
-          currentPage={currentPage}
-          perPage={perPage}
-          totalCount={filteredDebits?.length ?? 0}
-          onPageChange={onPageChange}
-        />}
+        {!!filteredDebits?.length && (
+          <Paginator
+            currentPage={currentPage}
+            perPage={perPage}
+            totalCount={filteredDebits?.length ?? 0}
+            onPageChange={onPageChange}
+          />
+        )}
       </div>
     );
   }

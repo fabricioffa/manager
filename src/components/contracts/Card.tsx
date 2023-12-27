@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useDelete } from '../../utils/hooks';
+import { useDelete, useRestore } from '../../utils/hooks';
 import type { RouterOutputs } from '../../utils/trpc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatCurrency, formatDate } from '../../utils/function/prod';
@@ -11,13 +11,15 @@ export type CardProps = {
 
 const Card = ({ contract }: CardProps) => {
   const deleteContract = useDelete(contract.id, 'contracts');
-
+  const restoreContract = useRestore(contract.id, 'contracts');
+  
   return (
     <BaseCard
       withActions={true}
       profileLink={`/contratos/${contract.id}?id=${contract.id}`}
       editLink={`/contratos/editar?id=${contract.id}`}
-      deleteFunc={deleteContract}
+      deleteFunc={contract.deleted ? undefined : deleteContract}
+      restoreFunc={contract.deleted ? restoreContract : undefined}
     >
       <FontAwesomeIcon icon='user' size='xl' className='justify-self-center' />
       <Link

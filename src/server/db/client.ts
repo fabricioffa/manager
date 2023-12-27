@@ -5,67 +5,13 @@ import { env } from '../../env/server.mjs';
 const prismaClientSingleton = () => {
   const client = new PrismaClient({
     log:
-      env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  });
-  const extendedClient = client.$extends({
-    name: 'soft-delete',
-    query: {
-      house: {
-        async delete({ args }) {
-          return client.house.update({
-            ...args,
-            data: {
-              deleted: true,
-            },
-            where: args.where,
-          });
-        },
-      },
-      tenant: {
-        async delete({ args }) {
-          return client.tenant.update({
-            ...args,
-            data: {
-              deleted: true,
-            },
-            where: args.where,
-          });
-        },
-      },
-      contract: {
-        async delete({ args }) {
-          return client.contract.update({
-            data: {
-              deleted: true,
-            },
-            where: {
-              id: args.where.id,
-            },
-          });
-        },
-      },
-      debit: {
-        async delete({ args }) {
-          return client.debit.update({
-            data: {
-              deleted: true,
-            },
-            where: {
-              id: args.where.id,
-            },
-          });
-        },
-      },
-      $allModels: {
-        async findMany({ args, query }) {
-          args.where = { deleted: false, ...args.where };
-          return query(args);
-        },
-      },
-    },
+      env.NODE_ENV === 'development'
+        ? ['query', 'error', 'warn', 'info']
+        : ['error'],
   });
 
-  return extendedClient;
+
+  return client;
 };
 
 declare global {

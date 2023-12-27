@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useDelete } from '../../utils/hooks';
+import { useDelete, useRestore } from '../../utils/hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { RouterOutputs } from '../../utils/trpc';
 import BaseCard from '../BaseCard';
@@ -10,13 +10,14 @@ export type CardProps = {
 
 const Card = ({ house }: CardProps) => {
   const deleteHouse = useDelete(house.id, 'houses');
-
+  const restoreHouse = useRestore(house.id, 'houses');
   return (
     <BaseCard
       withActions={true}
       profileLink={`/casas/${house.street}?id=${house.id}`}
       editLink={`/casas/editar?id=${house.id}`}
-      deleteFunc={deleteHouse}
+      deleteFunc={house.deleted ? undefined : deleteHouse}
+      restoreFunc={house.deleted ? restoreHouse : undefined}
     >
       <FontAwesomeIcon
         icon='location-dot'
@@ -66,8 +67,9 @@ const Card = ({ house }: CardProps) => {
           />
           <Link
             className='hover:text-link hover:underline'
-            href={`/inquilinos/${house.contracts.at(0)?.tenant
-              .name}?id=${house.contracts.at(0)?.tenant.id}`}
+            href={`/inquilinos/${house.contracts.at(0)?.tenant.name}?id=${
+              house.contracts.at(0)?.tenant.id
+            }`}
           >
             Inquilino: {house.contracts.at(0)?.tenant.name.split(' ').at(0)}
           </Link>

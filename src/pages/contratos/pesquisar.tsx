@@ -2,14 +2,18 @@ import { useState } from 'react';
 import { ItemsList } from '../../components/ItemsList';
 import Paginator from '../../components/Paginator';
 import Card from '../../components/contracts/Card';
-import SearchForm from '../../components/contracts/SearchForm';
+import SearchForm from '~/components/SearchForm';
 import { dataFilter } from '../../utils/function/prod';
 import { trpc } from '../../utils/trpc';
 
 const perPage = 10;
 
 const SearchContract = () => {
-  const { data: contracts, isSuccess } = trpc.contracts.findAll.useQuery();
+  const [showDeleted, setShowDeleted] = useState(false);
+  const { data: contracts, isSuccess } = trpc.contracts.findAll.useQuery({
+    showDeleted,
+  });
+
   const [query, setQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -29,8 +33,25 @@ const SearchContract = () => {
     return (
       <div>
         <h1 className='mb-16 text-center text-5xl font-semibold'>Contratos</h1>
-
-        <SearchForm onFilterChange={onFilterChange} />
+        <div className='flex items-start justify-center gap-8'>
+          <SearchForm
+            onFilterChange={onFilterChange}
+            placeholder='Fulano da Silva'
+            id='debit'
+          />
+          <div className='flex items-center gap-4 text-center'>
+            <label htmlFor='show-deleted'>
+              Mostrar <br /> excluídos
+            </label>
+            <input
+              onChange={(e) => setShowDeleted(e.currentTarget.checked)}
+              checked={showDeleted}
+              type='checkbox'
+              name='show-deleted'
+              id='show-deleted'
+            />
+          </div>
+        </div>
 
         <ItemsList>
           {paginatedContracts.map((contract) => (

@@ -4,40 +4,50 @@ import { router, protectedProcedure } from '../trpc';
 import { debitSchema } from '~/server/schemas/debit.schemas';
 
 export const debitsRouter = router({
-  findAll: protectedProcedure.query(({ ctx }) =>
-    ctx.prisma.debit.findMany({
-      orderBy: {
-        amount: 'desc',
-      },
-      select: {
-        id: true,
-        amount: true,
-        dueDate: true,
-        contract: {
-          select: {
-            id: true,
-            initialDate: true,
-            house: {
-              select: {
-                id: true,
-                street: true,
-                number: true,
+  findAll: protectedProcedure
+    .input(
+      z.object({
+        showDeleted: z.boolean().default(false),
+      })
+    )
+    .query(({ ctx, input: { showDeleted } }) =>
+      ctx.prisma.debit.findMany({
+        orderBy: {
+          amount: 'desc',
+        },
+        where: {
+          deleted: showDeleted,
+        },
+        select: {
+          id: true,
+          deleted: true,
+          amount: true,
+          dueDate: true,
+          contract: {
+            select: {
+              id: true,
+              initialDate: true,
+              house: {
+                select: {
+                  id: true,
+                  street: true,
+                  number: true,
+                },
               },
-            },
-            tenant: {
-              select: {
-                id: true,
-                name: true,
-                cpf: true,
-                primaryPhone: true,
-                hasWpp: true,
+              tenant: {
+                select: {
+                  id: true,
+                  name: true,
+                  cpf: true,
+                  primaryPhone: true,
+                  hasWpp: true,
+                },
               },
             },
           },
         },
-      },
-    })
-  ),
+      })
+    ),
   findOne: protectedProcedure
     .input(z.object({ id: z.string().cuid() }))
     .query(({ ctx, input: { id } }) => {
@@ -83,6 +93,7 @@ export const debitsRouter = router({
           lt: new Date(),
         },
         paidAt: null,
+        deleted: false,
       },
       select: {
         id: true,
@@ -121,7 +132,6 @@ export const debitsRouter = router({
       });
     });
 
-    
     return { updates };
   }),
 
@@ -132,6 +142,7 @@ export const debitsRouter = router({
           lt: new Date(),
         },
         paidAt: null,
+        deleted: false,
       },
       orderBy: {
         amount: 'desc',
@@ -182,6 +193,7 @@ export const debitsRouter = router({
           paidAt: {
             not: null,
           },
+          deleted: false,
         },
       });
     }),
@@ -193,7 +205,25 @@ export const debitsRouter = router({
       })
     )
     .mutation(async ({ ctx, input: { id } }) => {
-      await ctx.prisma.debit.delete({
+      await ctx.prisma.debit.update({
+        data: {
+          deleted: true,
+        },
+        where: { id },
+      });
+    }),
+
+  restore: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input: { id } }) => {
+      await ctx.prisma.debit.update({
+        data: {
+          deleted: false,
+        },
         where: { id },
       });
     }),

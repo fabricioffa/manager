@@ -23,7 +23,27 @@ export const useDelete = (
         onSuccess: () => {
           entity.findOne.invalidate({ id });
           entity.findAll.invalidate();
-          // console.log('%c `/${entityName}/pesquisar`', 'color: green', `/${entityName}/pesquisar`)
+          router.push(`/${routesMap[entityName]}/pesquisar`);
+        },
+      }
+    );
+};
+
+export const useRestore = (
+  id: string,
+  entityName: 'houses' | 'contracts' | 'tenants' | 'debits'
+) => {
+  const router = useRouter();
+  const { [entityName]: entity } = trpc.useUtils();
+
+  const { mutate } = trpc[entityName].restore.useMutation();
+  return () =>
+    mutate(
+      { id },
+      {
+        onSuccess: () => {
+          entity.findOne.invalidate({ id });
+          entity.findAll.invalidate();
           router.push(`/${routesMap[entityName]}/pesquisar`);
         },
       }

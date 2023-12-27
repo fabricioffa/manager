@@ -60,31 +60,40 @@ export const contractsRouter = router({
       });
     }),
 
-  findAll: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.contract.findMany({
-      include: {
-        tenant: {
-          select: {
-            id: true,
-            name: true,
+  findAll: protectedProcedure
+    .input(
+      z.object({
+        showDeleted: z.boolean().default(false),
+      })
+    )
+    .query(async ({ ctx, input: { showDeleted } }) => {
+      return await ctx.prisma.contract.findMany({
+        include: {
+          tenant: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          house: {
+            select: {
+              id: true,
+              street: true,
+              number: true,
+            },
+          },
+          witnesses: {
+            select: {
+              id: true,
+              name: true,
+            },
           },
         },
-        house: {
-          select: {
-            id: true,
-            street: true,
-            number: true,
-          },
+        where: {
+          deleted: showDeleted,
         },
-        witnesses: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
-    });
-  }),
+      });
+    }),
 
   dueToThisWeek: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.contract.findMany({
@@ -92,6 +101,7 @@ export const contractsRouter = router({
         dueDay: {
           in: daysUntilNextSaturday(),
         },
+        deleted: false,
       },
       orderBy: {
         dueDay: 'asc',
@@ -157,7 +167,22 @@ export const contractsRouter = router({
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input: { id } }) => {
-      await ctx.prisma.contract.delete({
+      await ctx.prisma.contract.update({
+        data: {
+          deleted: true,
+          // TODO: witnesses:
+        },
+        where: { id },
+      });
+    }),
+
+  restore: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input: { id } }) => {
+      await ctx.prisma.contract.update({
+        data: {
+          deleted: false,
+        },
         where: { id },
       });
     }),
@@ -175,8 +200,10 @@ export const contractsRouter = router({
             dueDate: {
               gt: pastMonthLastDay(),
             },
+            deleted: true,
           },
         },
+        deleted: false,
       },
     });
 
