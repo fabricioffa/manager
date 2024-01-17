@@ -1,6 +1,7 @@
 import { type AppType } from 'next/app';
 import { type Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
+import { ClerkProvider } from '@clerk/nextjs';
 
 import { trpc } from '../utils/trpc';
 import '../utils/fasIcons';
@@ -13,11 +14,16 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
+    <ClerkProvider {...pageProps}>
       <Layout>
         <Component {...pageProps} />
       </Layout>
-    </SessionProvider>
+    </ClerkProvider>
+    // <SessionProvider session={session}>
+    //   <Layout>
+    //     <Component {...pageProps} />
+    //   </Layout>
+    // </SessionProvider>
   );
 };
 

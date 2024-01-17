@@ -49,7 +49,7 @@ model Tenant {
   cpf            String        @unique @db.Char(11)
   maritalStatus  MaritalStatus @default(solteiro) @map("marital_status")
   profession     String        @db.VarChar(100)
-  primaryPhone   String        @map("primary_phone") @db.VarChar(25)
+  primaryPhone   String?        @map("primary_phone") @db.VarChar(25)
   hasWpp         Boolean       @default(false) @map("has_wpp")
   secondaryPhone String?       @map("secondary_phone") @db.VarChar(25)
   email          String?

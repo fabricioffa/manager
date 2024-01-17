@@ -281,7 +281,7 @@ const Form = ({ tenant, action }: FormProps) => {
                 parentClasses='grid'
                 label='Whatsapp'
                 id='has-wpp'
-                errorMsg={errors?.primaryPhone?.message}
+                errorMsg={errors?.hasWpp?.message}
               >
                 <input
                   className='h-6 w-6 self-center justify-self-center accent-link'

@@ -7,7 +7,7 @@ export type SideBarProps = {
 };
 
 const SideBar = ({ isVisible }: SideBarProps) => {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   return (
     <aside
       className={`fixed inset-y-0 bottom-0 left-0 z-50 flex px-8 duration-1000 ease-in-out contain-content dark:bg-slate-900 max-lg:absolute max-lg:transition-transform lg:w-[max(20%,17rem)] ${
@@ -49,7 +49,16 @@ const SideBar = ({ isVisible }: SideBarProps) => {
             ]}
           />
 
-          {session && (
+          <li className='px-2'>
+            <button
+              className='p-2 text-lg font-bold hover:text-link dark:border-l dark:border-slate-600'
+              onClick={() => signOut()}
+            >
+              Log out
+            </button>
+          </li>
+
+          {/* {session && (
             <li className='px-2'>
               <button
                 className='p-2 text-lg font-bold hover:text-link dark:border-l dark:border-slate-600'
@@ -58,7 +67,7 @@ const SideBar = ({ isVisible }: SideBarProps) => {
                 Log out
               </button>
             </li>
-          )}
+          )} */}
         </ul>
       </nav>
     </aside>

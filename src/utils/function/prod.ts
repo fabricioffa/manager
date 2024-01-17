@@ -144,8 +144,11 @@ export const formatCnpj = (cnpj: string) => {
   return formattedCnpj.slice(0, 18);
 };
 
-export const validateMobile = (phone: string) =>
-  phone.length === 11 ? phone.charAt(2) === '9' : true;
+export const validateMobile = (phone: string) => {
+  console.log('%c phone', 'color: green', phone)
+  console.log('%c phone.length === 11 ? phone.charAt(2) === 9 : true;', 'color: green', phone.length === 11 ? phone.charAt(2) === '9' : true)
+  return phone.length === 11 ? phone.charAt(2) === '9' : true;
+}
 
 type FieldName<TFieldValues extends FieldValues> = FieldPath<TFieldValues>;
 
