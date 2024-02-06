@@ -81,8 +81,6 @@ export const currentDueDate = (dueDay: number, today: Date = new Date()) =>
 //   return minuend
 // }
 
-
-
 export const toMonthInputFormat = (date: Date = new Date()) =>
   new Intl.DateTimeFormat('pt-BR')
     .format(date)
@@ -145,10 +143,14 @@ export const formatCnpj = (cnpj: string) => {
 };
 
 export const validateMobile = (phone: string) => {
-  console.log('%c phone', 'color: green', phone)
-  console.log('%c phone.length === 11 ? phone.charAt(2) === 9 : true;', 'color: green', phone.length === 11 ? phone.charAt(2) === '9' : true)
+  console.log('%c phone', 'color: green', phone);
+  console.log(
+    '%c phone.length === 11 ? phone.charAt(2) === 9 : true;',
+    'color: green',
+    phone.length === 11 ? phone.charAt(2) === '9' : true
+  );
   return phone.length === 11 ? phone.charAt(2) === '9' : true;
-}
+};
 
 type FieldName<TFieldValues extends FieldValues> = FieldPath<TFieldValues>;
 
@@ -197,14 +199,13 @@ export const buildWhatsappUrl = (phone?: string) =>
   phone && `https://wa.me/55${stripOfNonNumeric(phone)}`;
 
 export const monthsBetween = (start: Date, end: Date, whole = true) =>
-   Math.max(
+  Math.max(
     0,
     end.getMonth() -
-    start.getMonth() + // subtract months
-    12 * (end.getFullYear() - start.getFullYear()) - // add years difference
-    ((end.getDate() < start.getDate()) && whole ? 1 : 0) // remove current month based on dueDate
-  )
-;
+      start.getMonth() + // subtract months
+      12 * (end.getFullYear() - start.getFullYear()) - // add years difference
+      (end.getDate() < start.getDate() && whole ? 1 : 0) // remove current month based on dueDate
+  );
 
 export const calculateLateDebit = (
   rent: number,
@@ -216,9 +217,9 @@ export const calculateLateDebit = (
   if (today < dueDate) return rent;
   const lateMonths = monthsBetween(dueDate, new Date());
   // const lateMonths =
-    // today.getMonth() -
-    // dueDate.getMonth() +
-    // 12 * (today.getFullYear() - dueDate.getFullYear());
+  // today.getMonth() -
+  // dueDate.getMonth() +
+  // 12 * (today.getFullYear() - dueDate.getFullYear());
   const arreasAmount = rent * (arreas / 100);
   const interestAmount = rent * ((interest * lateMonths) / 100);
   return rent + arreasAmount + interestAmount;

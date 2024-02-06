@@ -22,8 +22,8 @@ const Card = ({ tenant }: CardProps) => {
       withActions={true}
       profileLink={`/inquilinos/${tenant.name}?id=${tenant.id}`}
       editLink={`/inquilinos/editar?id=${tenant.id}`}
-      deleteFunc={tenant.deleted ? undefined : deleteTenant }
-      restoreFunc={tenant.deleted ? restoreTenant : undefined }
+      deleteFunc={tenant.deleted ? undefined : deleteTenant}
+      restoreFunc={tenant.deleted ? restoreTenant : undefined}
     >
       <FontAwesomeIcon icon='user' size='xl' className='justify-self-center' />
       <h3 className='col-start-2 line-clamp-1 text-xl font-semibold capitalize'>
@@ -45,18 +45,28 @@ const Card = ({ tenant }: CardProps) => {
           </p>
         </>
       )}
-      <FontAwesomeIcon icon='phone' size='xl' className='justify-self-center' />
-      <a
-        href={
-          tenant.hasWpp
-            ? buildWhatsappUrl(tenant.primaryPhone)
-            : buildPhoneUrl(tenant.primaryPhone)
-        }
-        target={tenant.hasWpp ? '_blank' : '_self'}
-        rel={tenant.hasWpp ? 'noreferrer' : undefined}
-      >
-        {tenant.primaryPhone}
-      </a>
+
+      {tenant.primaryPhone && (
+        <>
+          <FontAwesomeIcon
+            icon='phone'
+            size='xl'
+            className='justify-self-center'
+          />
+          <a
+            href={
+              tenant.hasWpp
+                ? buildWhatsappUrl(tenant.primaryPhone)
+                : buildPhoneUrl(tenant.primaryPhone)
+            }
+            target={tenant.hasWpp ? '_blank' : '_self'}
+            rel={tenant.hasWpp ? 'noreferrer' : undefined}
+          >
+            {tenant.primaryPhone}
+          </a>
+        </>
+      )}
+
       {!!firstContract && (
         <>
           <FontAwesomeIcon
@@ -86,7 +96,11 @@ const Card = ({ tenant }: CardProps) => {
             className='justify-self-center'
           />
           <Link
-            className={`${tenant.contracts.length > 1 ? 'grid grid-cols-[17ch_min-content] gap-1.5' : ''} hover:text-link hover:underline`}
+            className={`${
+              tenant.contracts.length > 1
+                ? 'grid grid-cols-[17ch_min-content] gap-1.5'
+                : ''
+            } hover:text-link hover:underline`}
             href={`/casas/${firstContract.house.street}?id=${firstContract.house.id}`}
             key={firstContract.house.id}
           >

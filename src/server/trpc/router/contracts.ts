@@ -63,10 +63,10 @@ export const contractsRouter = router({
   findAll: protectedProcedure
     .input(
       z.object({
-        showDeleted: z.boolean().default(false),
-      })
+        showDeleted: z.boolean().optional().default(false),
+      }).optional()
     )
-    .query(async ({ ctx, input: { showDeleted } }) => {
+    .query(async ({ ctx, input }) => {
       return await ctx.prisma.contract.findMany({
         include: {
           tenant: {
@@ -90,7 +90,7 @@ export const contractsRouter = router({
           },
         },
         where: {
-          deleted: showDeleted,
+          deleted: input?.showDeleted,
         },
       });
     }),

@@ -7,14 +7,14 @@ import { getHTTPStatusCodeFromError } from '@trpc/server/http';
 const updateDb = async (req: NextApiRequest, res: NextApiResponse) => {
   // Create context and caller
   const ctx = await createContext({ req, res });
-  ctx.session = {
-    user: {
-      id: '1324',
-      role: 'ADMIN',
-    },
-    expires: '8000',
-  };
 
+  ctx.auth.sessionClaims = {
+    ...ctx.auth.sessionClaims!,
+    metadata: {
+      role: 'admin'
+    },
+  }
+  
   const apiHeaders = req.headers;
 
   const caller = appRouter.createCaller(ctx);

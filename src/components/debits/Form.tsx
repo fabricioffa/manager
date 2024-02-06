@@ -20,7 +20,7 @@ const inputDefaultStyle =
 const Form = ({ debit, action }: FormProps) => {
   const create = trpc.debits.create.useMutation();
   const { data: contracts, isSuccess: contractsIsSuccess } =
-    trpc.contracts.findAll.useQuery();
+    trpc.contracts.findAll.useQuery({showDeleted: false});
   const {
     register,
     handleSubmit,

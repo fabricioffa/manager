@@ -45,20 +45,28 @@ const Card = ({ debit }: CardProps) => {
         <span className='font-medium'>{formatDate(debit.dueDate)}</span>
       </p>
 
-      <FontAwesomeIcon icon='phone' size='xl' className='justify-self-center' />
-      <address>
-        <a
-          href={
-            debit.contract.tenant.hasWpp
-              ? buildWhatsappUrl(debit.contract.tenant.primaryPhone)
-              : buildPhoneUrl(debit.contract.tenant.primaryPhone)
-          }
-          target={debit.contract.tenant.hasWpp ? '_blank' : '_self'}
-          rel={debit.contract.tenant.hasWpp ? 'noreferrer' : undefined}
-        >
-          {debit.contract.tenant.primaryPhone}
-        </a>
-      </address>
+      {debit.contract.tenant.primaryPhone && (
+        <>
+          <FontAwesomeIcon
+            icon='phone'
+            size='xl'
+            className='justify-self-center'
+          />
+          <address>
+            <a
+              href={
+                debit.contract.tenant.hasWpp
+                  ? buildWhatsappUrl(debit.contract.tenant.primaryPhone)
+                  : buildPhoneUrl(debit.contract.tenant.primaryPhone)
+              }
+              target={debit.contract.tenant.hasWpp ? '_blank' : '_self'}
+              rel={debit.contract.tenant.hasWpp ? 'noreferrer' : undefined}
+            >
+              {debit.contract.tenant.primaryPhone}
+            </a>
+          </address>
+        </>
+      )}
 
       <FontAwesomeIcon
         icon='exclamation'

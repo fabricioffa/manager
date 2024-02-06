@@ -1,7 +1,12 @@
 import type { RouterOutputs } from '../utils/trpc';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { buildPhoneUrl, buildWhatsappUrl, formatCurrency, formatDate } from '../utils/function/prod';
+import {
+  buildPhoneUrl,
+  buildWhatsappUrl,
+  formatCurrency,
+  formatDate,
+} from '../utils/function/prod';
 
 export type CardProps = {
   debit: NonNullable<RouterOutputs['debits']['lateDebits'][number]>;
@@ -31,27 +36,32 @@ const DebitorCard = ({ debit }: CardProps) => {
           className='justify-self-center'
         />
         <p>
-          Venci.: <span className='font-medium'>{formatDate(debit.dueDate)}</span>
+          Venci.:{' '}
+          <span className='font-medium'>{formatDate(debit.dueDate)}</span>
         </p>
 
-        <FontAwesomeIcon
-          icon='phone'
-          size='xl'
-          className='justify-self-center'
-        />
-        <address>
-          <a
-            href={
-              debit.contract.tenant.hasWpp
-                ? buildWhatsappUrl(debit.contract.tenant.primaryPhone)
-                : buildPhoneUrl(debit.contract.tenant.primaryPhone)
-            }
-            target={debit.contract.tenant.hasWpp ? '_blank' : '_self'}
-            rel={debit.contract.tenant.hasWpp ? 'noreferrer' : undefined}
-          >
-            {debit.contract.tenant.primaryPhone}
-          </a>
-        </address>
+        {debit.contract.tenant.primaryPhone && (
+          <>
+            <FontAwesomeIcon
+              icon='phone'
+              size='xl'
+              className='justify-self-center'
+            />
+            <address>
+              <a
+                href={
+                  debit.contract.tenant.hasWpp
+                    ? buildWhatsappUrl(debit.contract.tenant.primaryPhone)
+                    : buildPhoneUrl(debit.contract.tenant.primaryPhone)
+                }
+                target={debit.contract.tenant.hasWpp ? '_blank' : '_self'}
+                rel={debit.contract.tenant.hasWpp ? 'noreferrer' : undefined}
+              >
+                {debit.contract.tenant.primaryPhone}
+              </a>
+            </address>
+          </>
+        )}
 
         <FontAwesomeIcon
           icon='exclamation'
