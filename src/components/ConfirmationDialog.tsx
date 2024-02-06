@@ -36,9 +36,9 @@ const ConfirmationDialog = () => {
     <dialog className='bg-transparent p-0 backdrop:bg-black/40' ref={dialogRef}>
       <div className='relative flex flex-col items-center gap-4 rounded-xl bg-red-100 p-5 dark:bg-slate-700'>
         <button className='absolute right-3 top-3' onClick={closeDialog}>
-          <FontAwesomeIcon icon={'close'} className='text-2xl' />
+          {/* <FontAwesomeIcon icon={'close'} className='text-2xl' /> */}
         </button>
-        <FontAwesomeIcon icon={'trash-can'} className='text-2xl' />
+        {/* <FontAwesomeIcon icon={'trash-can'} className='text-2xl' /> */}
         <p>Tem certeza que deseja excluir esse item?</p>
         <menu className='flex justify-around gap-4'>
           <li>

@@ -2,6 +2,7 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 
 import { type Context } from './context';
+import { checkRole } from '~/utils/roles';
 
 const t = initTRPC.context<Context>().create({
   transformer: superjson,
@@ -22,15 +23,12 @@ export const publicProcedure = t.procedure;
  * users are logged in
  */
 const isAuthed = t.middleware(({ ctx, next }) => {
-  console.log('%c ctx', 'color: green', ctx)
-  // if (!ctx.session || !ctx.session.user || ctx.session.user.role !== 'ADMIN') {
-  if (!ctx.session || !ctx.session.user ) {
+  if (!checkRole(ctx.auth, 'admin'))
     throw new TRPCError({ code: 'UNAUTHORIZED' });
-  }
+
   return next({
     ctx: {
-      // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
+      auth: ctx.auth,
     },
   });
 });

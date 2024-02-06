@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import SubMenu from './SubMenu';
-import { signOut, useSession } from 'next-auth/react';
+// import { signOut,  } from 'next-auth/react';
 
 export type SideBarProps = {
   isVisible: boolean;
@@ -49,14 +49,14 @@ const SideBar = ({ isVisible }: SideBarProps) => {
             ]}
           />
 
-          <li className='px-2'>
+          {/* <li className='px-2'>
             <button
               className='p-2 text-lg font-bold hover:text-link dark:border-l dark:border-slate-600'
-              onClick={() => signOut()}
+              // onClick={() => signOut()}
             >
               Log out
             </button>
-          </li>
+          </li> */}
 
           {/* {session && (
             <li className='px-2'>
