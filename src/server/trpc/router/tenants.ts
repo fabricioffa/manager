@@ -3,7 +3,7 @@ import { createTenantSchema } from './../../schemas/tenant.schema';
 import { router, protectedProcedure } from './../trpc';
 import { z } from 'zod';
 import { pagination } from '../../schemas/base.schemas';
-import { isPrimaError } from '../../../utils/function/prod';
+import { isPrismaError } from '../../../utils/function/prod';
 import { TRPCError } from '@trpc/server';
 
 export const tenantsRouter = router({
@@ -28,7 +28,7 @@ export const tenantsRouter = router({
         await ctx.prisma.tenant.create({ data: tenantData });
       } catch (error) {
         console.log('%c error', 'color: blue', error);
-        if (isPrimaError(error) && error.code === 'P2002') {
+        if (isPrismaError(error) && error.code === 'P2002') {
           throw new TRPCError({
             code: 'BAD_REQUEST',
             message: 'Unique contraint violation',

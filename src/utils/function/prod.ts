@@ -190,7 +190,7 @@ export const isMaritalStatus = (
 ): str is keyof typeof MaritalStatus =>
   Object.keys(MaritalStatus).includes(str);
 
-export const isPrimaError = (e: unknown): e is PrismaClientKnownRequestError =>
+export const isPrismaError = (e: unknown): e is PrismaClientKnownRequestError =>
   typeof e === 'object' && !!e && 'code' in e;
 
 export const buildPhoneUrl = (phone: string) =>
